@@ -55,6 +55,7 @@ namespace VisionProject.ViewModels
                     SystemConfig.Password= SystemConfig.NewPassword;
 
                     Variables.ShowMessage("密码更新成功，请立即保存！\r\n此为唯一密码！");
+                    Variables.Logs.WriteInfo("更新密码操作。");
                 }
                 SystemConfig.NewPassword = "";
                 SystemConfig.CurrentPassword = "";

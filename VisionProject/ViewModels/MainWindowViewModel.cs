@@ -64,7 +64,7 @@ namespace VisionProject.ViewModels
 
         #region 数据统计
 
-        private ShowStatus _resultStatus = new ShowStatus();
+        private ShowStatus _resultStatus = new ShowStatus() { Value = true };
 
         public ShowStatus ResultStatus
         {
@@ -423,7 +423,7 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref version, value); }
         }
 
-        private string supplier = "Leader R&D";
+        private string supplier = "Leader";
 
         public string Supplier
         {
