@@ -1,0 +1,280 @@
+﻿<Window x:Class="VisionProject.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:VisionProject.Views"
+        Title="{Binding Title}" Height="600" Width="960"
+        WindowStartupLocation="CenterScreen" WindowState="Maximized" 
+        xmlns:bing="clr-namespace:BingLibrary.Controls.Log.View;assembly=BingLibrary"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
+         xmlns:bingVision="clr-namespace:BingLibrary.Vision;assembly=BingLibrary.Vision"
+    >
+    <Window.Resources>
+        <Style TargetType="Ellipse" x:Key="StatusEllipse">
+            <Setter Property="Margin" Value="3"></Setter>
+            <Setter Property="Width" Value="30"></Setter>
+            <Setter Property="Height" Value="30"></Setter>
+            <Setter Property="Fill" Value="MediumVioletRed"></Setter>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=Value}" Value="True">
+                    <Setter Property="Fill" Value="DarkSeaGreen"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="Border" x:Key="StatusBorder">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=Value}" Value="True">
+                    <Setter Property="Background" Value="DarkSeaGreen"></Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=Value}" Value="False">
+                    <Setter Property="Background" Value="MediumVioletRed"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="StatusTextBlock">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Path=Value}" Value="True">
+                    <Setter Property="FontSize" Value="28"></Setter>
+                    <Setter Property="FontWeight" Value="Bold"></Setter>
+                    <Setter Property="Foreground" Value="White"></Setter>
+                    <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+                    <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                    <Setter Property="Text" Value="PASS"></Setter>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Path=Value}" Value="False">
+                    <Setter Property="FontSize" Value="28"></Setter>
+                    <Setter Property="FontWeight" Value="Bold"></Setter>
+                    <Setter Property="Foreground" Value="White"></Setter>
+                    <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+                    <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                    <Setter Property="Text" Value="FAIL"></Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PasswordTextBox" TargetType="{x:Type TextBox}">
+            <Setter Property="TextDecorations">
+                <Setter.Value>
+                    <TextDecorationCollection>
+                        <TextDecoration>
+                            <TextDecoration.Pen>
+                                <Pen Thickness="10" Brush="Black"   EndLineCap="Round" StartLineCap="Round"     DashCap="Round"  >
+                                    <Pen.DashStyle>
+                                        <DashStyle Dashes="0.0,1.2" Offset="0.6"/>
+                                    </Pen.DashStyle>
+                                </Pen>
+                            </TextDecoration.Pen>
+                            <TextDecoration.Location>
+                                <TextDecorationLocation>Strikethrough</TextDecorationLocation>
+                            </TextDecoration.Location>
+                        </TextDecoration>
+                    </TextDecorationCollection>
+                </Setter.Value>
+
+            </Setter>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Foreground" Value="Transparent"></Setter>
+            <Setter Property="FontSize" Value="20"></Setter>
+            <Setter Property="FontFamily" Value="Courier New"></Setter>
+        </Style>
+    </Window.Resources>
+    
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" >
+            <hc:TabControl x:Name="TabControlDemo" IsAnimationEnabled="True" IsTabFillEnabled="True" Style="{StaticResource    TabControlBaseStyle}">
+                <hc:TabItem IsSelected="True" Header="&#xe708; 主  页" FontSize="21" FontFamily="../#iconfont" Width="150">
+                    <Grid Background="{StaticResource BackgroundBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="420"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="0">
+                            <bingVision:BingImageWindow x:Name="ImageWindow1"></bingVision:BingImageWindow>
+                        </Grid>
+
+                        <Grid Grid.Column="1" >
+                            <StackPanel Orientation="Vertical">
+
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Margin="5" FontSize="24" Text="当前项目："></TextBlock>
+                                    <TextBlock Text="{Binding ProjectName}" Style="{StaticResource TextBlockTitleBold}"></TextBlock>
+                                </StackPanel>
+
+                                <Border Margin="5" Height="60"  Style="{StaticResource StatusBorder}" DataContext="{Binding ResultStatus}" >
+                                    <TextBlock Style="{StaticResource StatusTextBlock}"  ></TextBlock>
+                                    </Border>
+                             
+
+                                            
+                              
+
+                                <DataGrid FontSize="16" Margin="5" HeadersVisibility="All" IsReadOnly="True" RowHeaderWidth="60" AutoGenerateColumns="False" ItemsSource="{Binding HomeStatisticData}" >
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn FontSize="14" Binding="{Binding CurrentDate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="日期" />
+                                        <DataGridTextColumn FontSize="14" Binding="{Binding OK,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="良品" />
+                                        <DataGridTextColumn FontSize="14" Binding="{Binding NG,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="不良" />
+                                        <DataGridTextColumn FontSize="14" Binding="{Binding All,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="总计" />
+                                        <DataGridTextColumn FontSize="14" Binding="{Binding Rate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="良率" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Margin="5" Width="100" Style="{StaticResource ButtonDanger}" Content="清空当前" Command="{Binding StatisticOperate}" CommandParameter="clear"></Button>
+
+                                </StackPanel>
+
+
+
+                              
+
+
+                            </StackPanel>
+                            
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                <TextBlock Margin="5" FontSize="14" Text="用户登录" VerticalAlignment="Center" Width="70"></TextBlock>
+                                <TextBox VerticalContentAlignment="Center" Margin="5" Style="{StaticResource PasswordTextBox}" Width="220" Text="{Binding Password}"></TextBox>
+                                
+
+                                <ComboBox x:Name="user" Width="100" FontSize="14"  Margin="5" SelectedIndex="{Binding UserIndex}">
+                                    <ComboBoxItem Content="用户" IsSelected="True" ></ComboBoxItem>
+                                    <ComboBoxItem Content="管理员"></ComboBoxItem>
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="DropDownClosed">
+                                            <i:InvokeCommandAction Command="{Binding Login}"></i:InvokeCommandAction>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </ComboBox> 
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </hc:TabItem>
+                <hc:TabItem IsEnabled="{Binding IsLogin}" Header="&#xe71f; 项  目" FontSize="21" FontFamily="../#iconfont" Width="150">
+                    <Grid Background="{StaticResource BackgroundBrush}">
+                        <StackPanel Orientation="Vertical" >
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Margin="5" FontSize="14" Text="项目操作" VerticalAlignment="Center" Width="70"></TextBlock>
+                                <Button Margin="5" Width="100" Style="{StaticResource ButtonPrimary}" Content="打  开" Command="{Binding ProjectOperate}" CommandParameter="open"></Button>
+                                <Button Margin="5" Width="100" Style="{StaticResource ButtonPrimary}" Content="保  存" Command="{Binding ProjectOperate}" CommandParameter="save"></Button>
+                            </StackPanel>
+
+
+                        </StackPanel>
+
+                    </Grid>
+                    
+                </hc:TabItem>
+                <hc:TabItem IsEnabled="{Binding IsLogin}" Header="&#xe71b; 设  置" FontSize="21" FontFamily="../#iconfont" Width="150">
+                    <Grid Background="{StaticResource BackgroundBrush}" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Margin="5" Width="100" Style="{StaticResource ButtonInfo}" Content="保  存" Command="{Binding SaveSystemConfig}" ></Button>
+                                <TextBlock Margin="5" FontSize="14" VerticalAlignment="Center" Text="注意：系统相关设置，软件重启后生效。" HorizontalAlignment="Left" Style="{StaticResource TextBlockDefaultWarning}"></TextBlock>
+
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="1" DataContext="{Binding SystemConfig}">
+                            <StackPanel Orientation="Vertical">
+
+                                <StackPanel Orientation="Horizontal" >
+                                    <hc:TextBox Text="{Binding Title}"  FontSize="14"   Margin="5"   hc:InfoElement.TitleWidth="80"  Width="280" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="软件名字"  />
+
+                                </StackPanel>
+
+
+                            </StackPanel>
+                        </Grid>
+                        
+                  
+                    </Grid>
+                </hc:TabItem>
+                <hc:TabItem Header="&#xe71c; 产  量" FontSize="21" FontFamily="../#iconfont" Width="150">
+                    <Grid Background="{StaticResource BackgroundBrush}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Margin="5" Width="100" Style="{StaticResource ButtonInfo}" Content="刷  新" Command="{Binding StatisticOperate}" CommandParameter="refresh"></Button>
+                                <Button Margin="5" Width="100" Style="{StaticResource ButtonInfo}" Content="导  出" Command="{Binding StatisticOperate}" CommandParameter="export"></Button>
+
+
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="1">
+                            <DataGrid FontSize="16" Margin="5" HeadersVisibility="All" IsReadOnly="True" RowHeaderWidth="60" AutoGenerateColumns="False" ItemsSource="{Binding AllStatisticData}"  hc:DataGridAttach.ShowRowNumber="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn FontSize="14" Binding="{Binding CurrentDate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="日期" />
+                                    <DataGridTextColumn FontSize="14" Binding="{Binding OK,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="良品" />
+                                    <DataGridTextColumn FontSize="14" Binding="{Binding NG,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="不良" />
+                                    <DataGridTextColumn FontSize="14" Binding="{Binding All,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="总计" />
+                                    <DataGridTextColumn FontSize="14" Binding="{Binding Rate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="良率" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+
+                        </Grid>
+                    </Grid>
+                </hc:TabItem>
+                <hc:TabItem Header="&#xe719; 日  志" FontSize="21" FontFamily="../#iconfont" Width="150">
+                    <Grid Background="{StaticResource BackgroundBrush}">
+                        <bing:LogRealTimeWin FontSize="14"></bing:LogRealTimeWin >
+                    </Grid>
+                </hc:TabItem>
+                <hc:TabItem Header="&#xe70e; 帮  助" FontSize="21" FontFamily="../#iconfont" Width="150">
+                    <Grid Background="{StaticResource BackgroundBrush}">
+
+                    </Grid>
+                </hc:TabItem>
+
+            </hc:TabControl>
+
+        </Grid>
+
+
+        <Grid Grid.Row="1">
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="5" FontSize="16" VerticalAlignment="Center" Text="PLC:"></TextBlock>
+                    <Ellipse  Style="{StaticResource StatusEllipse}" DataContext="{Binding PLCStatus}"></Ellipse>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="5" FontSize="16" VerticalAlignment="Center" Text="相机:"></TextBlock>
+                    <Ellipse  Style="{StaticResource StatusEllipse}" DataContext="{Binding PLCStatus}"></Ellipse>
+                </StackPanel>
+            </StackPanel>
+            
+            
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
+                <hc:Shield Subject="Version" Status="{Binding Version,FallbackValue=1.0.0}" Margin="4" Color="#1182c3" />
+                <hc:Shield Subject="Expiry" Status="Permanent"  Margin="4" Color="#1182c3" />
+                <hc:Shield Subject="Supplier" Status="{Binding Supplier}" Margin="4" Color="#d8624c" >
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                            <i:InvokeCommandAction Command="{Binding ShowAboutDialog}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </hc:Shield>
+            </StackPanel>
+        </Grid>
+        
+    </Grid>
+</Window>
