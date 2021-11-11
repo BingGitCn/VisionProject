@@ -14,12 +14,17 @@ namespace VisionProject.ViewModels
 {
     public partial class MainWindowViewModel : BindableBase
     {
-        private ShowStatus _resultStatus = new ShowStatus();
-        public ShowStatus ResultStatus
+
+        //设备运行状态，可用于展示PLC的运行，待机，故障等。
+        private string _machineStatus="待机中";
+        public string MachineStatus
         {
-            get { return _resultStatus; }
-            set { SetProperty(ref _resultStatus, value); }
+            get { return _machineStatus; }
+            set { SetProperty(ref _machineStatus, value); }
         }
+
+
+
 
 
         private string _title = "外观检测软件";
@@ -38,6 +43,8 @@ namespace VisionProject.ViewModels
             Variables.Title = SystemConfig.Title;
             Title = Variables.Title;
 
+            //测试
+            IsLogin = true;
             
         }
 
@@ -58,7 +65,12 @@ namespace VisionProject.ViewModels
 
         #region 数据统计
 
-       
+        private ShowStatus _resultStatus = new ShowStatus();
+        public ShowStatus ResultStatus
+        {
+            get { return _resultStatus; }
+            set { SetProperty(ref _resultStatus, value); }
+        }
 
         //数据类
         public class StatisticData : BindableBase
@@ -120,6 +132,7 @@ namespace VisionProject.ViewModels
       async  void initStatistic()
         {
             await Task.Delay(100);
+           
                 try
                 {
 
@@ -242,6 +255,7 @@ namespace VisionProject.ViewModels
         /// </summary>
         void setOK()
         {
+            ResultStatus.Value = true;
             try {
                 FileInfo fileInfo = new FileInfo(Variables.StatisticDataFilePath);
                 ExcelPackage package = new ExcelPackage(fileInfo);
@@ -302,6 +316,7 @@ namespace VisionProject.ViewModels
         /// </summary>
         void setNG()
         {
+            ResultStatus.Value = false;
             try
             {
                 FileInfo fileInfo = new FileInfo(Variables.StatisticDataFilePath);

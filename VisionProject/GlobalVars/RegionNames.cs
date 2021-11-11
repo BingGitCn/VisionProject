@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace VisionProject.GlobalVars
 {
+
   public static  class RegionNames
     {
+
     }
 }

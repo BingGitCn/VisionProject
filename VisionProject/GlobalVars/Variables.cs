@@ -6,16 +6,20 @@ using System.Threading.Tasks;
 using BingLibrary.Controls.Log;
 
 using BingLibrary.Vision;
+using VisionProject.ViewModels;
 
 namespace VisionProject.GlobalVars
 {
     public static class Variables
     {
+        //标题
         public static string Title = "";
         //路径
         public static string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
         public static string StatisticDataFilePath = AppDomain.CurrentDomain.BaseDirectory + "Statistics.xlsx";
+        //项目
+        public static Project CurrentProject = new Project();
 
         //日志
         public  static LogDateTime Logs = new LogDateTime(AppDomain.CurrentDomain.BaseDirectory + "Logs");

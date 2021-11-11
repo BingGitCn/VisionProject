@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using BingLibrary.Tools;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
@@ -16,6 +17,7 @@ namespace VisionProject.ViewModels
         public AboutDialogViewModel()
         {
             Name = Variables.Title;
+            MachineID= Authorize.GetMachineCode();
         }
 
         private string _title = "关于软件";
@@ -39,6 +41,13 @@ namespace VisionProject.ViewModels
         {
             get { return version; }
             set { SetProperty(ref version, value); }
+        }
+
+        private string _machineID;
+        public string MachineID
+        {
+            get { return _machineID; }
+            set { SetProperty(ref _machineID, value); }
         }
 
 

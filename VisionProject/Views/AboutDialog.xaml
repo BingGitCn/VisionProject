@@ -18,7 +18,7 @@
                 <Grid Grid.Column="1">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center">
                         <TextBlock   Margin="5"  Text="{Binding Name}" FontSize="32" Style="{StaticResource   TextBlockBoldBaseStyle}"></TextBlock>
-                        <TextBlock   Margin="5"  Text="{Binding Version}"  Foreground="DarkGray" ><Run Text="(内部版本)(64位)  .NET 4.72"></Run></TextBlock>
+                        <TextBlock   Margin="5"  Text="{Binding Version}" FontSize="14"  Foreground="DarkGray" ><Run Text="(内部版本)(64位)  .NET 4.72"></Run></TextBlock>
 
                     </StackPanel>
                 </Grid>
@@ -28,8 +28,9 @@
             
           
           
-            <TextBlock HorizontalAlignment="Left"  Margin="5 25 5 0"  Text="{Binding Name}" Style="{ StaticResource    TextBlockDefaultThiLight}" ></TextBlock>
-            <TextBlock HorizontalAlignment="Left"    Margin="5 0 5 5"  Text="© 2021-2022 Leader。保留所有权利。" Style="{ StaticResource    TextBlockDefaultThiLight}" ></TextBlock>
+            <TextBlock FontSize="14"  HorizontalAlignment="Left"  Margin="5 45 5 0"  Text="{Binding Name}" Style="{ StaticResource    TextBlockDefaultThiLight}" ></TextBlock>
+            <TextBlock FontSize="14"  HorizontalAlignment="Left"    Margin="5 0 5 5"  Text="© 2021-2022 Leader。保留所有权利。" Style="{ StaticResource    TextBlockDefaultThiLight}" ></TextBlock>
+            <TextBlock FontSize="14"  HorizontalAlignment="Left"    Margin="5 0 5 5"  Text="本机ID：" Style="{ StaticResource    TextBlockDefaultThiLight}" ><Run Text="{Binding MachineID}"></Run></TextBlock>
 
 
         </StackPanel>

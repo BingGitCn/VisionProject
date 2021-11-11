@@ -85,6 +85,8 @@
     <Compile Include="GlobalVars\Variables.cs" />
     <Compile Include="ViewModels\AboutDialogViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\Project.cs" />
+    <Compile Include="ViewModels\Run.cs" />
     <Compile Include="ViewModels\SystemConfig.cs" />
     <Compile Include="Views\AboutDialog.xaml.cs">
       <DependentUpon>AboutDialog.xaml</DependentUpon>
