@@ -1,26 +1,22 @@
 ﻿using BingLibrary.Tools;
-using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
 {
-   
-
     public class AboutDialogViewModel : BindableBase, IDialogAware
     {
         public AboutDialogViewModel()
         {
             Name = Variables.Title;
-            MachineID= Authorize.GetMachineCode();
+            MachineID = Authorize.GetMachineCode();
         }
 
         private string _title = "关于软件";
+
         public string Title
         {
             get { return _title; }
@@ -28,13 +24,13 @@ namespace VisionProject.ViewModels
         }
 
         private string _name = "检测软件";
+
         public string Name
         {
             get { return _name; }
             set { SetProperty(ref _name, value); }
-
-
         }
+
         private string version = "版本 " + Application.ResourceAssembly.GetName().Version.ToString();
 
         public string Version
@@ -44,13 +40,12 @@ namespace VisionProject.ViewModels
         }
 
         private string _machineID;
+
         public string MachineID
         {
             get { return _machineID; }
             set { SetProperty(ref _machineID, value); }
         }
-
-
 
         public event Action<IDialogResult> RequestClose;
 
@@ -61,13 +56,10 @@ namespace VisionProject.ViewModels
 
         public void OnDialogClosed()
         {
-
         }
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
-
-
         }
     }
 }

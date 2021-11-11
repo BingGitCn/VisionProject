@@ -1,8 +1,7 @@
-﻿using VisionProject.Views;
-using Prism.Ioc;
-using Prism.Modularity;
+﻿using Prism.Ioc;
 using System.Windows;
 using VisionProject.ViewModels;
+using VisionProject.Views;
 
 namespace VisionProject
 {
@@ -19,9 +18,6 @@ namespace VisionProject
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterDialog<AboutDialog, AboutDialogViewModel>(GlobalVars.DialogNames.ShowAboutWindow);
-           
         }
-
-
     }
 }

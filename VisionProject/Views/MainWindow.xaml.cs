@@ -10,7 +10,6 @@ namespace VisionProject.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-      
         public MainWindow(IRegionManager regionManager)
         {
             InitializeComponent();
@@ -19,7 +18,6 @@ namespace VisionProject.Views
 
             //regionManager.RegisterViewWithRegion(GlobalPrism.RegionNames.StatusRegionName, typeof(Status));
             //GlobalVars.Variables.ImageWindowData = imageWin.windowData;
-
 
             //主线程上更新
             UIThread.InitializeWithDispatcher();
@@ -37,7 +35,6 @@ namespace VisionProject.Views
                 Application.Current.Shutdown();
                 return;
             }
-
         }
     }
 }
