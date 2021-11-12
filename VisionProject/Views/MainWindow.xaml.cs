@@ -1,4 +1,5 @@
 ﻿using BingLibrary.Tools;
+using OfficeOpenXml;
 using Prism.Regions;
 using System.Windows;
 using VisionProject.GlobalVars;
@@ -13,6 +14,8 @@ namespace VisionProject.Views
         public MainWindow(IRegionManager regionManager)
         {
             InitializeComponent();
+            //excel授权
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             //给图像控件windowdata全局
             Variables.WindowData1 = ImageWindow1.windowData;
 

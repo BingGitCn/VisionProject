@@ -36,18 +36,7 @@ namespace VisionProject.ViewModels
         public MainWindowViewModel(IDialogService dialogService)
         {
             curDialogService = dialogService;
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            initStatistic();
-            getSystemConfig();
-            Variables.Title = SystemConfig.Title;
-            Title = Variables.Title;
-            if (SystemConfig.Password != "")
-                Variables.CurrentPassword = SystemConfig.Password;
-            else
-                Variables.CurrentPassword = "123456";
-
-            //测试
-            //IsLogin = true;
+            initAll();
         }
 
         #region 底部状态显示ConnectStatus
@@ -360,6 +349,7 @@ namespace VisionProject.ViewModels
                 switch (param)
                 {
                     case "clear":
+
                         bool rst = Variables.ShowConfirm("确认清除当前计数？");
                         if (rst)
                         {

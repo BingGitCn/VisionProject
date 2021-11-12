@@ -16,7 +16,7 @@
                 </Grid>
                 <Grid Grid.Column="1">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <TextBlock   Margin="5"  Text="{Binding Name}" FontSize="32" Style="{StaticResource   TextBlockBoldBaseStyle}"></TextBlock>
+                        <TextBlock   Margin="5"  Text="{Binding Name}" FontSize="28" Style="{StaticResource   TextBlockBoldBaseStyle}"></TextBlock>
                         <TextBlock   Margin="5"  Text="{Binding Version}" FontSize="14"  Foreground="DarkGray" ><Run Text="(内部版本)(64位)  .NET 4.72"></Run></TextBlock>
                     </StackPanel>
                 </Grid>

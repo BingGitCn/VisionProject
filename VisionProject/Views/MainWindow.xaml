@@ -196,7 +196,7 @@
                                     <hc:TextBox Text="{Binding Title}"  FontSize="14"   Margin="5"   hc:InfoElement.TitleWidth="80"  Width="610" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="软件名字" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Margin="5" FontSize="14" Text="当前密码：" VerticalAlignment="Center" Width="70"></TextBlock>
+                                    <TextBlock Margin="5" FontSize="14" Text="原密码：" VerticalAlignment="Center" Width="70"></TextBlock>
                                     <TextBox VerticalContentAlignment="Center" Margin="5" Style="{StaticResource PasswordTextBox}" Width="220" Text="{Binding CurrentPassword}"></TextBox>
                                   
                                     <TextBlock Margin="5" FontSize="14" Text="新密码：" VerticalAlignment="Center" Width="70"></TextBlock>
