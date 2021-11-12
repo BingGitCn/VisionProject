@@ -32,12 +32,12 @@ namespace VisionProject.GlobalVars
         //弹出窗口确认
         public static void ShowMessage(string msg)
         {
-            HandyControl.Controls.MessageBox.Show(msg);
+            HandyControl.Controls.MessageBox.Show(msg,"消息提示");
         }
 
         public static bool ShowConfirm(string msg)
         {
-            if (HandyControl.Controls.MessageBox.Ask(msg) == System.Windows.MessageBoxResult.OK)
+            if (HandyControl.Controls.MessageBox.Ask(msg,"确认操作") == System.Windows.MessageBoxResult.OK)
                 return true;
             else return false;
         }

@@ -1,6 +1,7 @@
 ﻿using BingLibrary.Tools;
 using OfficeOpenXml;
 using Prism.Regions;
+using System;
 using System.Windows;
 using VisionProject.GlobalVars;
 
@@ -38,6 +39,16 @@ namespace VisionProject.Views
                 Application.Current.Shutdown();
                 return;
             }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+
+            if (Variables.ShowConfirm("确认退出软件？") == false)
+                return;
+            else
+                Environment.Exit(0);
         }
     }
 }

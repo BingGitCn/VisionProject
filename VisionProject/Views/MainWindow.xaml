@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:VisionProject.Views"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="{Binding Title}" Height="600" Width="960"
+        Title="{Binding Title}" Height="600" Width="960" Closing="Window_Closing"
         WindowStartupLocation="CenterScreen" WindowState="Maximized">
     <Window.Resources>
         <Style TargetType="Ellipse" x:Key="StatusEllipse">
