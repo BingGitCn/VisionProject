@@ -2,15 +2,45 @@
 using HalconDotNet;
 using Newtonsoft.Json;
 using Prism.Commands;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Windows;
 using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
 {
     public partial class MainWindowViewModel
     {
+        private ObservableCollection<ProjectInfo> _projectNames = new ObservableCollection<ProjectInfo>();
+        public ObservableCollection<ProjectInfo> ProjectNames
+        {
+            get { return _projectNames; }
+            set { SetProperty(ref _projectNames, value); }
+        }
+
+        private ProjectInfo _selectProjectName=new ProjectInfo();
+        public ProjectInfo SelectProjectName
+        {
+            get { return _selectProjectName; }
+            set { SetProperty(ref _selectProjectName, value); }
+        }
+
+        private  void initProjects()
+        {
+            string[] files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "Projects");
+            for (int i = 0; i < files.Length; i++)
+            {
+                FileInfo fileInfo = new FileInfo(files[i]);
+                if (fileInfo.Extension == ".lprj")
+                    ProjectNames.Add(new ProjectInfo() { Name = fileInfo.Name.Replace(".lprj", ""), Path = files[i] });
+            }
+        }
+
+
+
         private string _projectName;
 
         public string ProjectName
@@ -19,8 +49,14 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _projectName, value); }
         }
 
-        private string _projectPath;
+        private int _projectIndex;
+        public int ProjectIndex
+        {
+            get { return _projectIndex; }
+            set { SetProperty(ref _projectIndex, value); }
+        }
 
+        private string _projectPath;
         public string ProjectPath
         {
             get { return _projectPath; }
@@ -42,6 +78,60 @@ namespace VisionProject.ViewModels
             get { return _lastDate; }
             set { SetProperty(ref _lastDate, value); }
         }
+
+        int projectIndex = -1;
+
+        private DelegateCommand<string> _openProject;
+        public DelegateCommand<string> OpenProject =>
+            _openProject ?? (_openProject = new DelegateCommand<string>((string param) => {
+
+                switch (param) {
+                    case "close":
+                        try
+                        {
+                            if (Variables.ShowConfirm("请确认设备处于非工作状态？") == false)
+                            {
+                                ProjectIndex = projectIndex;
+                                return;
+                            }
+                            if (Variables.ShowConfirm("防止勿操作，请确认设备处于非工作状态？") == false)
+                            {
+                                ProjectIndex = projectIndex;
+                                return;
+                            }
+                            if (Variables.ShowConfirm("已就绪，确认进行下一步操作？") == false)
+                            {
+                                ProjectIndex = projectIndex;
+                                return;
+                            }
+
+
+                            HOperatorSet.SetSystem(new HTuple("clip_region"), new HTuple("false"));
+
+                            Variables.CurrentProject = Serialize.ReadJsonV2<Project>(SelectProjectName.Path);
+                            //Programs = Variables.CurrentProject.Programs;
+                            ProjectName = SelectProjectName.Name;
+                            CreateDate = Variables.CurrentProject.CreateDate;
+                            LastDate = Variables.CurrentProject.LastDate;
+                            ProjectPath = SelectProjectName.Path;
+
+
+                        }
+                        catch { }
+                        break;
+                    case "open":
+                        projectIndex = ProjectIndex;
+                        break;
+
+                }
+                
+
+            }));
+
+       
+
+
+
 
         private DelegateCommand<string> _projectOperate;
 
@@ -118,5 +208,22 @@ namespace VisionProject.ViewModels
 
         [JsonIgnore]
         public Dictionary<string, object> Results = new Dictionary<string, object>();
+    }
+
+    public class ProjectInfo:BindableBase
+    {
+        private string _name;
+        public string Name
+        {
+            get { return _name; }
+            set { SetProperty(ref _name, value); }
+        }
+
+        private string _path;
+        public string Path
+        {
+            get { return _path; }
+            set { SetProperty(ref _path, value); }
+        }
     }
 }

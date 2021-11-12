@@ -20,6 +20,8 @@ namespace VisionProject.ViewModels
             //测试
             //IsLogin = true;
 
+
+            initProjects();
             initPLC();
         }
 

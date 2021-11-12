@@ -433,14 +433,6 @@ namespace VisionProject.ViewModels
 
         #region 登录密码
 
-        private string _password = "";
-
-        public string Password
-        {
-            get { return _password; }
-            set { SetProperty(ref _password, value); }
-        }
-
         private int _userIndex = 0;
 
         public int UserIndex
@@ -458,19 +450,34 @@ namespace VisionProject.ViewModels
                     IsLogin = false;
                 else if (UserIndex == 1)
                 {
-                    if (Password == Variables.CurrentPassword)
+                    if (!IsLogin)
                     {
-                        IsLogin = true;
+                        UserIndex = 0;
+                        LoginPad.Open = true;
+                        LoginPad.CallBack = finishLogin;
                     }
-                    else
-                        IsLogin = false;
+
+
                 }
 
-                if (IsLogin == false)
-                    UserIndex = 0;
-
-                Password = "";
+              
             }));
+
+
+        private void finishLogin(string result)
+        {
+            if (result ==Variables.CurrentPassword)
+            {
+                IsLogin = true;
+                UserIndex = 1;
+            }
+            else
+            {
+               
+            }
+        }
+
+
 
         private bool _isLogin = false;
 
@@ -479,6 +486,10 @@ namespace VisionProject.ViewModels
             get { return _isLogin; }
             set { SetProperty(ref _isLogin, value); }
         }
+
+
+        public NumberPadViewModel LoginPad { get; set; } = new NumberPadViewModel();
+
 
         #endregion 登录密码
     }
