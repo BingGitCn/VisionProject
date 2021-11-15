@@ -456,28 +456,20 @@ namespace VisionProject.ViewModels
                         LoginPad.Open = true;
                         LoginPad.CallBack = finishLogin;
                     }
-
-
                 }
-
-              
             }));
-
 
         private void finishLogin(string result)
         {
-            if (result ==Variables.CurrentPassword)
+            if (result == Variables.CurrentPassword)
             {
                 IsLogin = true;
                 UserIndex = 1;
             }
             else
             {
-               
             }
         }
-
-
 
         private bool _isLogin = false;
 
@@ -487,9 +479,7 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _isLogin, value); }
         }
 
-
         public NumberPadViewModel LoginPad { get; set; } = new NumberPadViewModel();
-
 
         #endregion 登录密码
     }

@@ -3,11 +3,11 @@ using HalconDotNet;
 using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Mvvm;
+using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Windows;
 using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
@@ -15,21 +15,24 @@ namespace VisionProject.ViewModels
     public partial class MainWindowViewModel
     {
         #region 项目编辑
+
         private ObservableCollection<ProjectInfo> _projectNames = new ObservableCollection<ProjectInfo>();
+
         public ObservableCollection<ProjectInfo> ProjectNames
         {
             get { return _projectNames; }
             set { SetProperty(ref _projectNames, value); }
         }
 
-        private ProjectInfo _selectProjectName=new ProjectInfo();
+        private ProjectInfo _selectProjectName = new ProjectInfo();
+
         public ProjectInfo SelectProjectName
         {
             get { return _selectProjectName; }
             set { SetProperty(ref _selectProjectName, value); }
         }
 
-        private  void initProjects()
+        private void initProjects()
         {
             string[] files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "Projects");
             for (int i = 0; i < files.Length; i++)
@@ -40,8 +43,6 @@ namespace VisionProject.ViewModels
             }
         }
 
-
-
         private string _projectName;
 
         public string ProjectName
@@ -50,7 +51,8 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _projectName, value); }
         }
 
-        private int _projectIndex=-1;
+        private int _projectIndex = -1;
+
         public int ProjectIndex
         {
             get { return _projectIndex; }
@@ -58,6 +60,7 @@ namespace VisionProject.ViewModels
         }
 
         private string _projectPath;
+
         public string ProjectPath
         {
             get { return _projectPath; }
@@ -80,13 +83,15 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _lastDate, value); }
         }
 
-        int projectIndex = -1;
+        private int projectIndex = -1;
 
         private DelegateCommand<string> _openProject;
-        public DelegateCommand<string> OpenProject =>
-            _openProject ?? (_openProject = new DelegateCommand<string>((string param) => {
 
-                switch (param) {
+        public DelegateCommand<string> OpenProject =>
+            _openProject ?? (_openProject = new DelegateCommand<string>((string param) =>
+            {
+                switch (param)
+                {
                     case "close":
                         try
                         {
@@ -106,7 +111,6 @@ namespace VisionProject.ViewModels
                                 return;
                             }
 
-
                             HOperatorSet.SetSystem(new HTuple("clip_region"), new HTuple("false"));
 
                             Variables.CurrentProject = Serialize.ReadJsonV2<Project>(SelectProjectName.Path);
@@ -115,24 +119,15 @@ namespace VisionProject.ViewModels
                             CreateDate = Variables.CurrentProject.CreateDate;
                             LastDate = Variables.CurrentProject.LastDate;
                             ProjectPath = SelectProjectName.Path;
-
-
                         }
                         catch { }
                         break;
+
                     case "open":
                         projectIndex = ProjectIndex;
                         break;
-
                 }
-                
-
             }));
-
-       
-
-
-
 
         private DelegateCommand<string> _projectOperate;
 
@@ -183,28 +178,29 @@ namespace VisionProject.ViewModels
 
                                 Variables.CurrentProject.Programs1 = Programs1;
                                 Serialize.WriteJsonV2(Variables.CurrentProject, saveFileDialog.FileName);
-
-                               
                             }
                         }
                         catch { }
                         break;
                 }
             }));
-        #endregion
 
-        #region 程序1编辑 
+        #endregion 项目编辑
+
+        #region 程序1编辑
 
         //程序索引
         private int program1Index;
+
         public int Program1Index
         {
             get { return program1Index; }
-            set { SetProperty(ref program1Index, value); } 
+            set { SetProperty(ref program1Index, value); }
         }
 
         //程序列表
         private ObservableCollection<Program> programs1 = new ObservableCollection<Program>();
+
         public ObservableCollection<Program> Programs1
         {
             get { return programs1; }
@@ -213,30 +209,29 @@ namespace VisionProject.ViewModels
 
         //当前选择的程序
         private string program1;
+
         public string Program1
         {
             get { return program1; }
             set { SetProperty(ref program1, value); }
         }
-         
-      
-
-
-
 
         //增加删除程序
         private DelegateCommand<string> _programs1Operate;
+
         public DelegateCommand<string> Programs1Operate =>
-            _programs1Operate ?? (_programs1Operate = new DelegateCommand<string>((string param) => {
+            _programs1Operate ?? (_programs1Operate = new DelegateCommand<string>((string param) =>
+            {
                 switch (param)
                 {
                     case "add":
                         try
                         {
-                            Programs1.Add(new  Program());
+                            Programs1.Add(new Program());
                         }
                         catch { }
                         break;
+
                     case "del":
                         try
                         {
@@ -245,31 +240,29 @@ namespace VisionProject.ViewModels
                         catch { }
                         break;
                 }
-
             }));
-
 
         //程序编辑
         private DelegateCommand _program1Config;
+
         public DelegateCommand Program1Config =>
             _program1Config ?? (_program1Config = new DelegateCommand(() =>
             {
                 try
                 {
-                   Variables.Program1Index = Program1Index;
-                   Variables.CurrentProject.Programs1 = Programs1;
-                   // GlobalVars.Variables.CurrentImage = GlobalVars.Variables.ImageWindowData.CurrentImage;
+                    Variables.ProgramIndex = Program1Index;
+                    Variables.CurrentProject.Programs1 = Programs1;
+                    Variables.CurrentImage1 = Variables.WindowData1.CurrentImage;
 
-                  
+                    if (Programs1[Program1Index].InspectFunction == "无")
+                    {
+                        curDialogService.ShowDialog(DialogNames.ShowFunctionTestWindow);
+                    }
                 }
                 catch { }
-
-
             }));
 
-
-        #endregion
-
+        #endregion 程序1编辑
     }
 
     //项目类
@@ -285,6 +278,7 @@ namespace VisionProject.ViewModels
     public class Program
     {
         public bool IsUse { set; get; } = true;
+        public string InspectFunction { set; get; } = "无";
 
         public Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
@@ -292,9 +286,10 @@ namespace VisionProject.ViewModels
         public Dictionary<string, object> Results = new Dictionary<string, object>();
     }
 
-    public class ProjectInfo:BindableBase
+    public class ProjectInfo : BindableBase
     {
         private string _name;
+
         public string Name
         {
             get { return _name; }
@@ -302,6 +297,7 @@ namespace VisionProject.ViewModels
         }
 
         private string _path;
+
         public string Path
         {
             get { return _path; }

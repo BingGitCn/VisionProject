@@ -3,11 +3,11 @@
 namespace VisionProject.Views
 {
     /// <summary>
-    /// Interaction logic for NumberPad
+    /// Interaction logic for Function_Test
     /// </summary>
-    public partial class NumberPad : UserControl
+    public partial class Function_Test : UserControl
     {
-        public NumberPad()
+        public Function_Test()
         {
             InitializeComponent();
         }

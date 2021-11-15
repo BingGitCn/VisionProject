@@ -40,30 +40,22 @@ namespace VisionProject.ViewModels
             catch { Variables.Logs.WriteError("系统设置保存失败。"); }
         }
 
-
-
-
-
-
         private DelegateCommand _updatePassword;
-        public DelegateCommand UpdatePassword =>
-            _updatePassword ?? (_updatePassword = new DelegateCommand(()=> {
 
+        public DelegateCommand UpdatePassword =>
+            _updatePassword ?? (_updatePassword = new DelegateCommand(() =>
+            {
                 if (Variables.CurrentPassword == SystemConfig.CurrentPassword)
                 {
                     Variables.CurrentPassword = SystemConfig.NewPassword;
-                    SystemConfig.Password= SystemConfig.NewPassword;
+                    SystemConfig.Password = SystemConfig.NewPassword;
 
                     Variables.ShowMessage("密码更新成功，请立即保存！\r\n此为唯一密码！");
                     Variables.Logs.WriteInfo("更新密码操作。");
                 }
                 SystemConfig.NewPassword = "";
                 SystemConfig.CurrentPassword = "";
-
             }));
-
-    
-
     }
 
     public class SystemConfigData : BindableBase
@@ -99,5 +91,5 @@ namespace VisionProject.ViewModels
             get { return _Password; }
             set { SetProperty(ref _Password, value); }
         }
-    } 
+    }
 }
