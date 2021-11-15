@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
 using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
@@ -6,6 +7,8 @@ namespace VisionProject.ViewModels
     public partial class MainWindowViewModel
     {
         #region 初始化
+
+       
 
         private void initAll()
         {
@@ -40,6 +43,7 @@ namespace VisionProject.ViewModels
 
             Variables.Logs.WriteInfo(Variables.HCPLC.IsConnected ? "PLC连接成功" : "PLC连接失败");
             PLCStatus.Value = Variables.HCPLC.IsConnected;
+
         }
 
         #endregion 初始化
@@ -50,7 +54,12 @@ namespace VisionProject.ViewModels
             while (true)
             {
                 await Task.Delay(100);
+
+
+
             }
         }
+
+       
     }
 }

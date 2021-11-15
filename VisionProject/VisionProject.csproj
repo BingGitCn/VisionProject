@@ -68,6 +68,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModels\Functions.cs" />
     <Compile Include="ViewModels\Function_TestViewModel.cs" />
     <Compile Include="ViewModels\NumberPadViewModel.cs" />
     <Compile Include="Views\Function_Test.xaml.cs">

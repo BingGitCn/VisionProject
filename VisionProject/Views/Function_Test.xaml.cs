@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using VisionProject.GlobalVars;
 
 namespace VisionProject.Views
 {
@@ -10,6 +11,7 @@ namespace VisionProject.Views
         public Function_Test()
         {
             InitializeComponent();
+            Variables.ImageWindowDataForFunction = aimg.windowData;
         }
     }
 }
