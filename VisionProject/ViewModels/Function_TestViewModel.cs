@@ -11,7 +11,7 @@ namespace VisionProject.ViewModels
     {
         #region 窗口相关
 
-        private string _title = "元件检测";
+        private string _title = "测试窗口，无其它用途。";
 
         public string Title
         {

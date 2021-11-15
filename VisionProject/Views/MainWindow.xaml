@@ -175,8 +175,12 @@
                             <GroupBox     Header="项目操作" FontSize="14"  Margin="5" Style="{StaticResource   GroupBoxOriginal}">
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
-                                        <Button Margin="5" Width="100" Style="{StaticResource ButtonPrimary}" Content="打  开" Command="{Binding ProjectOperate}" CommandParameter="open"></Button>
-                                        <Button Margin="5" Width="100" Style="{StaticResource ButtonPrimary}" Content="保  存" Command="{Binding ProjectOperate}" CommandParameter="save"></Button>
+                                        <Button Margin="5" Width="100" Style="{StaticResource ButtonPrimary}"    FontFamily="../#iconfont" Command="{Binding ProjectOperate}" CommandParameter="open">
+                                            <TextBlock Text="&#xe671; " FontSize="16"><Run Text="打  开" FontSize="12"></Run></TextBlock>
+                                        </Button>
+                                        <Button Margin="5" Width="100" Style="{StaticResource ButtonPrimary}"    FontFamily="../#iconfont" Command="{Binding ProjectOperate}" CommandParameter="save">
+                                            <TextBlock Text="&#xe67c; " FontSize="16"><Run Text="保  存" FontSize="12"></Run></TextBlock>
+                                        </Button>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock  Text="项目路径：" Width="80"  FontSize="14"   Margin="5"  Foreground="DarkGray" />
@@ -205,8 +209,12 @@
                                     <Grid Grid.Row="0">
                                         <StackPanel Orientation="Vertical">
                                             <StackPanel Orientation="Horizontal" IsEnabled="{Binding IsLogin}">
-                                                <Button Margin="5" Width="100" Style="{StaticResource ButtonPrimary}" Content="增  加" Command="{Binding Programs1Operate}" CommandParameter="add"></Button>
-                                                <Button Margin="5" Width="100" Style="{StaticResource ButtonPrimary}" Content="删  除" Command="{Binding Programs1Operate}" CommandParameter="del"></Button>
+                                                <Button Margin="5" Width="100" Style="{StaticResource ButtonDashedPrimary}"    FontFamily="../#iconfont" Command="{Binding Programs1Operate}" CommandParameter="add">
+                                                    <TextBlock Text="&#xe664; " FontSize="16"><Run Text="增  加" FontSize="12"></Run></TextBlock>
+                                                </Button>
+                                                <Button Margin="5" Width="100" Style="{StaticResource ButtonDashedPrimary}"   FontFamily="../#iconfont" Command="{Binding Programs1Operate}" CommandParameter="del">
+                                                    <TextBlock Text="&#xe677; " FontSize="16"><Run Text="删  除" FontSize="12"></Run></TextBlock>
+                                                </Button>
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>
