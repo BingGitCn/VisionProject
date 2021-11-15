@@ -14,6 +14,7 @@ namespace VisionProject.ViewModels
 {
     public partial class MainWindowViewModel
     {
+        #region 项目编辑
         private ObservableCollection<ProjectInfo> _projectNames = new ObservableCollection<ProjectInfo>();
         public ObservableCollection<ProjectInfo> ProjectNames
         {
@@ -49,7 +50,7 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _projectName, value); }
         }
 
-        private int _projectIndex;
+        private int _projectIndex=-1;
         public int ProjectIndex
         {
             get { return _projectIndex; }
@@ -109,7 +110,7 @@ namespace VisionProject.ViewModels
                             HOperatorSet.SetSystem(new HTuple("clip_region"), new HTuple("false"));
 
                             Variables.CurrentProject = Serialize.ReadJsonV2<Project>(SelectProjectName.Path);
-                            //Programs = Variables.CurrentProject.Programs;
+                            Programs1 = Variables.CurrentProject.Programs1;
                             ProjectName = SelectProjectName.Name;
                             CreateDate = Variables.CurrentProject.CreateDate;
                             LastDate = Variables.CurrentProject.LastDate;
@@ -152,7 +153,7 @@ namespace VisionProject.ViewModels
                             if (dig_openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                             {
                                 Variables.CurrentProject = Serialize.ReadJsonV2<Project>(dig_openFileDialog.FileName);
-                                //Programs = Variables.CurrentProject.Programs;
+                                Programs1 = Variables.CurrentProject.Programs1;
                                 ProjectName = dig_openFileDialog.SafeFileName.Replace(".lprj", "");
                                 CreateDate = Variables.CurrentProject.CreateDate;
                                 LastDate = Variables.CurrentProject.LastDate;
@@ -171,9 +172,6 @@ namespace VisionProject.ViewModels
                             saveFileDialog.Filter = "项目文件(*.lprj)|*.lprj";
                             if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                             {
-                                // GlobalVars.Variables.CurrentProject.Programs = Programs;
-                                Serialize.WriteJsonV2(Variables.CurrentProject, saveFileDialog.FileName);
-
                                 if (Variables.CurrentProject.CreateDate == "")
                                 {
                                     Variables.CurrentProject.CreateDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -182,12 +180,96 @@ namespace VisionProject.ViewModels
                                 Variables.CurrentProject.LastDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 LastDate = Variables.CurrentProject.LastDate;
                                 ProjectPath = saveFileDialog.FileName;
+
+                                Variables.CurrentProject.Programs1 = Programs1;
+                                Serialize.WriteJsonV2(Variables.CurrentProject, saveFileDialog.FileName);
+
+                               
                             }
                         }
                         catch { }
                         break;
                 }
             }));
+        #endregion
+
+        #region 程序1编辑 
+
+        //程序索引
+        private int program1Index;
+        public int Program1Index
+        {
+            get { return program1Index; }
+            set { SetProperty(ref program1Index, value); } 
+        }
+
+        //程序列表
+        private ObservableCollection<Program> programs1 = new ObservableCollection<Program>();
+        public ObservableCollection<Program> Programs1
+        {
+            get { return programs1; }
+            set { SetProperty(ref programs1, value); }
+        }
+
+        //当前选择的程序
+        private string program1;
+        public string Program1
+        {
+            get { return program1; }
+            set { SetProperty(ref program1, value); }
+        }
+         
+      
+
+
+
+
+        //增加删除程序
+        private DelegateCommand<string> _programs1Operate;
+        public DelegateCommand<string> Programs1Operate =>
+            _programs1Operate ?? (_programs1Operate = new DelegateCommand<string>((string param) => {
+                switch (param)
+                {
+                    case "add":
+                        try
+                        {
+                            Programs1.Add(new  Program());
+                        }
+                        catch { }
+                        break;
+                    case "del":
+                        try
+                        {
+                            Programs1.RemoveAt(program1Index);
+                        }
+                        catch { }
+                        break;
+                }
+
+            }));
+
+
+        //程序编辑
+        private DelegateCommand _program1Config;
+        public DelegateCommand Program1Config =>
+            _program1Config ?? (_program1Config = new DelegateCommand(() =>
+            {
+                try
+                {
+                   Variables.Program1Index = Program1Index;
+                   Variables.CurrentProject.Programs1 = Programs1;
+                   // GlobalVars.Variables.CurrentImage = GlobalVars.Variables.ImageWindowData.CurrentImage;
+
+                  
+                }
+                catch { }
+
+
+            }));
+
+
+        #endregion
+
     }
 
     //项目类

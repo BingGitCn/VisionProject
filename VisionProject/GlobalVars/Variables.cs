@@ -23,8 +23,9 @@ namespace VisionProject.GlobalVars
 
         //项目
         public static Project CurrentProject = new Project();
+        //程序
+        public static int Program1Index = 0; 
 
-        
 
         //图像窗口，需在mainwindow.cs入口指定对应的windowdata
         public static BingImageWindowData WindowData1 = new BingImageWindowData();
