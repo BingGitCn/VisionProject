@@ -132,7 +132,7 @@
                                     <Button Margin="5" Width="100" Style="{StaticResource ButtonDanger}" Content="清空当前" Command="{Binding StatisticOperate}" CommandParameter="clear"></Button>
                                 </StackPanel>
                             </StackPanel>
-                            <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Bottom"> 
 
                                 <StackPanel Orientation="Horizontal">
                                     <hc:ComboBox  Width="410" FontSize="14"  Margin="5" hc:InfoElement.Placeholder="请选择料号" hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="切换料号" ItemsSource="{Binding  Path=ProjectNames}" SelectedItem="{Binding SelectProjectName}" DisplayMemberPath="Name"  SelectedIndex="{Binding ProjectIndex}">
@@ -176,7 +176,7 @@
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
                                         <Button Margin="5" Width="100" Style="{StaticResource ButtonPrimary}"    FontFamily="../#iconfont" Command="{Binding ProjectOperate}" CommandParameter="open">
-                                            <TextBlock Text="&#xe671; " FontSize="16"><Run Text="打  开" FontSize="12"></Run></TextBlock>
+                                            <TextBlock Text="&#xe671; " FontSize="18"><Run Text="打  开" FontSize="12"></Run></TextBlock>
                                         </Button>
                                         <Button Margin="5" Width="100" Style="{StaticResource ButtonPrimary}"    FontFamily="../#iconfont" Command="{Binding ProjectOperate}" CommandParameter="save">
                                             <TextBlock Text="&#xe67c; " FontSize="16"><Run Text="保  存" FontSize="12"></Run></TextBlock>

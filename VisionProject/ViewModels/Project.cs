@@ -95,6 +95,7 @@ namespace VisionProject.ViewModels
                     case "close":
                         try
                         {
+                            if (ProjectIndex == -1) return;
                             if (Variables.ShowConfirm("请确认设备处于非工作状态？") == false)
                             {
                                 ProjectIndex = projectIndex;
