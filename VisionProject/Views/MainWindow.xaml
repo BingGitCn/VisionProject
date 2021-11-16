@@ -8,6 +8,7 @@
         xmlns:local="clr-namespace:VisionProject.Views"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         prism:ViewModelLocator.AutoWireViewModel="True"
+         xmlns:dd="urn:gong-wpf-dragdrop"
         Title="{Binding Title}" Height="600" Width="960" Closing="Window_Closing"
         WindowStartupLocation="CenterScreen" WindowState="Maximized">
     <Window.Resources>
@@ -215,12 +216,14 @@
                                                 <Button Margin="5" Width="100" Style="{StaticResource ButtonDashedPrimary}"   FontFamily="../#iconfont" Command="{Binding Programs1Operate}" CommandParameter="del">
                                                     <TextBlock Text="&#xe677; " FontSize="16"><Run Text="删  除" FontSize="12"></Run></TextBlock>
                                                 </Button>
+
+                                                <CheckBox x:Name="IsAllowDrag1" Content="拖动排序"></CheckBox>
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>
 
                                     <Grid Grid.Row="1">
-                                        <DataGrid   HeadersVisibility="All"   AutoGenerateColumns="False" ItemsSource="{Binding Programs1}" SelectedIndex="{Binding Program1Index}" hc:DataGridAttach.ShowRowNumber="True" SelectedItem="{Binding SelectedProgram1}">
+                                        <DataGrid dd:DragDrop.IsDragSource="{Binding ElementName=IsAllowDrag1,Path=IsChecked}" dd:DragDrop.IsDropTarget="{Binding ElementName=IsAllowDrag1,Path=IsChecked}" dd:DragDrop.UseDefaultDragAdorner="{Binding ElementName=IsAllowDrag1,Path=IsChecked}" dd:DragDrop.DropHandler="{Binding}"   HeadersVisibility="All"   AutoGenerateColumns="False" ItemsSource="{Binding Programs1}" SelectedIndex="{Binding Program1Index}" hc:DataGridAttach.ShowRowNumber="True" SelectedItem="{Binding SelectedProgram1}">
                                             <DataGrid.Columns>
 
                                                 <DataGridTemplateColumn Header="检测内容">
@@ -252,6 +255,8 @@
                                                 </DataGridTemplateColumn>
                                             </DataGrid.Columns>
                                         </DataGrid>
+
+
                                     </Grid>
                                 </Grid>
                             </GroupBox>

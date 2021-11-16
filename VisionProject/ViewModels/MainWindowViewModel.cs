@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using VisionProject.GlobalVars;
+using VisionProject.Views;
 
 namespace VisionProject.ViewModels
 {
@@ -349,6 +350,7 @@ namespace VisionProject.ViewModels
                 switch (param)
                 {
                     case "clear":
+
 
                         bool rst = Variables.ShowConfirm("确认清除当前计数？");
                         if (rst)

@@ -217,6 +217,8 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref program1, value); }
         }
 
+      
+
         //增加删除程序
         private DelegateCommand<string> _programs1Operate;
 
