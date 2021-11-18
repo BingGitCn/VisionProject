@@ -45,14 +45,35 @@ namespace VisionProject.ViewModels
         public DelegateCommand UpdatePassword =>
             _updatePassword ?? (_updatePassword = new DelegateCommand(() =>
             {
-                if (Variables.CurrentPassword == SystemConfig.CurrentPassword)
+                if (SystemConfig.UserIndex >= UserIndex)
                 {
-                    Variables.CurrentPassword = SystemConfig.NewPassword;
-                    SystemConfig.Passwords[UserIndex] = SystemConfig.NewPassword;
+                    SystemConfig.UserIndex = UserIndex;
+                    Variables.ShowMessage("当前权限无法更改此账号密码。");
+                    return;
+                }
+
+                if (SystemConfig.UserIndex < 0)
+                    SystemConfig.UserIndex = UserIndex;
+
+                if (SystemConfig.UserIndex + 1 == UserIndex)
+                {
+                    if (SystemConfig.Passwords[SystemConfig.UserIndex + 1] == SystemConfig.CurrentPassword)
+                    {
+                        SystemConfig.Passwords[SystemConfig.UserIndex + 1] = SystemConfig.NewPassword;
+
+                        Variables.ShowMessage("密码更新成功，请立即保存！\r\n此为唯一密码！");
+                        Variables.Logs.WriteInfo("更新密码操作。");
+                    }
+                } else if(SystemConfig.UserIndex + 1 < UserIndex)
+                
+                {
+                    SystemConfig.Passwords[SystemConfig.UserIndex + 1] = SystemConfig.NewPassword;
 
                     Variables.ShowMessage("密码更新成功，请立即保存！\r\n此为唯一密码！");
                     Variables.Logs.WriteInfo("更新密码操作。");
                 }
+
+               
                 SystemConfig.NewPassword = "";
                 SystemConfig.CurrentPassword = "";
             }));
@@ -61,6 +82,8 @@ namespace VisionProject.ViewModels
     public class SystemConfigData
     {
         public string Title { set; get; }
+
+        public int UserIndex { set; get; }
 
         public Dictionary<int, string> Passwords { set; get; } = new Dictionary<int, string>() {
             { 1,"123456"},{ 2,"123456"},{ 3,"123456"}

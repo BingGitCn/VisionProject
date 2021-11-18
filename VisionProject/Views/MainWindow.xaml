@@ -149,11 +149,11 @@
                                                 <i:InvokeCommandAction Command="{Binding OpenProject}" CommandParameter="open"></i:InvokeCommandAction>
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
-                                    </hc:ComboBox>
+                                    </hc:ComboBox> 
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <hc:ComboBox x:Name="user" Width="410" FontSize="14"  Margin="5" SelectedIndex="{Binding UserIndex}"  hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="用户登录">
-                                        <ComboBoxItem Content="操作员(LV0)" IsSelected="True" ></ComboBoxItem>
+                                        <ComboBoxItem Content="用户(LV0)" IsSelected="True" ></ComboBoxItem>
                                         <ComboBoxItem Content="技术员(LV1)"></ComboBoxItem>
                                         <ComboBoxItem Content="工程师(LV2)"></ComboBoxItem>
                                         <ComboBoxItem Content="管理员(LV3)"></ComboBoxItem>
@@ -161,9 +161,9 @@
                                             <i:EventTrigger EventName="DropDownClosed">
                                                 <i:InvokeCommandAction Command="{Binding Login}"></i:InvokeCommandAction>
                                             </i:EventTrigger>
-                                        </i:Interaction.Triggers>
+                                        </i:Interaction.Triggers> 
                                     </hc:ComboBox>
-
+ 
                                     <Popup IsOpen="{Binding LoginPad.Open}" Placement="Mouse" StaysOpen="False">
                                         <local:NumberPad DataContext="{Binding LoginPad}" />
                                     </Popup>
@@ -296,18 +296,25 @@
                             <StackPanel Orientation="Vertical">
 
                                 <StackPanel Orientation="Horizontal">
-                                    <hc:TextBox Text="{Binding Title}"  FontSize="14"   Margin="5"   hc:InfoElement.TitleWidth="80"  Width="610" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="软件名字" />
+                                    <hc:TextBox Text="{Binding Title}"  FontSize="14"   Margin="5"   hc:InfoElement.TitleWidth="80"  Width="510" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="软件名字" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
+                                    <hc:ComboBox Width="270" FontSize="14"  Margin="5" SelectedIndex="{Binding UserIndex}"  hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="选择用户">
+                                 
+                                        <ComboBoxItem Content="技术员(LV1)"></ComboBoxItem>
+                                        <ComboBoxItem Content="工程师(LV2)"></ComboBoxItem>
+                                        <ComboBoxItem Content="管理员(LV3)"></ComboBoxItem>
+                                    </hc:ComboBox>
+                                    
                                     <TextBlock Margin="5" FontSize="14" Text="原密码：" VerticalAlignment="Center" Width="70"></TextBlock>
-                                    <TextBox VerticalContentAlignment="Center" Margin="5" Style="{StaticResource PasswordTextBox}" Width="220" Text="{Binding CurrentPassword}"></TextBox>
+                                    <TextBox VerticalContentAlignment="Center" Margin="5" Style="{StaticResource PasswordTextBox}" Width="150" Text="{Binding CurrentPassword}"></TextBox>
 
                                     <TextBlock Margin="5" FontSize="14" Text="新密码：" VerticalAlignment="Center" Width="70"></TextBlock>
-                                    <TextBox VerticalContentAlignment="Center" Margin="5" Style="{StaticResource PasswordTextBox}" Width="220" Text="{Binding NewPassword}"></TextBox>
+                                    <TextBox VerticalContentAlignment="Center" Margin="5" Style="{StaticResource PasswordTextBox}" Width="150" Text="{Binding NewPassword}"></TextBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Margin="5" FontSize="14" Text="记住路径" VerticalAlignment="Center" Width="70"></TextBlock>
-                                    <CheckBox IsChecked="{Binding IsRestoreDirectory,UpdateSourceTrigger=PropertyChanged}" FontSize="14" Content="记住上次项目文件打开保存的路径。" Foreground="DarkGray"></CheckBox>
+                                    <CheckBox Margin="5" IsChecked="{Binding IsRestoreDirectory,UpdateSourceTrigger=PropertyChanged}" FontSize="14" Content="记住上次项目文件打开保存的路径。" Foreground="DarkGray"></CheckBox>
                                       </StackPanel>
                             </StackPanel>
                         </Grid>
