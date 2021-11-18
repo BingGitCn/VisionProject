@@ -1,6 +1,6 @@
 ﻿using BingLibrary.FileOpreate;
 using Prism.Commands;
-using Prism.Mvvm;
+using System.Collections.Generic;
 using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
@@ -48,7 +48,7 @@ namespace VisionProject.ViewModels
                 if (Variables.CurrentPassword == SystemConfig.CurrentPassword)
                 {
                     Variables.CurrentPassword = SystemConfig.NewPassword;
-                    SystemConfig.Password = SystemConfig.NewPassword;
+                    SystemConfig.Passwords[UserIndex] = SystemConfig.NewPassword;
 
                     Variables.ShowMessage("密码更新成功，请立即保存！\r\n此为唯一密码！");
                     Variables.Logs.WriteInfo("更新密码操作。");
@@ -58,38 +58,15 @@ namespace VisionProject.ViewModels
             }));
     }
 
-    public class SystemConfigData : BindableBase
+    public class SystemConfigData
     {
-        private string _title = "检测软件";
+        public string Title { set; get; }
 
-        public string Title
-        {
-            get { return _title; }
-            set { SetProperty(ref _title, value); }
-        }
-
-        private string _currentPassword = "";
-
-        public string CurrentPassword
-        {
-            get { return _currentPassword; }
-            set { SetProperty(ref _currentPassword, value); }
-        }
-
-        private string _newPassword = "";
-
-        public string NewPassword
-        {
-            get { return _newPassword; }
-            set { SetProperty(ref _newPassword, value); }
-        }
-
-        private string _Password = "";
-
-        public string Password
-        {
-            get { return _Password; }
-            set { SetProperty(ref _Password, value); }
-        }
+        public Dictionary<int, string> Passwords { set; get; } = new Dictionary<int, string>() {
+            { 1,"123456"},{ 2,"123456"},{ 3,"123456"}
+        };
+        public string CurrentPassword { set; get; }
+        public string NewPassword { set; get; }
+        public bool IsRestoreDirectory { set; get; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using DryIoc;
+using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -9,6 +10,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using VisionProject.GlobalVars;
+using BingLibrary.Controls.Permit;
 using VisionProject.Views;
 
 namespace VisionProject.ViewModels
@@ -386,7 +388,7 @@ namespace VisionProject.ViewModels
                     case "export":
                         System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
                         folderBrowserDialog.Description = "请选择导出的文件路径";
-                        var dlg = folderBrowserDialog.ShowDialog();
+                         var dlg = folderBrowserDialog.ShowDialog();
                         if (dlg == System.Windows.Forms.DialogResult.OK)
                         {
                             string path = folderBrowserDialog.SelectedPath + "\\";
@@ -434,6 +436,12 @@ namespace VisionProject.ViewModels
         #endregion 底部Status
 
         #region 登录密码
+        private PermitLevel _currentPermit;
+        public PermitLevel CurrentPermit
+        {
+            get { return _currentPermit; }
+            set { SetProperty(ref _currentPermit, value); }
+        }
 
         private int _userIndex = 0;
 
@@ -449,39 +457,42 @@ namespace VisionProject.ViewModels
             _login ?? (_login = new DelegateCommand(() =>
             {
                 if (UserIndex == 0)
-                    IsLogin = false;
-                else if (UserIndex == 1)
+                    CurrentPermit = PermitLevel.Nobody;
+                else
                 {
-                    if (!IsLogin)
-                    {
-                        UserIndex = 0;
-                        LoginPad.Open = true;
-                        LoginPad.CallBack = finishLogin;
-                    }
+
+                    LoginPad.Open = true;
+                    LoginPad.CallBack = finishLogin;
+
                 }
             }));
 
         private void finishLogin(string result)
         {
-            if (result == Variables.CurrentPassword)
+            if (result == SystemConfig.Passwords[UserIndex])
             {
-                IsLogin = true;
-                UserIndex = 1;
+                Variables.CurrentPassword = result;
+                if (UserIndex == 1)
+                    CurrentPermit = PermitLevel.Operater;
+                if (UserIndex == 2)
+                    CurrentPermit = PermitLevel.Engineer;
+                if (UserIndex == 3)
+                    CurrentPermit = PermitLevel.Administrator;
+
             }
             else
             {
+                CurrentPermit = PermitLevel.Nobody;
+                UserIndex = 0;
             }
         }
 
-        private bool _isLogin = false;
-
-        public bool IsLogin
-        {
-            get { return _isLogin; }
-            set { SetProperty(ref _isLogin, value); }
-        }
+       
 
         public NumberPadViewModel LoginPad { get; set; } = new NumberPadViewModel();
+
+
+
 
         #endregion 登录密码
     }

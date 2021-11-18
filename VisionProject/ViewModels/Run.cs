@@ -16,10 +16,7 @@ namespace VisionProject.ViewModels
             getSystemConfig();
             Variables.Title = SystemConfig.Title;
             Title = Variables.Title;
-            if (SystemConfig.Password != "")
-                Variables.CurrentPassword = SystemConfig.Password;
-            else
-                Variables.CurrentPassword = "123456";
+            
 
             //测试
             //IsLogin = true;

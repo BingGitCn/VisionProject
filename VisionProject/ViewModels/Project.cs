@@ -34,6 +34,8 @@ namespace VisionProject.ViewModels
 
         private void initProjects()
         {
+            if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "Projects"))
+                Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "Projects");
             string[] files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "Projects");
             for (int i = 0; i < files.Length; i++)
             {
@@ -143,6 +145,9 @@ namespace VisionProject.ViewModels
                             HOperatorSet.SetSystem(new HTuple("clip_region"), new HTuple("false"));
                             System.Windows.Forms.OpenFileDialog dig_openFileDialog = new System.Windows.Forms.OpenFileDialog();
                             dig_openFileDialog.Title = "请选择项目文件路径";
+                            if (SystemConfig.IsRestoreDirectory)
+                                dig_openFileDialog.RestoreDirectory = true;
+                            else
                             dig_openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
                             dig_openFileDialog.Filter = "项目文件(*.lprj)|*.lprj";
@@ -164,7 +169,11 @@ namespace VisionProject.ViewModels
                         {
                             System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
                             saveFileDialog.Title = ("请选择项目文件路径");
-                            saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                            if (SystemConfig.IsRestoreDirectory)
+                                saveFileDialog.RestoreDirectory = true;
+                            else
+                                saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+
                             saveFileDialog.Filter = "项目文件(*.lprj)|*.lprj";
                             if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                             {
@@ -287,24 +296,15 @@ namespace VisionProject.ViewModels
 
         [JsonIgnore]
         public Dictionary<string, object> Results = new Dictionary<string, object>();
+
+        public string Content { set; get; }
     }
 
-    public class ProjectInfo : BindableBase
+    public class ProjectInfo
     {
-        private string _name;
+        public string Name { set; get; }
+        public string Path { set; get; }
 
-        public string Name
-        {
-            get { return _name; }
-            set { SetProperty(ref _name, value); }
-        }
-
-        private string _path;
-
-        public string Path
-        {
-            get { return _path; }
-            set { SetProperty(ref _path, value); }
-        }
+      
     }
 }

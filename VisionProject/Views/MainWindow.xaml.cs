@@ -39,6 +39,7 @@ namespace VisionProject.Views
                 Application.Current.Shutdown();
                 return;
             }
+
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

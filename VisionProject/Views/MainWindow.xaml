@@ -7,6 +7,7 @@
         xmlns:bingVision="clr-namespace:BingLibrary.Vision;assembly=BingLibrary.Vision"
         xmlns:local="clr-namespace:VisionProject.Views"
         xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:bingPermit="clr-namespace:BingLibrary.Controls.Permit;assembly=BingLibrary"
         prism:ViewModelLocator.AutoWireViewModel="True"
          xmlns:dd="urn:gong-wpf-dragdrop"
         Title="{Binding Title}" Height="600" Width="960" Closing="Window_Closing"
@@ -79,6 +80,9 @@
             <Setter Property="FontSize" Value="20"></Setter>
             <Setter Property="FontFamily" Value="Courier New"></Setter>
         </Style>
+
+            <bingPermit:PermitLevelConver x:Key="BingPermit"></bingPermit:PermitLevelConver>
+     
     </Window.Resources>
 
     <Grid>
@@ -149,8 +153,10 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <hc:ComboBox x:Name="user" Width="410" FontSize="14"  Margin="5" SelectedIndex="{Binding UserIndex}"  hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="用户登录">
-                                        <ComboBoxItem Content="用户" IsSelected="True" ></ComboBoxItem>
-                                        <ComboBoxItem Content="管理员"></ComboBoxItem>
+                                        <ComboBoxItem Content="操作员(LV0)" IsSelected="True" ></ComboBoxItem>
+                                        <ComboBoxItem Content="技术员(LV1)"></ComboBoxItem>
+                                        <ComboBoxItem Content="工程师(LV2)"></ComboBoxItem>
+                                        <ComboBoxItem Content="管理员(LV3)"></ComboBoxItem>
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="DropDownClosed">
                                                 <i:InvokeCommandAction Command="{Binding Login}"></i:InvokeCommandAction>
@@ -166,7 +172,7 @@
                         </Grid>
                     </Grid>
                 </hc:TabItem>
-                <hc:TabItem IsEnabled="{Binding IsLogin}" Header="&#xe71f; 项  目" FontSize="21" FontFamily="../#iconfont" Width="150">
+                <hc:TabItem IsEnabled="{Binding CurrentPermit,Converter={StaticResource BingPermit},ConverterParameter=2 }" Header="&#xe71f; 项  目" FontSize="21" FontFamily="../#iconfont" Width="150">
                     <Grid Background="{StaticResource BackgroundBrush}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"></RowDefinition>
@@ -253,6 +259,13 @@
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
+                                                <DataGridTemplateColumn  Header="备注">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <TextBox Text="{Binding Content,UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
                                             </DataGrid.Columns>
                                         </DataGrid>
 
@@ -263,7 +276,7 @@
                         </Grid>
                     </Grid>
                 </hc:TabItem>
-                <hc:TabItem IsEnabled="{Binding IsLogin}" Header="&#xe71b; 设  置" FontSize="21" FontFamily="../#iconfont" Width="150">
+                <hc:TabItem IsEnabled="{Binding CurrentPermit,Converter={StaticResource BingPermit},ConverterParameter=1 }" Header="&#xe71b; 设  置" FontSize="21" FontFamily="../#iconfont" Width="150">
                     <Grid Background="{StaticResource BackgroundBrush}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"></RowDefinition>
@@ -292,6 +305,10 @@
                                     <TextBlock Margin="5" FontSize="14" Text="新密码：" VerticalAlignment="Center" Width="70"></TextBlock>
                                     <TextBox VerticalContentAlignment="Center" Margin="5" Style="{StaticResource PasswordTextBox}" Width="220" Text="{Binding NewPassword}"></TextBox>
                                 </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Margin="5" FontSize="14" Text="记住路径" VerticalAlignment="Center" Width="70"></TextBlock>
+                                    <CheckBox IsChecked="{Binding IsRestoreDirectory,UpdateSourceTrigger=PropertyChanged}" FontSize="14" Content="记住上次项目文件打开保存的路径。" Foreground="DarkGray"></CheckBox>
+                                      </StackPanel>
                             </StackPanel>
                         </Grid>
                     </Grid>
