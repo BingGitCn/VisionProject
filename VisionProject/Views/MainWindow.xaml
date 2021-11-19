@@ -223,6 +223,7 @@
                                                     <TextBlock Text="&#xe677; " FontSize="16"><Run Text="删  除" FontSize="12"></Run></TextBlock>
                                                 </Button>
 
+
                                                 <CheckBox x:Name="IsAllowDrag1" Content="拖动排序"></CheckBox>
                                             </StackPanel>
                                         </StackPanel>
@@ -240,6 +241,7 @@
                                                                 <ComboBoxItem Content="检测1" ></ComboBoxItem>
                                                                 <ComboBoxItem Content="检测2"></ComboBoxItem>
                                                                 <ComboBoxItem Content="检测3"></ComboBoxItem>
+                                                                <ComboBoxItem Content="保存图像"></ComboBoxItem>
                                                             </hc:ComboBox>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>

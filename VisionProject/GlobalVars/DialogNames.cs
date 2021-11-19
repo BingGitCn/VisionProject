@@ -4,7 +4,8 @@
     {
         //app.xaml.cs中相应添加
         public static string ShowAboutWindow = "CA994EAF-4637-4D66-8263-F0862A346662";
-        
+
         public static string ShowFunctionTestWindow = "E1B3C54E-93A6-421D-9D8A-F592B13E8B1A";
+        public static string ShowFunctionSaveImageWindow = "A5E81A1F-EDDA-447C-B196-8ABF2F04B58E"; 
     }
 }

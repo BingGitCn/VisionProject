@@ -20,6 +20,8 @@ namespace VisionProject
             containerRegistry.RegisterDialog<AboutDialog, AboutDialogViewModel>(GlobalVars.DialogNames.ShowAboutWindow);
             //测试窗口
             containerRegistry.RegisterDialog<Function_Test, Function_TestViewModel>(GlobalVars.DialogNames.ShowFunctionTestWindow);
+            //保存图像窗口
+            containerRegistry.RegisterDialog<Function_SaveImage, Function_SaveImageViewModel>(GlobalVars.DialogNames.ShowFunctionSaveImageWindow);
         }
     }
 }

@@ -2,7 +2,6 @@
 using HalconDotNet;
 using Newtonsoft.Json;
 using Prism.Commands;
-using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -148,7 +147,7 @@ namespace VisionProject.ViewModels
                             if (SystemConfig.IsRestoreDirectory)
                                 dig_openFileDialog.RestoreDirectory = true;
                             else
-                            dig_openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                                dig_openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 
                             dig_openFileDialog.Filter = "项目文件(*.lprj)|*.lprj";
                             if (dig_openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -187,7 +186,24 @@ namespace VisionProject.ViewModels
                                 ProjectPath = saveFileDialog.FileName;
 
                                 Variables.CurrentProject.Programs1 = Programs1;
-                                Serialize.WriteJsonV2(Variables.CurrentProject, saveFileDialog.FileName);
+
+                                bool isSaveOK = true;
+
+                                try
+                                {
+                                    Serialize.WriteJsonV2(Variables.CurrentProject, AppDomain.CurrentDomain.BaseDirectory + "cache.lprj");
+                                    Serialize.ReadJsonV2<Project>(AppDomain.CurrentDomain.BaseDirectory + "cache.lprj");
+                                }
+                                catch (Exception ex)
+                                {
+                                    isSaveOK = false;
+                                    Variables.ShowMessage("保存文件出错，当前项目文件未受影响。" + "\r\n" + ex.Message);
+                                }
+
+                                if (isSaveOK)
+                                {
+                                    Serialize.WriteJsonV2(Variables.CurrentProject, saveFileDialog.FileName);
+                                }
                             }
                         }
                         catch { }
@@ -226,8 +242,6 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref program1, value); }
         }
 
-      
-
         //增加删除程序
         private DelegateCommand<string> _programs1Operate;
 
@@ -263,15 +277,25 @@ namespace VisionProject.ViewModels
                 try
                 {
                     Variables.ProgramIndex = Program1Index;
-                    Variables.CurrentProject.Programs1 = Programs1;
+                    Variables.CurrentProgram.Clear();
+                    for (int i = 0; i < Programs1.Count; i++)
+                        Variables.CurrentProgram.Add(Programs1[i]);
+
                     Variables.CurrentImage1 = Variables.WindowData1.CurrentImage;
 
                     if (Programs1[Program1Index].InspectFunction == "无")
                     {
                         curDialogService.ShowDialog(DialogNames.ShowFunctionTestWindow);
                     }
+                    if (Programs1[Program1Index].InspectFunction == "保存图像")
+                    {
+                        curDialogService.ShowDialog(DialogNames.ShowFunctionSaveImageWindow);
+                        Programs1.Clear();
+                        for (int i = 0; i < Variables.CurrentProgram.Count; i++)
+                            Programs1.Add(Variables.CurrentProgram[i]);
+                    }
                 }
-                catch { }
+                catch (Exception ex) { }
             }));
 
         #endregion 程序1编辑
@@ -304,7 +328,5 @@ namespace VisionProject.ViewModels
     {
         public string Name { set; get; }
         public string Path { set; get; }
-
-      
     }
 }

@@ -69,8 +69,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ViewModels\Functions.cs" />
+    <Compile Include="ViewModels\Function_SaveImageViewModel.cs" />
     <Compile Include="ViewModels\Function_TestViewModel.cs" />
     <Compile Include="ViewModels\NumberPadViewModel.cs" />
+    <Compile Include="Views\Function_SaveImage.xaml.cs">
+      <DependentUpon>Function_SaveImage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Function_Test.xaml.cs">
       <DependentUpon>Function_Test.xaml</DependentUpon>
     </Compile>
@@ -78,6 +82,10 @@
       <DependentUpon>NumberPad.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\AboutDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Function_SaveImage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
