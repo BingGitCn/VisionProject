@@ -85,6 +85,9 @@ namespace VisionProject.ViewModels
 
         public int UserIndex { set; get; }
 
+        public int HardDrive { set; get; }
+        public double FreeSpaceRate { set; get; }
+
         public Dictionary<int, string> Passwords { set; get; } = new Dictionary<int, string>() {
             { 1,"123456"},{ 2,"123456"},{ 3,"123456"}
         };

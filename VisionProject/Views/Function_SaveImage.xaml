@@ -8,21 +8,29 @@
     <Grid>
         <StackPanel Orientation="Vertical">
 
-            <hc:ComboBox Margin="5" hc:InfoElement.Title="保存方式" SelectedIndex="{Binding SaveMode}"  FontWeight="Bold"  Style="{StaticResource    ComboBoxExtend}"  >
+            <!--<hc:ComboBox Margin="5" hc:InfoElement.Title="保存方式" SelectedIndex="{Binding SaveMode}"  FontWeight="Bold"  Style="{StaticResource    ComboBoxExtend}"  >
                 <ComboBoxItem Content="按日期" IsSelected="True"></ComboBoxItem>
                 <ComboBoxItem Content="按序列1,2.." ></ComboBoxItem>
-            </hc:ComboBox>
+            </hc:ComboBox>-->
             <hc:ComboBox Margin="5" hc:InfoElement.Title="图像格式" SelectedIndex="{Binding SaveFormat}"  FontWeight="Bold"  Style="{StaticResource    ComboBoxExtend}"  >
                 <ComboBoxItem Content="bmp(体积大)" ></ComboBoxItem>
                 <ComboBoxItem Content="jpg(体积小)" IsSelected="True"></ComboBoxItem>
             </hc:ComboBox>
             <TextBox Margin="5" hc:InfoElement.Title="保存数量"  FontWeight="Bold"  Style="{StaticResource TextBoxExtend}"  Text="{Binding SaveCount}"  />
             <TextBlock Margin="5"  Text="循环覆盖，0为不限数量" ></TextBlock>
-
             <TextBox Margin="5" hc:InfoElement.Title="保存路径" Text="{Binding SavePath}"  FontWeight="Bold"  Style="{StaticResource TextBoxExtend}"   />
 
             <Button Margin="5" Command="{Binding SelectPath}" Content="文件夹.." Width="80" Style="{StaticResource ButtonPrimary}"  HorizontalAlignment="Right"></Button>
-            <Button Margin="5" Command="{Binding SaveParam}" Content="保  存" Width="80" Style="{StaticResource ButtonPrimary}"  HorizontalAlignment="Right"></Button>
-        </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            
+                <Button Margin="5" Command="{Binding SaveParam}" Content="保  存" Width="80" Style="{StaticResource ButtonPrimary}"  HorizontalAlignment="Right"></Button>
+
+            </StackPanel>
+           
+           
+          
+            
+             </StackPanel>
     </Grid>
 </UserControl>

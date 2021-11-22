@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HalconDotNet;
 
 namespace VisionProject.ViewModels
 {
-    public partial class MainWindowViewModel
-    {
+    public static class VisionFunctions
+    { 
         //具体的检测方式
 
-        private Dictionary<string, object> Function1(Dictionary<string, object> Parameters)
+        public static Dictionary<string, object> SaveImages(HImage image,Dictionary<string, object> parameters)
         {
-            return Parameters;
+
+
+            return parameters;
         }
 
-        private void Function2(Dictionary<string, object> Parameters)
-        {
-             
-        }
-
+       
 
     }
 }

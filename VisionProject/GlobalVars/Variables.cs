@@ -4,6 +4,7 @@ using BingLibrary.Vision;
 using HalconDotNet;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using VisionProject.ViewModels;
 
 namespace VisionProject.GlobalVars
@@ -56,6 +57,43 @@ namespace VisionProject.GlobalVars
             if (HandyControl.Controls.MessageBox.Ask(msg, "确认操作") == System.Windows.MessageBoxResult.OK)
                 return true;
             else return false;
+        }
+
+        //剩余硬盘容量
+        public static string GetFreeSpace(string path)
+        {
+            DirectoryInfo directory = new DirectoryInfo(path);
+            DriveInfo savedFolderDrive = new DriveInfo(directory.Root.Name);
+            double rst = savedFolderDrive.AvailableFreeSpace / 1024 / 1024;
+            if (rst < 1024)
+                return rst + "M";
+            else
+            {
+                rst = rst / 1024.0;
+                if (rst < 1024)
+                    return rst.ToString("f1") + "G";
+                else
+                {
+                    rst = rst / 1024.0;
+                    return rst.ToString("f1") + "T";
+                }
+            }
+
+
+        }
+
+
+        public static string GetFreeSpaceRate(string path) 
+        {
+            DirectoryInfo directory = new DirectoryInfo(path);
+            DriveInfo savedFolderDrive = new DriveInfo(directory.Root.Name);
+            double rstT = savedFolderDrive.TotalSize / 1024 / 1024;
+            double rstA = savedFolderDrive.AvailableFreeSpace / 1024 / 1024;
+
+            return (rstA / rstT * 100).ToString("f1") + "%";
+
+
+
         }
     }
 }

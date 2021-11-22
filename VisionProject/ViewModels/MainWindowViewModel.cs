@@ -12,6 +12,7 @@ using System.Windows;
 using VisionProject.GlobalVars;
 using BingLibrary.Controls.Permit;
 using VisionProject.Views;
+using System.Linq;
 
 namespace VisionProject.ViewModels
 {
@@ -123,6 +124,8 @@ namespace VisionProject.ViewModels
             get { return _allStatisticData; }
             set { SetProperty(ref _allStatisticData, value); }
         }
+
+
 
         //初始化统计数据
         private async void initStatistic()
@@ -405,9 +408,18 @@ namespace VisionProject.ViewModels
                 }
             }));
 
+
+
         #endregion 数据统计
 
         #region 底部Status
+
+        private string _freeSpace;
+        public string FreeSpace
+        { 
+            get { return _freeSpace; }
+            set { SetProperty(ref _freeSpace, value); }
+        }
 
         private string version = Application.ResourceAssembly.GetName().Version.ToString();
 

@@ -317,7 +317,23 @@
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Margin="5" FontSize="14" Text="记住路径" VerticalAlignment="Center" Width="70"></TextBlock>
                                     <CheckBox Margin="5" IsChecked="{Binding IsRestoreDirectory,UpdateSourceTrigger=PropertyChanged}" FontSize="14" Content="记住上次项目文件打开保存的路径。" Foreground="DarkGray"></CheckBox>
-                                      </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <hc:ComboBox Width="270" FontSize="14"  Margin="5" SelectedIndex="{Binding HardDrive}"  hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="盘符选择">
+                                        <ComboBoxItem Content="C:\\"></ComboBoxItem>
+                                        <ComboBoxItem Content="D:\\"></ComboBoxItem>
+                                        <ComboBoxItem Content="E:\\"></ComboBoxItem>
+                                        <ComboBoxItem Content="F:\\"></ComboBoxItem>
+                                        <ComboBoxItem Content="G:\\"></ComboBoxItem>
+                                    </hc:ComboBox>
+ 
+
+                                    <TextBlock Margin="5" FontSize="14" Text="报警阈值（剩余）" VerticalAlignment="Center"><Run Text="{Binding ElementName=sd,Path=Value,Mode=OneWay}"></Run></TextBlock>
+                                    <Slider Background="DarkGray" x:Name="sd" Margin="5" Width="400"  Value="{Binding FreeSpaceRate}"  Maximum="30" TickFrequency="1" VerticalAlignment="Center" hc:TipElement.Visibility="Visible" hc:TipElement.Placement="Top" IsSnapToTickEnabled="True"/>
+
+                                </StackPanel>
+                                
                             </StackPanel>
                         </Grid>
                     </Grid>
@@ -334,6 +350,7 @@
                                 <Button Margin="5" Width="100" Style="{StaticResource ButtonInfo}" Content="刷  新" Command="{Binding StatisticOperate}" CommandParameter="refresh"></Button>
                                 <Button Margin="5" Width="100" Style="{StaticResource ButtonInfo}" Content="导  出" Command="{Binding StatisticOperate}" CommandParameter="export"></Button>
                             </StackPanel>
+                            
                         </Grid>
 
                         <Grid Grid.Row="1">
@@ -377,6 +394,9 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="5" FontSize="16" VerticalAlignment="Center" Text="相机:"></TextBlock>
                     <Ellipse  Style="{StaticResource StatusEllipse}" DataContext="{Binding PLCStatus}"></Ellipse>
+                </StackPanel>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Margin="5" FontSize="16" Text="{Binding FreeSpace}"></TextBlock> 
                 </StackPanel>
             </StackPanel>
 

@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using Prism.Commands;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Controls.Primitives;
 using VisionProject.GlobalVars;
 
@@ -14,6 +16,7 @@ namespace VisionProject.ViewModels
         {
             initStatistic();
             getSystemConfig();
+            initFreeSpace();
             Variables.Title = SystemConfig.Title;
             Title = Variables.Title;
             
@@ -24,6 +27,42 @@ namespace VisionProject.ViewModels
             initProjects();
             initPLC();
         }
+
+
+        private async void initFreeSpace()
+        {
+            while (true)
+            {
+                await Task.Delay(5000);
+                try {
+                 FreeSpace = (SystemConfig.HardDrive == 0 ? "C:\\"
+                        : SystemConfig.HardDrive == 1 ? "D:\\"
+                         : SystemConfig.HardDrive == 2 ? "E:\\"
+                          : SystemConfig.HardDrive == 3 ? "F:\\"
+                           : SystemConfig.HardDrive == 4 ? "G:\\"
+                        : "C:\\")+"可用容量："+
+                        Variables.GetFreeSpace(SystemConfig.HardDrive == 0 ? "C:\\"
+                        :SystemConfig.HardDrive == 1 ? "D:\\"
+                         : SystemConfig.HardDrive == 2 ? "E:\\"
+                          : SystemConfig.HardDrive == 3 ? "F:\\"
+                           : SystemConfig.HardDrive == 4 ? "G:\\"
+                        : "C:\\")+"  可用比："+
+
+                         Variables.GetFreeSpaceRate(SystemConfig.HardDrive == 0 ? "C:\\"
+                        : SystemConfig.HardDrive == 1 ? "D:\\"
+                         : SystemConfig.HardDrive == 2 ? "E:\\"
+                          : SystemConfig.HardDrive == 3 ? "F:\\"
+                           : SystemConfig.HardDrive == 4 ? "G:\\"
+                        : "C:\\")
+
+                        ;
+                
+                
+                } catch { }
+            }
+        
+        }
+
 
         //PLC初始化
         private async void initPLC()
@@ -57,6 +96,37 @@ namespace VisionProject.ViewModels
             }
         }
 
+
+
+        private DelegateCommand _test;
+        public DelegateCommand Test =>
+            _test ?? (_test = new DelegateCommand(()=> {
+
+                //Do Something..
+               
+
+
+            }));
+
        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

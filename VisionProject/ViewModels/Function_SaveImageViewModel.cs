@@ -3,6 +3,9 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
 
@@ -59,10 +62,14 @@ namespace VisionProject.ViewModels
                     SavePath = (string)Variables.CurrentProgram[Variables.ProgramIndex]
                     .Parameters["SavePath"];
 
-              
+
+
+
             }
             catch(Exception ex) { }
         }
+
+      
 
         private int _saveMode;
         public int SaveMode 
@@ -101,7 +108,7 @@ namespace VisionProject.ViewModels
                 var dlg = folderBrowserDialog.ShowDialog();
                 if (dlg == System.Windows.Forms.DialogResult.OK)
                 {
-                    SavePath = folderBrowserDialog.SelectedPath + "\\";
+                    SavePath = folderBrowserDialog.SelectedPath ;
                    
                 }
 
@@ -130,9 +137,49 @@ namespace VisionProject.ViewModels
                 else
                     Variables.CurrentProgram[Variables.ProgramIndex].Parameters.Add("SavePath", SavePath);
 
-               
+              
 
             }));
+
+
+       
+
+
+
+
+        public static Dictionary<string, object> SaveImages(HImage image,string name, Dictionary<string, object> parameters)
+        {
+            try
+            {
+                    if (!Directory.Exists(parameters["SavePath"] + "\\" + System.DateTime.Now.ToString("yyyy-MM-dd")))
+                        Directory.CreateDirectory(parameters["SavePath"] + "\\" + System.DateTime.Now.ToString("yyyy-MM-dd"));
+                    saveImage(image, parameters["SavePath"] + "\\" + System.DateTime.Now.ToString("yyyy-MM-dd") + "\\" + name, parameters["SaveFormat"].ToString());
+
+
+
+            } catch { }
+
+            return parameters;
+        }
+
+        private class FileComparer : IComparer
+        {
+            int IComparer.Compare(Object o1, Object o2)
+            {
+                FileInfo fi1 = o1 as FileInfo;
+                FileInfo fi2 = o2 as FileInfo;
+                return fi1.LastWriteTime.CompareTo(fi2.LastWriteTime);
+            }
+        }
+
+        private static void saveImage(HImage image, string name, string f)
+        {
+            if (f == "0")
+                image.WriteImage("bmp", new HTuple(0), new HTuple(name + ".bmp"));
+            else
+                image.WriteImage("jpeg", new HTuple(0), new HTuple(name + ".jpg"));
+        }
+
 
     }
 }
