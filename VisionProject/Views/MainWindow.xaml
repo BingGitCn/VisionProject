@@ -371,7 +371,7 @@
                         <bing:LogRealTimeWin FontSize="14"></bing:LogRealTimeWin>
                     </Grid>
                 </hc:TabItem>
-                <hc:TabItem  Header="&#xe71e; 关  于" FontSize="21" FontFamily="../#iconfont" Width="150">
+                <hc:TabItem Visibility="Collapsed"  Header="&#xe71e; 关  于" FontSize="21" FontFamily="../#iconfont" Width="150">
                     <Grid Background="{StaticResource BackgroundBrush}">
                         <Border  Effect="{StaticResource EffectShadow5}">
                             <local:AboutDialog ></local:AboutDialog>
