@@ -166,6 +166,10 @@
     <Resource Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BingLibrary.Location\BingLibrary.Location.csproj">
+      <Project>{84ec4a6f-7159-42bb-aa0d-01ac2795c3e9}</Project>
+      <Name>BingLibrary.Location</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BingVision\BingLibrary.Vision.csproj">
       <Project>{c4f5c5de-7ea8-47fe-8218-48138f48965f}</Project>
       <Name>BingLibrary.Vision</Name>
