@@ -140,18 +140,7 @@
                             </StackPanel>
                             <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
 
-                                <TextBlock Text="{Binding About,Source={StaticResource BingLocation},Mode=OneWay}"></TextBlock>
-
-                                <ComboBox VerticalAlignment="Center"
-                              DataContext="{x:Static bingLocation:LanguageManager.Instance}"
-                              ItemsSource="{Binding AvailableCultures}"
-                              SelectedValue="{Binding CurrentCulture, Mode=TwoWay,NotifyOnSourceUpdated=True}">
-                                    <ComboBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Mode=OneWay, Converter={StaticResource  LanguageConverter}}"/>
-                                        </DataTemplate>
-                                    </ComboBox.ItemTemplate>
-                                </ComboBox>
+                              
 
                                 <StackPanel Orientation="Horizontal">
                                 
