@@ -16,8 +16,8 @@
                 <ComboBoxItem Content="bmp(体积大)" ></ComboBoxItem>
                 <ComboBoxItem Content="jpg(体积小)" IsSelected="True"></ComboBoxItem>
             </hc:ComboBox>
-            <TextBox Margin="5" hc:InfoElement.Title="保存数量"  FontWeight="Bold"  Style="{StaticResource TextBoxExtend}"  Text="{Binding SaveCount}"  />
-            <TextBlock Margin="5"  Text="循环覆盖，0为不限数量" ></TextBlock>
+            <TextBox Visibility="Collapsed" Margin="5" hc:InfoElement.Title="保存数量"  FontWeight="Bold"  Style="{StaticResource TextBoxExtend}"  Text="{Binding SaveCount}"  />
+            <TextBlock Visibility="Collapsed" Margin="5"  Text="循环覆盖，0为不限数量" ></TextBlock>
             <TextBox Margin="5" hc:InfoElement.Title="保存路径" Text="{Binding SavePath}"  FontWeight="Bold"  Style="{StaticResource TextBoxExtend}"   />
 
             <Button Margin="5" Command="{Binding SelectPath}" Content="文件夹.." Width="80" Style="{StaticResource ButtonPrimary}"  HorizontalAlignment="Right"></Button>

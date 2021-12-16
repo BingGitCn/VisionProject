@@ -53,6 +53,17 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _plcStatus, value); }
         }
 
+
+        private ShowStatus _hardWareStatus=new ShowStatus(); 
+        public ShowStatus HardWareStatus
+        {
+            get { return _hardWareStatus; }
+            set { SetProperty(ref _hardWareStatus, value); }
+        }
+
+
+
+
         #endregion 底部状态显示ConnectStatus
 
         #region 数据统计

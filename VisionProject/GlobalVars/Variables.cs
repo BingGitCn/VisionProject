@@ -82,17 +82,16 @@ namespace VisionProject.GlobalVars
 
         }
 
-
-        public static string GetFreeSpaceRate(string path) 
+     
+        //容量
+        public static double GetFreeSpaceRateValue(string path) 
         {
             DirectoryInfo directory = new DirectoryInfo(path);
             DriveInfo savedFolderDrive = new DriveInfo(directory.Root.Name);
-            double rstT = savedFolderDrive.TotalSize / 1024 / 1024;
-            double rstA = savedFolderDrive.AvailableFreeSpace / 1024 / 1024;
-
-            return (rstA / rstT * 100).ToString("f1") + "%";
-
-
+            double rst = savedFolderDrive.AvailableFreeSpace / 1024 / 1024/1024;
+            return rst;
+               
+         
 
         }
     }

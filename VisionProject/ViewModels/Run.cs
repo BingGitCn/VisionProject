@@ -46,18 +46,19 @@ namespace VisionProject.ViewModels
                          : SystemConfig.HardDrive == 2 ? "E:\\"
                           : SystemConfig.HardDrive == 3 ? "F:\\"
                            : SystemConfig.HardDrive == 4 ? "G:\\"
-                        : "C:\\")+"  可用比："+
+                        : "C:\\") ;
 
-                         Variables.GetFreeSpaceRate(SystemConfig.HardDrive == 0 ? "C:\\"
+                    double freeSpace = Variables.GetFreeSpaceRateValue(SystemConfig.HardDrive == 0 ? "C:\\"
                         : SystemConfig.HardDrive == 1 ? "D:\\"
                          : SystemConfig.HardDrive == 2 ? "E:\\"
                           : SystemConfig.HardDrive == 3 ? "F:\\"
                            : SystemConfig.HardDrive == 4 ? "G:\\"
-                        : "C:\\")
+                        : "C:\\"); 
 
-                        ;
-                
-                
+
+                    HardWareStatus.Value = freeSpace >= SystemConfig.FreeSpace ? true : false;
+
+
                 } catch { }
             }
         

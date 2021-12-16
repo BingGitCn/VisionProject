@@ -137,13 +137,8 @@ namespace VisionProject.ViewModels
                 else
                     Variables.CurrentProgram[Variables.ProgramIndex].Parameters.Add("SavePath", SavePath);
 
-              
 
             }));
-
-
-       
-
 
 
 

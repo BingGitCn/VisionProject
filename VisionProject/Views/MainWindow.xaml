@@ -216,10 +216,10 @@
                                     <Grid Grid.Row="0">
                                         <StackPanel Orientation="Vertical">
                                             <StackPanel Orientation="Horizontal" IsEnabled="{Binding IsLogin}">
-                                                <Button Margin="5" Width="100" Style="{StaticResource ButtonDashedPrimary}"    FontFamily="../#iconfont" Command="{Binding Programs1Operate}" CommandParameter="add">
+                                                <Button Margin="5" Width="100" Style="{StaticResource ButtonDashedSuccess}"    FontFamily="../#iconfont" Command="{Binding Programs1Operate}" CommandParameter="add">
                                                     <TextBlock Text="&#xe664; " FontSize="16"><Run Text="增  加" FontSize="12"></Run></TextBlock>
                                                 </Button>
-                                                <Button Margin="5" Width="100" Style="{StaticResource ButtonDashedPrimary}"   FontFamily="../#iconfont" Command="{Binding Programs1Operate}" CommandParameter="del">
+                                                <Button Margin="5" Width="100" Style="{StaticResource ButtonDashedDanger}"   FontFamily="../#iconfont" Command="{Binding Programs1Operate}" CommandParameter="del">
                                                     <TextBlock Text="&#xe677; " FontSize="16"><Run Text="删  除" FontSize="12"></Run></TextBlock>
                                                 </Button>
 
@@ -329,8 +329,8 @@
                                     </hc:ComboBox>
  
 
-                                    <TextBlock Margin="5" FontSize="14" Text="报警阈值（剩余）" VerticalAlignment="Center"><Run Text="{Binding ElementName=sd,Path=Value,Mode=OneWay}"></Run></TextBlock>
-                                    <Slider Background="DarkGray" x:Name="sd" Margin="5" Width="400"  Value="{Binding FreeSpaceRate}"  Maximum="30" TickFrequency="1" VerticalAlignment="Center" hc:TipElement.Visibility="Visible" hc:TipElement.Placement="Top" IsSnapToTickEnabled="True"/>
+                                    <TextBlock Margin="5" FontSize="14" Text="报警阈值（剩余GB）" VerticalAlignment="Center"><Run Text="{Binding ElementName=sd,Path=Value,Mode=OneWay}"></Run></TextBlock>
+                                    <Slider Background="DarkGray" x:Name="sd" Margin="5" Width="400"  Value="{Binding FreeSpace}"  Maximum="1024" Minimum="5" TickFrequency="1" VerticalAlignment="Center" hc:TipElement.Visibility="Visible" hc:TipElement.Placement="Top" IsSnapToTickEnabled="True"/>
 
                                 </StackPanel>
                                 
@@ -395,8 +395,15 @@
                     <TextBlock Margin="5" FontSize="16" VerticalAlignment="Center" Text="相机:"></TextBlock>
                     <Ellipse  Style="{StaticResource StatusEllipse}" DataContext="{Binding PLCStatus}"></Ellipse>
                 </StackPanel>
+               
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="5" FontSize="16" VerticalAlignment="Center" Text="硬盘容量:" ></TextBlock>
+                    <Ellipse  Style="{StaticResource StatusEllipse}" DataContext="{Binding HardWareStatus}"></Ellipse>
+                </StackPanel>
+                
+                
                 <StackPanel VerticalAlignment="Center">
-                    <TextBlock Margin="5" FontSize="16" Text="{Binding FreeSpace}"></TextBlock> 
+                    <TextBlock Margin="5" FontSize="12" Foreground="DarkGray"  Text="{Binding FreeSpace}"></TextBlock>
                 </StackPanel>
             </StackPanel>
 
