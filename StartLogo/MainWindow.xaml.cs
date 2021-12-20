@@ -20,16 +20,16 @@ namespace StartLogo
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(string title)
         {
             InitializeComponent();
-            Text1.Content = "视觉检测软件";
-            Text2.Content = "Leader";
+            Text1.Content = title;
+            Text2.Content = "Leader Technology";
             exit();
         }
 
 
-        private async void exit(int delay=10000)
+        private async void exit(int delay=12000)
         {
 
             await Task.Delay(delay);
