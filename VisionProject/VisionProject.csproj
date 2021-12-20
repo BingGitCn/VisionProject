@@ -174,6 +174,10 @@
       <Project>{c4f5c5de-7ea8-47fe-8218-48138f48965f}</Project>
       <Name>BingLibrary.Vision</Name>
     </ProjectReference>
+    <ProjectReference Include="..\StartLogo\StartLogo.csproj">
+      <Project>{79be83b3-bd01-446a-943e-ac9cf5603ab9}</Project>
+      <Name>StartLogo</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

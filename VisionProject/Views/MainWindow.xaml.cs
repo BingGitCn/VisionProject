@@ -15,6 +15,10 @@ namespace VisionProject.Views
         public MainWindow(IRegionManager regionManager)
         {
             InitializeComponent();
+            StartLogo.MainWindow startLogo = new StartLogo.MainWindow();
+            startLogo.Show();
+
+            
             //excel授权
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             //给图像控件windowdata全局

@@ -23,5 +23,7 @@ namespace VisionProject
             //保存图像窗口
             containerRegistry.RegisterDialog<Function_SaveImage, Function_SaveImageViewModel>(GlobalVars.DialogNames.ShowFunctionSaveImageWindow);
         }
+
+
     }
 }
