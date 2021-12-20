@@ -71,10 +71,10 @@
     <Compile Include="ViewModels\Function_SaveImageViewModel.cs" />
     <Compile Include="ViewModels\Function_TestViewModel.cs" />
     <Compile Include="ViewModels\NumberPadViewModel.cs" />
-    <Compile Include="Views\Function_SaveImage.xaml.cs">
+    <Compile Include="Views\Tools\Function_SaveImage.xaml.cs">
       <DependentUpon>Function_SaveImage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Function_Test.xaml.cs">
+    <Compile Include="Views\Tools\Function_Test.xaml.cs">
       <DependentUpon>Function_Test.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NumberPad.xaml.cs">
@@ -84,11 +84,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Function_SaveImage.xaml">
+    <Page Include="Views\Tools\Function_SaveImage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Function_Test.xaml">
+    <Page Include="Views\Tools\Function_Test.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

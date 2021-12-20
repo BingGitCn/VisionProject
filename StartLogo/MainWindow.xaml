@@ -110,7 +110,7 @@
             </Border>
             <StackPanel Margin="15,0,0,0" VerticalAlignment="Bottom">
                 <ContentControl x:Name="Text1" Margin="5,0,0,0"
-                                Content="视觉检测软件"
+                                Content="启动动画，如你所见"
                                 FontFamily="Microsoft Sans Serif"
                                 FontSize="32"
                                 Foreground="White">
@@ -132,7 +132,7 @@
                     </ContentControl.ContentTemplate>
                 </ContentControl>
                 <ContentControl  x:Name="Text2" Margin="0,-2,0,-4"
-                                Content="Leader"
+                                Content="翻转文字，字母为佳"
                                 FontFamily="Microsoft Sans Serif"
                                 FontSize="60"
                                 FontWeight="Bold"
