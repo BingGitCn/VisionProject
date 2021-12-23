@@ -1,0 +1,56 @@
+﻿{
+  "Home": "Home",
+  "Project": "Project",
+  "Setting": "Setting",
+  "Statistic": "Statistic",
+  "Log": "Log",
+  "About": "About",
+
+  "ShowCurrentProjectName": "ProjectName",
+  "ShowRunResult": "RunResult",
+  "ShowRunStatus": "RunStatus",
+  "ShowRunStatistic": "RunStatistic",
+  "ButtonClearRunStatistic": "Clear",
+  "SelectProject": "SelectProject",
+  "Login": "Login",
+
+  "ProjectManagement": "Prj Management",
+  "ButtonOpen": "Open",
+  "ButtonSave": "Save",
+  "ProjectPath": "ProjectPath",
+  "CreateDate": "CreateDate",
+  "UpdateDate": "UpdateDate",
+  "ProgramEdit": "ProgramEdit",
+  "ButtonAdd": "Add",
+  "ButtonDelete": "Delete",
+  "Dragging": "Dragging",
+
+  "DataGridDate": "Date",
+  "DataGridOK": "OK",
+  "DataGridNG": "NG",
+  "DataGridAll": "All",
+  "DataGridRate": "Rate",
+
+  "ButtonRefresh": "Refresh",
+  "ButtonExport": "Export",
+  "ButtonUpdatePassword": "UpdatePassword",
+
+  "ShowTextWarn": "Note: The system-related settings take effect after the software is restarted.",
+
+  "IDUser": "User",
+  "IDTechnician": "Technician",
+  "IDEngineer": "Engineer",
+  "IDAdministrator": "Administrator",
+
+  "SoftName": "SoftName",
+  "UserLevel": "UserLevel",
+  "OldPassword": "OldPSD",
+  "NewPassword": "NewPSD",
+  "RememberParh": "RememberParh",
+  "ShowTextWarn2": "Remember the path where the last project file was opened and saved.",
+  "Drive": "Drive",
+  "AlarmThreshold": "AlarmThreshold",
+  "Language": "Language"
+
+
+}

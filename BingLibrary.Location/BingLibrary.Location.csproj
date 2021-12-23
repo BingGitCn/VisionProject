@@ -52,6 +52,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Languages\en-us.json" />
     <None Include="Languages\zh-tw.json" />
     <None Include="packages.config" />
   </ItemGroup>

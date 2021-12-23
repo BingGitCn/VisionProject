@@ -94,7 +94,7 @@
 
         <Grid Grid.Row="0">
             <hc:TabControl x:Name="TabControlDemo" IsAnimationEnabled="True" IsTabFillEnabled="True" Style="{StaticResource    TabControlBaseStyle}">
-                <hc:TabItem IsSelected="True" Header="&#xe708; 主  页" FontSize="21" FontFamily="../#iconfont" Width="150">
+                <hc:TabItem IsSelected="True" HeaderStringFormat="{}&#xe708; {0}" Header="{Binding Home,Source={StaticResource BingLocation},Mode=OneWay}" FontSize="21" FontFamily="../#iconfont" Width="150">
                     <Grid Background="{StaticResource BackgroundBrush}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition></ColumnDefinition>
@@ -109,33 +109,33 @@
                             <StackPanel Orientation="Vertical">
 
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Margin="5" FontSize="24" Text="当前项目："></TextBlock>
+                                    <TextBlock Margin="5" FontSize="24" Text="{Binding ShowCurrentProjectName,Source={StaticResource BingLocation},Mode=OneWay}" ></TextBlock>
                                     <TextBlock Text="{Binding ProjectName}" Style="{StaticResource TextBlockTitleBold}"></TextBlock>
                                 </StackPanel>
 
-                                <TextBlock Margin="5 15 5 5" FontSize="12" FontWeight="Bold" Text="运行结果："></TextBlock>
+                                <TextBlock Margin="5 15 5 5" FontSize="12" FontWeight="Bold" Text="{Binding ShowRunResult,Source={StaticResource BingLocation},Mode=OneWay}"></TextBlock>
                                 <Border Margin="5" Height="60"  Style="{StaticResource StatusBorder}" DataContext="{Binding ResultStatus}">
                                     <TextBlock Style="{StaticResource StatusTextBlock}"  ></TextBlock>
                                 </Border>
 
-                                <TextBlock Margin="5 15 5 5" FontSize="12" FontWeight="Bold" Text="设备状态："></TextBlock>
+                                <TextBlock Margin="5 15 5 5" FontSize="12" FontWeight="Bold" Text="{Binding ShowRunStatus,Source={StaticResource BingLocation},Mode=OneWay}"></TextBlock>
                                 <Border Margin="5" Height="60"  Style="{StaticResource    BorderTipInfo}">
                                     <TextBlock  FontSize="24" Text="{Binding MachineStatus}"  VerticalAlignment="Center" ></TextBlock>
                                 </Border>
 
-                                <TextBlock Margin="5 15 5 5" FontSize="12" FontWeight="Bold" Text="运行数据："></TextBlock>
+                                <TextBlock Margin="5 15 5 5" FontSize="12" FontWeight="Bold" Text="{Binding ShowRunStatistic,Source={StaticResource BingLocation},Mode=OneWay}"></TextBlock>
                                 <DataGrid FontSize="16" Margin="5" HeadersVisibility="All" IsReadOnly="True" RowHeaderWidth="60" AutoGenerateColumns="False" ItemsSource="{Binding HomeStatisticData}">
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn FontSize="14" Binding="{Binding CurrentDate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="日期" />
-                                        <DataGridTextColumn FontSize="14" Binding="{Binding OK,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="良品" />
-                                        <DataGridTextColumn FontSize="14" Binding="{Binding NG,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="不良" />
-                                        <DataGridTextColumn FontSize="14" Binding="{Binding All,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="总计" />
-                                        <DataGridTextColumn FontSize="14" Binding="{Binding Rate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="良率" />
+                                        <DataGridTextColumn FontSize="14" Binding="{Binding CurrentDate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="{Binding DataGridDate,Source={StaticResource BingLocation},Mode=OneWay}" />
+                                        <DataGridTextColumn FontSize="14" Binding="{Binding OK,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"          Header="{Binding DataGridOK,Source={StaticResource BingLocation},Mode=OneWay}" />
+                                        <DataGridTextColumn FontSize="14" Binding="{Binding NG,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"          Header="{Binding DataGridNG,Source={StaticResource BingLocation},Mode=OneWay}" />
+                                        <DataGridTextColumn FontSize="14" Binding="{Binding All,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"         Header="{Binding DataGridAll,Source={StaticResource BingLocation},Mode=OneWay}" />
+                                        <DataGridTextColumn FontSize="14" Binding="{Binding Rate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"        Header="{Binding DataGridRate,Source={StaticResource BingLocation},Mode=OneWay}" />
                                     </DataGrid.Columns>
                                 </DataGrid>
 
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Button Margin="5" Width="100" Style="{StaticResource ButtonDanger}" Content="清空当前" Command="{Binding StatisticOperate}" CommandParameter="clear"></Button>
+                                    <Button Margin="5" Width="100" Style="{StaticResource ButtonDanger}" Content="{Binding ButtonClearRunStatistic,Source={StaticResource BingLocation},Mode=OneWay}" Command="{Binding StatisticOperate}" CommandParameter="clear"></Button>
                                 </StackPanel>
                             </StackPanel>
                             <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
@@ -143,11 +143,11 @@
                               
 
                                 <StackPanel Orientation="Horizontal">
-                                
 
- 
 
-                                    <hc:ComboBox  Width="410" FontSize="14"  Margin="5" hc:InfoElement.Placeholder="请选择料号" hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="切换料号" ItemsSource="{Binding  Path=ProjectNames}" SelectedItem="{Binding SelectProjectName}" DisplayMemberPath="Name"  SelectedIndex="{Binding ProjectIndex}">
+
+
+                                    <hc:ComboBox  Width="410" FontSize="14"  Margin="5" hc:InfoElement.Placeholder="请选择料号" hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="{Binding SelectProject,Source={StaticResource BingLocation},Mode=OneWay}" ItemsSource="{Binding  Path=ProjectNames}" SelectedItem="{Binding SelectProjectName}" DisplayMemberPath="Name"  SelectedIndex="{Binding ProjectIndex}">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="DropDownClosed">
                                                 <i:InvokeCommandAction Command="{Binding OpenProject}" CommandParameter="close"></i:InvokeCommandAction>
@@ -159,17 +159,17 @@
                                     </hc:ComboBox> 
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <hc:ComboBox x:Name="user" Width="410" FontSize="14"  Margin="5" SelectedIndex="{Binding UserIndex}"  hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="用户登录">
-                                        <ComboBoxItem Content="用户(LV0)" IsSelected="True" ></ComboBoxItem>
-                                        <ComboBoxItem Content="技术员(LV1)"></ComboBoxItem>
-                                        <ComboBoxItem Content="工程师(LV2)"></ComboBoxItem>
-                                        <ComboBoxItem Content="管理员(LV3)"></ComboBoxItem>
+                                    <hc:ComboBox x:Name="user" Width="410" FontSize="14"  Margin="5" SelectedIndex="{Binding UserIndex}"  hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="{Binding Login,Source={StaticResource BingLocation},Mode=OneWay}">
+                                        <ComboBoxItem Content="{Binding IDUser,Source={StaticResource BingLocation},Mode=OneWay}"               IsSelected="True" ></ComboBoxItem>
+                                        <ComboBoxItem Content="{Binding IDTechnician,Source={StaticResource BingLocation},Mode=OneWay}"     ></ComboBoxItem>
+                                        <ComboBoxItem Content="{Binding IDEngineer,Source={StaticResource BingLocation},Mode=OneWay}"            ></ComboBoxItem>
+                                        <ComboBoxItem Content="{Binding IDAdministrator,Source={StaticResource BingLocation},Mode=OneWay}" ></ComboBoxItem>
                                         <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="DropDownClosed">
+                                            <i:EventTrigger EventName="DropDownClosed"> 
                                                 <i:InvokeCommandAction Command="{Binding Login}"></i:InvokeCommandAction>
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers> 
-                                    </hc:ComboBox>
+                                    </hc:ComboBox> 
  
                                     <Popup IsOpen="{Binding LoginPad.Open}" Placement="Mouse" StaysOpen="False">
                                         <local:NumberPad DataContext="{Binding LoginPad}" />
@@ -179,33 +179,33 @@
                         </Grid>
                     </Grid>
                 </hc:TabItem>
-                <hc:TabItem IsEnabled="{Binding CurrentPermit,Converter={StaticResource BingPermit},ConverterParameter=2 }" Header="&#xe71f; 项  目" FontSize="21" FontFamily="../#iconfont" Width="150">
+                <hc:TabItem IsEnabled="{Binding CurrentPermit,Converter={StaticResource BingPermit},ConverterParameter=2 }"   HeaderStringFormat="{}&#xe71f; {0}" Header="{Binding Project,Source={StaticResource BingLocation},Mode=OneWay}"  FontSize="21" FontFamily="../#iconfont" Width="150">
                     <Grid Background="{StaticResource BackgroundBrush}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"></RowDefinition>
                             <RowDefinition></RowDefinition>
                         </Grid.RowDefinitions>
                         <Grid Grid.Row="0">
-                            <GroupBox     Header="项目操作" FontSize="14"  Margin="5" Style="{StaticResource   GroupBoxOriginal}">
+                            <GroupBox     Header="{Binding ProjectManagement,Source={StaticResource BingLocation},Mode=OneWay}"  FontSize="14"  Margin="5" Style="{StaticResource   GroupBoxOriginal}">
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
                                         <Button Margin="5" Width="100" Style="{StaticResource ButtonPrimary}"    FontFamily="../#iconfont" Command="{Binding ProjectOperate}" CommandParameter="open">
-                                            <TextBlock Text="&#xe671; " FontSize="18"><Run Text="打  开" FontSize="12"></Run></TextBlock>
+                                            <TextBlock Text="&#xe671; " FontSize="18"><Run Text="{Binding ButtonOpen,Source={StaticResource BingLocation},Mode=OneWay}" FontSize="12"></Run></TextBlock>
                                         </Button>
                                         <Button Margin="5" Width="100" Style="{StaticResource ButtonPrimary}"    FontFamily="../#iconfont" Command="{Binding ProjectOperate}" CommandParameter="save">
-                                            <TextBlock Text="&#xe67c; " FontSize="16"><Run Text="保  存" FontSize="12"></Run></TextBlock>
+                                            <TextBlock Text="&#xe67c; " FontSize="16"><Run Text="{Binding ButtonSave,Source={StaticResource BingLocation},Mode=OneWay}" FontSize="12"></Run></TextBlock>
                                         </Button>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock  Text="项目路径：" Width="80"  FontSize="14"   Margin="5"  Foreground="DarkGray" />
+                                        <TextBlock  Text="{Binding ProjectPath,Source={StaticResource BingLocation},Mode=OneWay}" Width="80"  FontSize="14"   Margin="5"  Foreground="DarkGray" />
                                         <TextBlock  Text="{Binding ProjectPath}"  FontSize="14"   Margin="5"    Foreground="DarkGray" />
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock  Text="创建时间：" Width="80"  FontSize="14"   Margin="5"  Foreground="DarkGray" />
+                                        <TextBlock  Text="{Binding CreateDate,Source={StaticResource BingLocation},Mode=OneWay}" Width="80"  FontSize="14"   Margin="5"  Foreground="DarkGray" />
                                         <TextBlock  Text="{Binding CreateDate}"  FontSize="14"   Margin="5"    Foreground="DarkGray" />
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock  Text="更改时间：" Width="80"  FontSize="14"   Margin="5"    Foreground="DarkGray" />
+                                        <TextBlock  Text="{Binding UpdateDate,Source={StaticResource BingLocation},Mode=OneWay}" Width="80"  FontSize="14"   Margin="5"    Foreground="DarkGray" />
                                         <TextBlock  Text="{Binding LastDate}"  FontSize="14"   Margin="5"    Foreground="DarkGray" />
                                     </StackPanel>
                                 </StackPanel>
@@ -214,7 +214,7 @@
 
                         <Grid Grid.Row="1">
 
-                            <GroupBox Header="程序编辑" FontSize="14"  Margin="5" Style="{StaticResource   GroupBoxOriginal}">
+                            <GroupBox Header="{Binding ProgramEdit,Source={StaticResource BingLocation},Mode=OneWay}" FontSize="14"  Margin="5" Style="{StaticResource   GroupBoxOriginal}">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto"></RowDefinition>
@@ -224,14 +224,14 @@
                                         <StackPanel Orientation="Vertical">
                                             <StackPanel Orientation="Horizontal" IsEnabled="{Binding IsLogin}">
                                                 <Button Margin="5" Width="100" Style="{StaticResource ButtonDashedSuccess}"    FontFamily="../#iconfont" Command="{Binding Programs1Operate}" CommandParameter="add">
-                                                    <TextBlock Text="&#xe664; " FontSize="16"><Run Text="增  加" FontSize="12"></Run></TextBlock>
+                                                    <TextBlock Text="&#xe664; " FontSize="16"><Run Text="{Binding ButtonAdd,Source={StaticResource BingLocation},Mode=OneWay}" FontSize="12"></Run></TextBlock>
                                                 </Button>
                                                 <Button Margin="5" Width="100" Style="{StaticResource ButtonDashedDanger}"   FontFamily="../#iconfont" Command="{Binding Programs1Operate}" CommandParameter="del">
-                                                    <TextBlock Text="&#xe677; " FontSize="16"><Run Text="删  除" FontSize="12"></Run></TextBlock>
+                                                    <TextBlock Text="&#xe677; " FontSize="16"><Run Text="{Binding ButtonDelete,Source={StaticResource BingLocation},Mode=OneWay}" FontSize="12"></Run></TextBlock>
                                                 </Button>
 
 
-                                                <CheckBox x:Name="IsAllowDrag1" Content="拖动排序"></CheckBox>
+                                                <CheckBox x:Name="IsAllowDrag1" Content="{Binding Dragging,Source={StaticResource BingLocation},Mode=OneWay}"></CheckBox>
                                             </StackPanel>
                                         </StackPanel>
                                     </Grid>
@@ -285,7 +285,7 @@
                         </Grid>
                     </Grid>
                 </hc:TabItem>
-                <hc:TabItem IsEnabled="{Binding CurrentPermit,Converter={StaticResource BingPermit},ConverterParameter=1 }" Header="&#xe71b; 设  置" FontSize="21" FontFamily="../#iconfont" Width="150">
+                <hc:TabItem IsEnabled="{Binding CurrentPermit,Converter={StaticResource BingPermit},ConverterParameter=1 }" HeaderStringFormat="{}&#xe71b; {0}" Header="{Binding Setting,Source={StaticResource BingLocation},Mode=OneWay}"  FontSize="21" FontFamily="../#iconfont" Width="150">
                     <Grid Background="{StaticResource BackgroundBrush}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"></RowDefinition>
@@ -294,10 +294,10 @@
 
                         <Grid Grid.Row="0">
                             <StackPanel Orientation="Horizontal">
-                                <Button Margin="5" Width="100" Style="{StaticResource ButtonInfo}" Content="保  存" Command="{Binding SaveSystemConfig}" ></Button>
-                                <Button Margin="5" Width="100" Style="{StaticResource ButtonInfo}" Content="更新密码" Command="{Binding UpdatePassword}" ></Button>
+                                <Button Margin="5" Width="120" Style="{StaticResource ButtonInfo}" Content="{Binding ButtonSave,Source={StaticResource BingLocation},Mode=OneWay}" Command="{Binding SaveSystemConfig}" ></Button>
+                                <Button Margin="5" Width="120" Style="{StaticResource ButtonInfo}" Content="{Binding ButtonUpdatePassword,Source={StaticResource BingLocation},Mode=OneWay}" Command="{Binding UpdatePassword}" ></Button>
 
-                                <TextBlock Margin="5" FontSize="14" VerticalAlignment="Center" Text="注意：系统相关设置，软件重启后生效。" HorizontalAlignment="Left" Style="{StaticResource TextBlockDefaultWarning}"></TextBlock>
+                                <TextBlock Margin="5" FontSize="14" VerticalAlignment="Center" Text="{Binding ShowTextWarn,Source={StaticResource BingLocation},Mode=OneWay}" HorizontalAlignment="Left" Style="{StaticResource TextBlockDefaultWarning}"></TextBlock>
                             </StackPanel>
                         </Grid>
 
@@ -305,47 +305,63 @@
                             <StackPanel Orientation="Vertical">
 
                                 <StackPanel Orientation="Horizontal">
-                                    <hc:TextBox Text="{Binding Title}"  FontSize="14"   Margin="5"   hc:InfoElement.TitleWidth="80"  Width="510" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="软件名字" />
+                                    <hc:TextBox Text="{Binding Title}"  FontSize="14"   Margin="5"   hc:InfoElement.TitleWidth="80"  Width="510" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="{Binding SoftName,Source={StaticResource BingLocation},Mode=OneWay}" />
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <hc:ComboBox Width="270" FontSize="14"  Margin="5" SelectedIndex="{Binding UserIndex}"  hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="选择用户">
-                                 
-                                        <ComboBoxItem Content="技术员(LV1)"></ComboBoxItem>
-                                        <ComboBoxItem Content="工程师(LV2)"></ComboBoxItem>
-                                        <ComboBoxItem Content="管理员(LV3)"></ComboBoxItem>
+                                    <hc:ComboBox Width="270" FontSize="14"  Margin="5" SelectedIndex="{Binding UserIndex}"  hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="{Binding UserLevel,Source={StaticResource BingLocation},Mode=OneWay}">
+                                                       
+                                        <ComboBoxItem Content="{Binding IDTechnician,Source={StaticResource BingLocation},Mode=OneWay}"   ></ComboBoxItem>
+                                        <ComboBoxItem Content="{Binding IDEngineer,Source={StaticResource BingLocation},Mode=OneWay}"     ></ComboBoxItem>
+                                        <ComboBoxItem Content="{Binding IDAdministrator,Source={StaticResource BingLocation},Mode=OneWay}"></ComboBoxItem>
                                     </hc:ComboBox>
-                                    
-                                    <TextBlock Margin="5" FontSize="14" Text="原密码：" VerticalAlignment="Center" Width="70"></TextBlock>
+
+                                    <TextBlock Margin="5" FontSize="14" Text="{Binding OldPassword,Source={StaticResource BingLocation},Mode=OneWay}" VerticalAlignment="Center" Width="70"></TextBlock>
                                     <TextBox VerticalContentAlignment="Center" Margin="5" Style="{StaticResource PasswordTextBox}" Width="150" Text="{Binding CurrentPassword}"></TextBox>
 
-                                    <TextBlock Margin="5" FontSize="14" Text="新密码：" VerticalAlignment="Center" Width="70"></TextBlock>
+                                    <TextBlock Margin="5" FontSize="14" Text="{Binding NewPassword,Source={StaticResource BingLocation},Mode=OneWay}" VerticalAlignment="Center" Width="70"></TextBlock>
                                     <TextBox VerticalContentAlignment="Center" Margin="5" Style="{StaticResource PasswordTextBox}" Width="150" Text="{Binding NewPassword}"></TextBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Margin="5" FontSize="14" Text="记住路径" VerticalAlignment="Center" Width="70"></TextBlock>
-                                    <CheckBox Margin="5" IsChecked="{Binding IsRestoreDirectory,UpdateSourceTrigger=PropertyChanged}" FontSize="14" Content="记住上次项目文件打开保存的路径。" Foreground="DarkGray"></CheckBox>
+                                    <TextBlock Margin="5" FontSize="14" Text="{Binding RememberParh,Source={StaticResource BingLocation},Mode=OneWay}" VerticalAlignment="Center" Width="70"></TextBlock>
+                                    <CheckBox Margin="5" IsChecked="{Binding IsRestoreDirectory,UpdateSourceTrigger=PropertyChanged}" FontSize="14" Content="{Binding ShowTextWarn2,Source={StaticResource BingLocation},Mode=OneWay}" Foreground="DarkGray"></CheckBox>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal">
-                                    <hc:ComboBox Width="270" FontSize="14"  Margin="5" SelectedIndex="{Binding HardDrive}"  hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="盘符选择">
+                                    <hc:ComboBox Width="270" FontSize="14"  Margin="5" SelectedIndex="{Binding HardDrive}"  hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="{Binding Drive,Source={StaticResource BingLocation},Mode=OneWay}">
                                         <ComboBoxItem Content="C:\\"></ComboBoxItem>
                                         <ComboBoxItem Content="D:\\"></ComboBoxItem>
                                         <ComboBoxItem Content="E:\\"></ComboBoxItem>
                                         <ComboBoxItem Content="F:\\"></ComboBoxItem>
                                         <ComboBoxItem Content="G:\\"></ComboBoxItem>
                                     </hc:ComboBox>
- 
 
-                                    <TextBlock Margin="5" FontSize="14" Text="报警阈值（剩余GB）" VerticalAlignment="Center"><Run Text="{Binding ElementName=sd,Path=Value,Mode=OneWay}"></Run></TextBlock>
+
+                                    <TextBlock Margin="5" FontSize="14" Text="{Binding AlarmThreshold,Source={StaticResource BingLocation},Mode=OneWay}" VerticalAlignment="Center"><Run Text="{Binding ElementName=sd,Path=Value,Mode=OneWay}"></Run></TextBlock>
                                     <Slider Background="DarkGray" x:Name="sd" Margin="5" Width="400"  Value="{Binding FreeSpace}"  Maximum="1024" Minimum="5" TickFrequency="1" VerticalAlignment="Center" hc:TipElement.Visibility="Visible" hc:TipElement.Placement="Top" IsSnapToTickEnabled="True"/>
 
                                 </StackPanel>
-                                
+
+                                <StackPanel Orientation="Horizontal">
+
+                                    <hc:ComboBox VerticalAlignment="Center" FontSize="14"  Margin="5"  Width="400" hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="{Binding Language,Source={StaticResource BingLocation},Mode=OneWay}"
+                                             DataContext="{x:Static bingLocation:LanguageManager.Instance}"
+                                             ItemsSource="{Binding AvailableCultures}"
+                                             SelectedValue="{Binding CurrentCulture, Mode=TwoWay,NotifyOnSourceUpdated=True}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Mode=OneWay, Converter={StaticResource  LanguageConverter}}"/>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </hc:ComboBox>
+
+                                </StackPanel>
+
+
                             </StackPanel>
                         </Grid>
                     </Grid>
                 </hc:TabItem>
-                <hc:TabItem Header="&#xe71c; 产  量" FontSize="21" FontFamily="../#iconfont" Width="150">
+                <hc:TabItem HeaderStringFormat="{}&#xe71c; {0}" Header="{Binding Statistic,Source={StaticResource BingLocation},Mode=OneWay}" FontSize="21" FontFamily="../#iconfont" Width="150">
                     <Grid Background="{StaticResource BackgroundBrush}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"></RowDefinition>
@@ -354,8 +370,8 @@
 
                         <Grid Grid.Row="0">
                             <StackPanel Orientation="Horizontal">
-                                <Button Margin="5" Width="100" Style="{StaticResource ButtonInfo}" Content="刷  新" Command="{Binding StatisticOperate}" CommandParameter="refresh"></Button>
-                                <Button Margin="5" Width="100" Style="{StaticResource ButtonInfo}" Content="导  出" Command="{Binding StatisticOperate}" CommandParameter="export"></Button>
+                                <Button Margin="5" Width="100" Style="{StaticResource ButtonInfo}" Content="{Binding ButtonRefresh,Source={StaticResource BingLocation},Mode=OneWay}" Command="{Binding StatisticOperate}" CommandParameter="refresh"></Button>
+                                <Button Margin="5" Width="100" Style="{StaticResource ButtonInfo}" Content="{Binding ButtonExport,Source={StaticResource BingLocation},Mode=OneWay}" Command="{Binding StatisticOperate}" CommandParameter="export"></Button>
                             </StackPanel>
                             
                         </Grid>
@@ -363,19 +379,19 @@
                         <Grid Grid.Row="1">
                             <DataGrid FontSize="16" Margin="5" HeadersVisibility="All" IsReadOnly="True" RowHeaderWidth="60" AutoGenerateColumns="False" ItemsSource="{Binding AllStatisticData}"  hc:DataGridAttach.ShowRowNumber="True">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn FontSize="14" Binding="{Binding CurrentDate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="日期" />
-                                    <DataGridTextColumn FontSize="14" Binding="{Binding OK,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="良品" />
-                                    <DataGridTextColumn FontSize="14" Binding="{Binding NG,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="不良" />
-                                    <DataGridTextColumn FontSize="14" Binding="{Binding All,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="总计" />
-                                    <DataGridTextColumn FontSize="14" Binding="{Binding Rate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="良率" />
+                                    <DataGridTextColumn FontSize="14" Binding="{Binding CurrentDate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Header="{Binding DataGridDate,Source={StaticResource BingLocation},Mode=OneWay}" />
+                                    <DataGridTextColumn FontSize="14" Binding="{Binding OK,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"          Header="{Binding DataGridOK,Source={StaticResource BingLocation},Mode=OneWay}" />
+                                    <DataGridTextColumn FontSize="14" Binding="{Binding NG,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"          Header="{Binding DataGridNG,Source={StaticResource BingLocation},Mode=OneWay}" />
+                                    <DataGridTextColumn FontSize="14" Binding="{Binding All,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"         Header="{Binding DataGridAll,Source={StaticResource BingLocation},Mode=OneWay}" />
+                                    <DataGridTextColumn FontSize="14" Binding="{Binding Rate,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"        Header="{Binding DataGridRate,Source={StaticResource BingLocation},Mode=OneWay}" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
                     </Grid>
                 </hc:TabItem>
-                <hc:TabItem Header="&#xe719; 日  志" FontSize="21" FontFamily="../#iconfont" Width="150">
+                <hc:TabItem  HeaderStringFormat="{}&#xe719; {0}" Header="{Binding Log,Source={StaticResource BingLocation},Mode=OneWay}" FontSize="21" FontFamily="../#iconfont" Width="150">
                     <Grid Background="{StaticResource BackgroundBrush}">
-                        <bing:LogRealTimeWin FontSize="14"></bing:LogRealTimeWin>
+                        <bing:LogRealTimeWin FontSize="14"></bing:LogRealTimeWin> 
                     </Grid>
                 </hc:TabItem>
                 <hc:TabItem Visibility="Collapsed"  Header="&#xe71e; 关  于" FontSize="21" FontFamily="../#iconfont" Width="150">

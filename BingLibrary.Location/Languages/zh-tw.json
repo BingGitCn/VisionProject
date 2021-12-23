@@ -1,3 +1,55 @@
 ﻿{
-  "About": "關於"
+  "Home": "主頁",
+  "Project": "項目",
+  "Setting": "設置",
+  "Statistic": "產量",
+  "Log": "日誌",
+  "About": "關於",
+
+  "ShowCurrentProjectName": "當前項目",
+  "ShowRunResult": "運行結果",
+  "ShowRunStatus": "設備狀態",
+  "ShowRunStatistic": "運行數據据",
+  "ButtonClearRunStatistic": "清除數據",
+  "SelectProject": "料號切換",
+  "Login": "用戶登錄",
+
+  "ProjectManagement": "項目管理",
+  "ButtonOpen": "打開",
+  "ButtonSave": "保存",
+  "ProjectPath": "項目路徑",
+  "CreateDate": "創建時間",
+  "UpdateDate": "更新時間",
+  "ProgramEdit": "程序編輯",
+  "ButtonAdd": "增加",
+  "ButtonDelete": "刪除",
+  "Dragging": "拖動排序",
+
+  "DataGridDate": "日期",
+  "DataGridOK": "良品",
+  "DataGridNG": "不良",
+  "DataGridAll": "所有",
+  "DataGridRate": "良率",
+
+  "ButtonRefresh": "刷新",
+  "ButtonExport": "導出",
+  "ButtonUpdatePassword": "更新密碼",
+
+  "ShowTextWarn": "注意：系統相關設置，軟件重啟後生效。",
+
+  "IDUser": "用戶",
+  "IDTechnician": "技術員",
+  "IDEngineer": "工程師",
+  "IDAdministrator": "管理員",
+
+  "SoftName": "軟件名字",
+  "UserLevel": "選擇用戶",
+  "OldPassword": "舊密碼",
+  "NewPassword": "新密碼",
+  "RememberParh": "記住路徑",
+  "ShowTextWarn2": "記住上次項目文件打開保存的路徑。",
+  "Drive": "盤符選擇",
+  "AlarmThreshold": "報警閾值（剩餘GB）",
+  "Language": "語言選擇"
+
 }
