@@ -7,7 +7,7 @@ namespace BingLibrary.Location
     /// <summary>
     /// 用于页面需要切换语言的属性绑定，此仅用作切换语言显示用，不可参与软件逻辑操作。
     /// </summary>
-    public partial class LanguageFields
+    public partial class LanguageAllFields
     {
         public string Home
         {
@@ -71,6 +71,11 @@ namespace BingLibrary.Location
             set => Set(value);
         }
         public string Login
+        {
+            get => Get();
+            set => Set(value);
+        }
+        public string ShowTips1
         {
             get => Get();
             set => Set(value);
@@ -241,7 +246,7 @@ namespace BingLibrary.Location
 
     }
 
-    public partial class LanguageFields : NotifyPropertyChanged
+    public partial class LanguageAllFields : NotifyPropertyChanged
     {
         protected virtual string GetValue(string Key) => "";
 

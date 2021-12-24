@@ -147,7 +147,7 @@
 
 
 
-                                    <hc:ComboBox  Width="410" FontSize="14"  Margin="5" hc:InfoElement.Placeholder="请选择料号" hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="{Binding SelectProject,Source={StaticResource BingLocation},Mode=OneWay}" ItemsSource="{Binding  Path=ProjectNames}" SelectedItem="{Binding SelectProjectName}" DisplayMemberPath="Name"  SelectedIndex="{Binding ProjectIndex}">
+                                    <hc:ComboBox  Width="410" FontSize="14"  Margin="5" hc:InfoElement.Placeholder="{Binding ShowTips1,Source={StaticResource BingLocation},Mode=OneWay}" hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="{Binding SelectProject,Source={StaticResource BingLocation},Mode=OneWay}" ItemsSource="{Binding  Path=ProjectNames}" SelectedItem="{Binding SelectProjectName}" DisplayMemberPath="Name"  SelectedIndex="{Binding ProjectIndex}">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="DropDownClosed">
                                                 <i:InvokeCommandAction Command="{Binding OpenProject}" CommandParameter="close"></i:InvokeCommandAction>
@@ -165,7 +165,7 @@
                                         <ComboBoxItem Content="{Binding IDEngineer,Source={StaticResource BingLocation},Mode=OneWay}"            ></ComboBoxItem>
                                         <ComboBoxItem Content="{Binding IDAdministrator,Source={StaticResource BingLocation},Mode=OneWay}" ></ComboBoxItem>
                                         <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="DropDownClosed"> 
+                                            <i:EventTrigger EventName="DropDownClosed">  
                                                 <i:InvokeCommandAction Command="{Binding Login}"></i:InvokeCommandAction>
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers> 

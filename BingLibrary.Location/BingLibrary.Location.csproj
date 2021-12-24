@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LanguageConverter.cs" />
-    <Compile Include="LanguageFields.cs" />
+    <Compile Include="LanguageAllFields.cs" />
     <Compile Include="LanguageManager.cs" />
     <Compile Include="NotifyPropertyChanged.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

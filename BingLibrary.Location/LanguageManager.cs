@@ -10,7 +10,7 @@ namespace BingLibrary.Location
     /// <summary>
     /// 多语言管理类
     /// </summary>
-    public class LanguageManager : LanguageFields
+    public class LanguageManager : LanguageAllFields
     {
         private readonly JObject _defaultLanguage;
         private JObject _currentLanguage;
