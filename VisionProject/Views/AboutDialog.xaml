@@ -12,7 +12,7 @@
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
-                    <Image  Margin="5" Source="..\favicon.ico" Width="60" Stretch="UniformToFill"></Image>
+                    <Image  Margin="5" Source="..\bitbug_favicon.ico" Width="60" Stretch="UniformToFill"></Image>
                 </Grid>
                 <Grid Grid.Column="1">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center">

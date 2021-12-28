@@ -4,9 +4,6 @@ using System.Runtime.CompilerServices;
 
 namespace BingLibrary.Location
 {
-    /// <summary>
-    /// 用于页面需要切换语言的属性绑定，此仅用作切换语言显示用，不可参与软件逻辑操作。
-    /// </summary>
     public partial class LanguageAllFields
     {
         public string Home
@@ -39,7 +36,6 @@ namespace BingLibrary.Location
             get => Get();
             set => Set(value);
         }
-
         public string ShowCurrentProjectName
         {
             get => Get();
@@ -85,7 +81,6 @@ namespace BingLibrary.Location
             get => Get();
             set => Set(value);
         }
-
         public string ButtonOpen
         {
             get => Get();
@@ -156,7 +151,6 @@ namespace BingLibrary.Location
             get => Get();
             set => Set(value);
         }
-
         public string ButtonRefresh
         {
             get => Get();
@@ -242,29 +236,6 @@ namespace BingLibrary.Location
             get => Get();
             set => Set(value);
         }
-  
-
-    }
-
-    public partial class LanguageAllFields : NotifyPropertyChanged
-    {
-        protected virtual string GetValue(string Key) => "";
-
-        protected virtual void SetValue(string Key, string Value)
-        { }
-
-        private string Get([CallerMemberName] string PropertyName = null)
-        {
-            return GetValue(PropertyName);
-        }
-
-        private void Set(string Value, [CallerMemberName] string PropertyName = null)
-        {
-            SetValue(PropertyName, Value);
-
-            RaisePropertyChanged(PropertyName);
-        }
-
-        public virtual event Action<CultureInfo> LanguageChanged;
     }
 }
+

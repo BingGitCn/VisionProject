@@ -17,6 +17,7 @@ namespace VisionProject
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            //关于窗口
             containerRegistry.RegisterDialog<AboutDialog, AboutDialogViewModel>(GlobalVars.DialogNames.ShowAboutWindow);
             //测试窗口
             containerRegistry.RegisterDialog<Function_Test, Function_TestViewModel>(GlobalVars.DialogNames.ShowFunctionTestWindow);

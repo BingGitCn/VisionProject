@@ -15,9 +15,9 @@ namespace BingLibrary.Location
             {
                 switch (c.Name)
                 {
+
                     case "en":
                         return "English";
-
                     case "zh-CN":
                         return "Chinese (Simplified) (中文简体)";
 
