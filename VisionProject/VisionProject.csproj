@@ -86,8 +86,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ViewModels\Function_SaveImageViewModel.cs" />
-    <Compile Include="ViewModels\Function_TestViewModel.cs" />
+    <Compile Include="ViewModels\Tools\Function_SaveImageViewModel.cs" />
+    <Compile Include="ViewModels\Tools\Function_TestViewModel.cs" />
     <Compile Include="ViewModels\NumberPadViewModel.cs" />
     <Compile Include="Views\Tools\Function_SaveImage.xaml.cs">
       <DependentUpon>Function_SaveImage.xaml</DependentUpon>

@@ -271,6 +271,8 @@ namespace VisionProject.ViewModels
         //程序编辑
         private DelegateCommand _program1Config;
 
+        //这里，如果有多个程序列表编辑，先将对应程序给到全局变量程序，然后编辑是在全局变量中完成，编辑完成后再给对应的程序
+
         public DelegateCommand Program1Config =>
             _program1Config ?? (_program1Config = new DelegateCommand(() =>
             {
