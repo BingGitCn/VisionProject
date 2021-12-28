@@ -240,15 +240,20 @@
                                         <DataGrid dd:DragDrop.IsDragSource="{Binding ElementName=IsAllowDrag1,Path=IsChecked}" dd:DragDrop.IsDropTarget="{Binding ElementName=IsAllowDrag1,Path=IsChecked}" dd:DragDrop.UseDefaultDragAdorner="{Binding ElementName=IsAllowDrag1,Path=IsChecked}" dd:DragDrop.DropHandler="{Binding}"   HeadersVisibility="All"   AutoGenerateColumns="False" ItemsSource="{Binding Programs1}" SelectedIndex="{Binding Program1Index}" hc:DataGridAttach.ShowRowNumber="True" SelectedItem="{Binding SelectedProgram1}">
                                             <DataGrid.Columns>
 
+                                                <DataGridTemplateColumn Header="产品序列">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <hc:ComboBox SelectedIndex="{Binding ProductIndex,UpdateSourceTrigger=PropertyChanged}" Width="80" ItemsSource="{Binding ProductIndexs}" >
+                                                            </hc:ComboBox>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                
+                                                
                                                 <DataGridTemplateColumn Header="检测内容">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate>
-                                                            <hc:ComboBox Text="{Binding InspectFunction,UpdateSourceTrigger=PropertyChanged}" Width="200"  hc:InfoElement.Placeholder="请选择检测内容">
-                                                                <ComboBoxItem Content="无" ></ComboBoxItem>
-                                                                <ComboBoxItem Content="检测1" ></ComboBoxItem>
-                                                                <ComboBoxItem Content="检测2"></ComboBoxItem>
-                                                                <ComboBoxItem Content="检测3"></ComboBoxItem>
-                                                                <ComboBoxItem Content="保存图像"></ComboBoxItem>
+                                                            <hc:ComboBox Text="{Binding InspectFunction,UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding ToolNames}" Width="200"  hc:InfoElement.Placeholder="请选择检测内容">
                                                             </hc:ComboBox>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>

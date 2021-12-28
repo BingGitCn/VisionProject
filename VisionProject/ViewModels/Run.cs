@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls.Primitives;
 using VisionProject.GlobalVars;
+using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace VisionProject.ViewModels
 {
@@ -26,6 +28,9 @@ namespace VisionProject.ViewModels
 
             initProjects();
             initPLC();
+
+
+            run();
         }
 
 
@@ -86,12 +91,42 @@ namespace VisionProject.ViewModels
         #endregion 初始化
 
         //运行
+        //这里设想，如果一个产品多个位置，默认产品索引位置为0不容更改，依次调用程序列表对应的位置进行处理即可。
+        //如果有多个产品，且一个产品需分多次检测，可以设置产品的索引号，同一索引号依次处理。
         private async void run()
         {
             while (true)
             {
                 await Task.Delay(100);
 
+                if (false)
+                {
+                    int index = 1;//产品位置索引
+                    var currentProduct = (from step in Programs1
+                                          where step.ProductIndex == index
+                                          select step)
+                                          .ToList();
+
+                    for (int i = 0; i < currentProduct.Count-1; i++)
+                    {
+                        if (currentProduct[i].InspectFunction == Variables.ToolNams[0])
+                        {
+                            //Do Something
+                            //Function_SaveImageViewModel.SaveImages(new HalconDotNet.HImage(),"123", currentProduct[i].Parameters);
+                        }
+                       else if (currentProduct[i].InspectFunction == Variables.ToolNams[1])
+                        {
+                            //Do Something
+                        }
+
+
+                    }
+
+                    
+
+                }
+               
+                                   
 
 
             }

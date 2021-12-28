@@ -3,6 +3,7 @@ using BingLibrary.Controls.Log;
 using BingLibrary.Vision;
 using HalconDotNet;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using VisionProject.ViewModels;
@@ -11,6 +12,18 @@ namespace VisionProject.GlobalVars
 {
     public static class Variables
     {
+        //工具或检测方式的名称，在此添加
+        public static List<string> ToolNams = new List<string>() { 
+        "无",
+        "检测1",
+        "检测2",
+        "检测3",
+        "保存图像",
+
+        };
+
+
+
         //PLC
         public static HuiChuanPLC HCPLC = new HuiChuanPLC();
 
