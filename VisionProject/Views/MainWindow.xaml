@@ -93,7 +93,7 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
-            <hc:TabControl x:Name="TabControlDemo" IsAnimationEnabled="True" IsTabFillEnabled="True" Style="{StaticResource    TabControlBaseStyle}">
+            <hc:TabControl  x:Name="TabControlDemo" IsAnimationEnabled="True" IsTabFillEnabled="True" Style="{StaticResource    TabControlBaseStyle}">
                 <hc:TabItem IsSelected="True" HeaderStringFormat="{}&#xe708; {0}" Header="{Binding Home,Source={StaticResource BingLocation},Mode=OneWay}" FontSize="21" FontFamily="../#iconfont" Width="150">
                     <Grid Background="{StaticResource BackgroundBrush}">
                         <Grid.ColumnDefinitions>
@@ -140,7 +140,7 @@
                             </StackPanel>
                             <StackPanel Orientation="Vertical" VerticalAlignment="Bottom">
 
-                              
+
 
                                 <StackPanel Orientation="Horizontal">
 
@@ -156,7 +156,7 @@
                                                 <i:InvokeCommandAction Command="{Binding OpenProject}" CommandParameter="open"></i:InvokeCommandAction>
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
-                                    </hc:ComboBox> 
+                                    </hc:ComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <hc:ComboBox x:Name="user" Width="410" FontSize="14"  Margin="5" SelectedIndex="{Binding UserIndex}"  hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="{Binding Login,Source={StaticResource BingLocation},Mode=OneWay}">
@@ -165,12 +165,12 @@
                                         <ComboBoxItem Content="{Binding IDEngineer,Source={StaticResource BingLocation},Mode=OneWay}"            ></ComboBoxItem>
                                         <ComboBoxItem Content="{Binding IDAdministrator,Source={StaticResource BingLocation},Mode=OneWay}" ></ComboBoxItem>
                                         <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="DropDownClosed">  
+                                            <i:EventTrigger EventName="DropDownClosed">
                                                 <i:InvokeCommandAction Command="{Binding Login}"></i:InvokeCommandAction>
                                             </i:EventTrigger>
-                                        </i:Interaction.Triggers> 
-                                    </hc:ComboBox> 
- 
+                                        </i:Interaction.Triggers>
+                                    </hc:ComboBox>
+
                                     <Popup IsOpen="{Binding LoginPad.Open}" Placement="Mouse" StaysOpen="False">
                                         <local:NumberPad DataContext="{Binding LoginPad}" />
                                     </Popup>
@@ -248,8 +248,8 @@
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
-                                                
-                                                
+
+
                                                 <DataGridTemplateColumn Header="检测内容">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate>
@@ -314,7 +314,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <hc:ComboBox Width="270" FontSize="14"  Margin="5" SelectedIndex="{Binding UserIndex}"  hc:InfoElement.TitleWidth="80"  hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="{Binding UserLevel,Source={StaticResource BingLocation},Mode=OneWay}">
-                                                       
+
                                         <ComboBoxItem Content="{Binding IDTechnician,Source={StaticResource BingLocation},Mode=OneWay}"   ></ComboBoxItem>
                                         <ComboBoxItem Content="{Binding IDEngineer,Source={StaticResource BingLocation},Mode=OneWay}"     ></ComboBoxItem>
                                         <ComboBoxItem Content="{Binding IDAdministrator,Source={StaticResource BingLocation},Mode=OneWay}"></ComboBoxItem>
@@ -378,7 +378,7 @@
                                 <Button Margin="5" Width="100" Style="{StaticResource ButtonInfo}" Content="{Binding ButtonRefresh,Source={StaticResource BingLocation},Mode=OneWay}" Command="{Binding StatisticOperate}" CommandParameter="refresh"></Button>
                                 <Button Margin="5" Width="100" Style="{StaticResource ButtonInfo}" Content="{Binding ButtonExport,Source={StaticResource BingLocation},Mode=OneWay}" Command="{Binding StatisticOperate}" CommandParameter="export"></Button>
                             </StackPanel>
-                            
+
                         </Grid>
 
                         <Grid Grid.Row="1">
@@ -396,7 +396,8 @@
                 </hc:TabItem>
                 <hc:TabItem   HeaderStringFormat="{}&#xe719; {0}" Header="{Binding Log,Source={StaticResource BingLocation},Mode=OneWay}" FontSize="21" FontFamily="../#iconfont" Width="150">
                     <Grid  Background="{StaticResource BackgroundBrush}" >
-                        <bing:LogWindow FontSize="14" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"></bing:LogWindow> 
+                        <bing:LogWindow FontSize="14" ></bing:LogWindow>
+
                     </Grid>
                 </hc:TabItem>
                 <hc:TabItem Visibility="Collapsed"  Header="&#xe71e; 关  于" FontSize="21" FontFamily="../#iconfont" Width="150">

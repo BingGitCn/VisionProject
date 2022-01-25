@@ -97,7 +97,7 @@ namespace VisionProject.ViewModels
         //如果有多个产品，且一个产品需分多次检测，可以设置产品的索引号，同一索引号依次处理。
         private async void run()
         {
-
+            //Step..
             List<string> ToolNames = DialogNames.ToolNams.Keys.ToList();
             while (true)
             {
