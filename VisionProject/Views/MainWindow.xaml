@@ -3,11 +3,11 @@
         xmlns:prism="http://prismlibrary.com/"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:bing="clr-namespace:BingLibrary.Controls.Log.View;assembly=BingLibrary"
+        xmlns:bing="clr-namespace:BingLibrary.Logs.View;assembly=BingLibraryLite"
         xmlns:bingVision="clr-namespace:BingLibrary.Vision;assembly=BingLibrary.Vision"
         xmlns:local="clr-namespace:VisionProject.Views"
         xmlns:hc="https://handyorg.github.io/handycontrol"
-        xmlns:bingPermit="clr-namespace:BingLibrary.Controls.Permit;assembly=BingLibrary"
+        xmlns:bingPermit="clr-namespace:BingLibrary.Tools;assembly=BingLibraryLite"
         xmlns:bingLocation="clr-namespace:BingLibrary.Location;assembly=BingLibrary.Location"
         prism:ViewModelLocator.AutoWireViewModel="True"
          xmlns:dd="urn:gong-wpf-dragdrop"
@@ -253,7 +253,7 @@
                                                 <DataGridTemplateColumn Header="检测内容">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate>
-                                                            <hc:ComboBox Text="{Binding InspectFunction,UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding ToolNames}" Width="200"  hc:InfoElement.Placeholder="请选择检测内容">
+                                                            <hc:ComboBox  Text="{Binding InspectFunction,UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding ToolNames}" Width="200"  hc:InfoElement.Placeholder="请选择检测内容">
                                                             </hc:ComboBox>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
@@ -262,7 +262,7 @@
                                                 <DataGridTemplateColumn  Header="参数设置">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate>
-                                                            <Button Margin="2"   Style="{StaticResource  ButtonPrimary}" Content="设  置" Width="80" Command="{Binding Path=DataContext.Program1Config, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"></Button>
+                                                            <Button Margin="2"   Style="{StaticResource  ButtonPrimary}" Content="设  置" Width="80" Command="{Binding Path=DataContext.Program1Config, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" CommandParameter="{Binding InspectFunction,Mode=OneWay}"></Button>
                                                         </DataTemplate>
                                                     </DataGridTemplateColumn.CellTemplate>
                                                 </DataGridTemplateColumn>
@@ -394,9 +394,9 @@
                         </Grid>
                     </Grid>
                 </hc:TabItem>
-                <hc:TabItem  HeaderStringFormat="{}&#xe719; {0}" Header="{Binding Log,Source={StaticResource BingLocation},Mode=OneWay}" FontSize="21" FontFamily="../#iconfont" Width="150">
-                    <Grid Background="{StaticResource BackgroundBrush}">
-                        <bing:LogRealTimeWin FontSize="14"></bing:LogRealTimeWin> 
+                <hc:TabItem   HeaderStringFormat="{}&#xe719; {0}" Header="{Binding Log,Source={StaticResource BingLocation},Mode=OneWay}" FontSize="21" FontFamily="../#iconfont" Width="150">
+                    <Grid  Background="{StaticResource BackgroundBrush}" >
+                        <bing:LogWindow FontSize="14" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"></bing:LogWindow> 
                     </Grid>
                 </hc:TabItem>
                 <hc:TabItem Visibility="Collapsed"  Header="&#xe71e; 关  于" FontSize="21" FontFamily="../#iconfont" Width="150">

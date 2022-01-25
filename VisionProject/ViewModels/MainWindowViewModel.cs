@@ -10,9 +10,10 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using VisionProject.GlobalVars;
-using BingLibrary.Controls.Permit;
+using BingLibrary.Tools;
 using VisionProject.Views;
 using System.Linq;
+using BingLibrary.Logs;
 
 namespace VisionProject.ViewModels
 {
@@ -240,9 +241,9 @@ namespace VisionProject.ViewModels
                 w.Protection.IsProtected = true;
                 package.Save();
                 package.Dispose();
-                Variables.Logs.WriteInfo("数据加载成功。");
+                 Log.Info("数据加载成功。");
             }
-            catch { Variables.Logs.WriteError("数据加载失败。"); }
+            catch {  Log.Error("数据加载失败。"); }
         }
 
         /// <summary>
@@ -409,10 +410,10 @@ namespace VisionProject.ViewModels
                             try
                             {
                                 File.Copy(AppDomain.CurrentDomain.BaseDirectory + "Statistics.xlsx", path + "产量统计.xlsx");
-                                Variables.Logs.WriteInfo("导出产量统计成功。");
+                                 Log.Info("导出产量统计成功。");
                                 Variables.ShowMessage("导出成功。");
                             }
-                            catch { Variables.Logs.WriteError("导出产量统计失败。"); }
+                            catch {  Log.Error("导出产量统计失败。"); }
                         }
 
                         break;

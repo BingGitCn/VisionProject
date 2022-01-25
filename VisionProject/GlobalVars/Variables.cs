@@ -1,5 +1,5 @@
 ﻿using BingLibrary.Communication.PLC;
-using BingLibrary.Controls.Log;
+using BingLibrary.Logs;
 using BingLibrary.Vision;
 using HalconDotNet;
 using System;
@@ -12,15 +12,7 @@ namespace VisionProject.GlobalVars
 {
     public static class Variables
     {
-        //工具或检测方式的名称，在此添加
-        public static List<string> ToolNams = new List<string>() { 
-        "无",
-        "检测1",
-        "检测2",
-        "检测3",
-        "保存图像",
-
-        };
+      
 
 
 
@@ -38,9 +30,7 @@ namespace VisionProject.GlobalVars
 
         public static string StatisticDataFilePath = AppDomain.CurrentDomain.BaseDirectory + "Statistics.xlsx";
 
-        //日志
-        public static LogDateTime Logs = new LogDateTime(AppDomain.CurrentDomain.BaseDirectory + "Logs");
-
+        
         //项目
         public static Project CurrentProject = new Project();
 

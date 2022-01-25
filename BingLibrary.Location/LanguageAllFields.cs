@@ -236,6 +236,11 @@ namespace BingLibrary.Location
             get => Get();
             set => Set(value);
         }
+        public string MachineID
+        {
+            get => Get();
+            set => Set(value);
+        }
     }
 }
 

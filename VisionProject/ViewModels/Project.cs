@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
@@ -268,14 +269,11 @@ namespace VisionProject.ViewModels
                 }
             }));
 
-        //程序编辑
-        private DelegateCommand _program1Config;
 
-        //这里，如果有多个程序列表编辑，先将对应程序给到全局变量程序，然后编辑是在全局变量中完成，编辑完成后再给对应的程序
-
-        public DelegateCommand Program1Config =>
-            _program1Config ?? (_program1Config = new DelegateCommand(() =>
-            {
+        //Step..
+        private DelegateCommand<string> _program1Config;
+        public DelegateCommand<string> Program1Config =>
+            _program1Config ?? (_program1Config = new DelegateCommand<string>((param)=> {
                 try
                 {
                     Variables.ProgramIndex = Program1Index;
@@ -285,20 +283,48 @@ namespace VisionProject.ViewModels
 
                     Variables.CurrentImage1 = Variables.WindowData1.CurrentImage;
 
-                    if (Programs1[Program1Index].InspectFunction == "无")
-                    {
-                        curDialogService.ShowDialog(DialogNames.ShowFunctionTestWindow);
-                    }
-                    if (Programs1[Program1Index].InspectFunction == "保存图像")
-                    {
-                        curDialogService.ShowDialog(DialogNames.ShowFunctionSaveImageWindow);
-                        Programs1.Clear();
-                        for (int i = 0; i < Variables.CurrentProgram.Count; i++)
-                            Programs1.Add(Variables.CurrentProgram[i]);
-                    }
+                    curDialogService.ShowDialog(DialogNames.ToolNams[param]);
+                    
+                    Programs1.Clear();
+                    for (int i = 0; i < Variables.CurrentProgram.Count; i++)
+                        Programs1.Add(Variables.CurrentProgram[i]);
                 }
                 catch (Exception ex) { }
             }));
+
+       
+
+        ////程序编辑
+        //private DelegateCommand _program1Config;
+
+        ////这里，如果有多个程序列表编辑，先将对应程序给到全局变量程序，然后编辑是在全局变量中完成，编辑完成后再给对应的程序
+
+        //public DelegateCommand Program1Config =>
+        //    _program1Config ?? (_program1Config = new DelegateCommand(() =>
+        //    {
+        //        try
+        //        {
+        //            Variables.ProgramIndex = Program1Index;
+        //            Variables.CurrentProgram.Clear();
+        //            for (int i = 0; i < Programs1.Count; i++)
+        //                Variables.CurrentProgram.Add(Programs1[i]);
+
+        //            Variables.CurrentImage1 = Variables.WindowData1.CurrentImage;
+
+        //            if (Programs1[Program1Index].InspectFunction == "无")
+        //            {
+        //                curDialogService.ShowDialog(DialogNames.ShowFunctionTestWindow);
+        //            }
+        //            if (Programs1[Program1Index].InspectFunction == "保存图像")
+        //            {
+        //                curDialogService.ShowDialog(DialogNames.ShowFunctionSaveImageWindow);
+        //                Programs1.Clear();
+        //                for (int i = 0; i < Variables.CurrentProgram.Count; i++)
+        //                    Programs1.Add(Variables.CurrentProgram[i]);
+        //            }
+        //        }
+        //        catch (Exception ex) { }
+        //    }));
 
         #endregion 程序1编辑
     }
@@ -330,7 +356,7 @@ namespace VisionProject.ViewModels
         public List<int> ProductIndexs { set; get; } = new List<int>() { 0,1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
         21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48};
 
-        public List<string> ToolNames { set; get; } = Variables.ToolNams;
+        public List<string> ToolNames { set; get; } = DialogNames.ToolNams.Keys.ToList();
     }
 
     public class ProjectInfo

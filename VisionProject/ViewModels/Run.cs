@@ -5,6 +5,8 @@ using System.Windows.Controls.Primitives;
 using VisionProject.GlobalVars;
 using System.Linq;
 using System.Collections.ObjectModel;
+using BingLibrary.Logs;
+using System.Collections.Generic;
 
 namespace VisionProject.ViewModels
 {
@@ -83,7 +85,7 @@ namespace VisionProject.ViewModels
                 await Task.Delay(1000);
             }
 
-            Variables.Logs.WriteInfo(Variables.HCPLC.IsConnected ? "PLC连接成功" : "PLC连接失败");
+            Log.Info(Variables.HCPLC.IsConnected ? "PLC连接成功" : "PLC连接失败");
             PLCStatus.Value = Variables.HCPLC.IsConnected;
 
         }
@@ -95,6 +97,8 @@ namespace VisionProject.ViewModels
         //如果有多个产品，且一个产品需分多次检测，可以设置产品的索引号，同一索引号依次处理。
         private async void run()
         {
+
+            List<string> ToolNames = DialogNames.ToolNams.Keys.ToList();
             while (true)
             {
                 await Task.Delay(100);
@@ -109,14 +113,16 @@ namespace VisionProject.ViewModels
 
                     for (int i = 0; i < currentProduct.Count-1; i++)
                     {
-                        if (currentProduct[i].InspectFunction == Variables.ToolNams[0])
+                        if (currentProduct[i].InspectFunction == ToolNames[0])
                         {
                             //Do Something
                             //Function_SaveImageViewModel.SaveImages(new HalconDotNet.HImage(),"123", currentProduct[i].Parameters);
                         }
-                       else if (currentProduct[i].InspectFunction == Variables.ToolNams[1])
+                  
+                       else if (currentProduct[i].InspectFunction == ToolNames[1])
                         {
                             //Do Something
+                        
                         }
 
 

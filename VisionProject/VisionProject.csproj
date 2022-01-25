@@ -163,8 +163,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BingLibrary">
-      <Version>2.3.0.7</Version>
+    <PackageReference Include="BingLibraryLite">
+      <Version>1.1.5</Version>
     </PackageReference>
     <PackageReference Include="EPPlus">
       <Version>5.8.2</Version>

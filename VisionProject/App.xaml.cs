@@ -17,12 +17,14 @@ namespace VisionProject
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            //Step..
+
             //关于窗口
             containerRegistry.RegisterDialog<AboutDialog, AboutDialogViewModel>(GlobalVars.DialogNames.ShowAboutWindow);
             //测试窗口
-            containerRegistry.RegisterDialog<Function_Test, Function_TestViewModel>(GlobalVars.DialogNames.ShowFunctionTestWindow);
+            containerRegistry.RegisterDialog<Function_Test, Function_TestViewModel>(GlobalVars.DialogNames.ToolNams["测试"]);
             //保存图像窗口
-            containerRegistry.RegisterDialog<Function_SaveImage, Function_SaveImageViewModel>(GlobalVars.DialogNames.ShowFunctionSaveImageWindow);
+            containerRegistry.RegisterDialog<Function_SaveImage, Function_SaveImageViewModel>(GlobalVars.DialogNames.ToolNams["保存图像"]);
         }
 
 

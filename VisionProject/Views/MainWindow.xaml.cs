@@ -15,6 +15,7 @@ namespace VisionProject.Views
         public MainWindow(IRegionManager regionManager)
         {
             InitializeComponent();
+            //Step..
             if (false)//是否显示启动动画
             {
                 StartLogo.MainWindow startLogo = new StartLogo.MainWindow("视觉检测软件");
