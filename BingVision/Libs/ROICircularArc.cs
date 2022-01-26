@@ -27,7 +27,7 @@ namespace BingLibrary.Vision
 
         public ROICircularArc()
         {
-            NumHandles = 4;         // midpoint handle + three handles on the arc
+            numHandles = 4;         // midpoint handle + three handles on the arc
             activeHandleIdx = 0;
             contour = new HXLDCont();
             circDir = "";
@@ -72,14 +72,14 @@ namespace BingLibrary.Vision
         public override double distToClosestHandle(double x, double y)
         {
             double max = 10000;
-            double[] val = new double[NumHandles];
+            double[] val = new double[numHandles];
 
             val[0] = HMisc.DistancePp(y, x, midR, midC);       // midpoint
             val[1] = HMisc.DistancePp(y, x, sizeR, sizeC);     // border handle
             val[2] = HMisc.DistancePp(y, x, startR, startC);   // border handle
             val[3] = HMisc.DistancePp(y, x, extentR, extentC); // border handle
 
-            for (int i = 0; i < NumHandles; i++)
+            for (int i = 0; i < numHandles; i++)
             {
                 if (val[i] < max)
                 {

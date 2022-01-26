@@ -26,7 +26,7 @@ namespace BingLibrary.Vision
         /// <param name="isShow"></param>
         public void ShowWaterString(bool isShow = true)
         {
-            HCtrl.ShowWaterString = isShow;
+            HCtrl.isShowWaterString = isShow; 
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace BingLibrary.Vision
         }
 
         /// <summary>
-        /// 是否启用鼠标右键
+        /// 是否进入绘画模式
         /// </summary>
         /// <param name="isUse"></param>
         public void DrawMode(bool isUse)
@@ -53,7 +53,7 @@ namespace BingLibrary.Vision
         /// <param name="isEdit"></param>
         public void EditMode(bool isEdit)
         {
-            HCtrl.isEdit = isEdit;
+            HCtrl.canEdit = isEdit;
         }
 
         /// <summary>
@@ -104,29 +104,15 @@ namespace BingLibrary.Vision
         }
 
         /// <summary>
-        /// 将对象显示到窗口
+        /// 将图像显示到窗口
         /// </summary>
         /// <param name="hObject"></param>
         /// <param name="roiColor"></param>
-        public void AddObjectToWindow(HObject hObject, ROIColors roiColor = ROIColors.red)
+        public void AddImageToWindow(HImage himage)
         {
             try
             {
-                HCtrl.addIconicVar(hObject, roiColor.ToString());
-            }
-            catch { }
-        }
-
-        /// <summary>
-        /// 将对象显示到ROIList
-        /// </summary>
-        /// <param name="hRegion"></param>
-        /// <param name="roiColor"></param>
-        public void AddObjectToROIList(HObject hRegion, ROIColors roiColor = ROIColors.red)
-        {
-            try
-            {
-                RCtrl.showROIShape(new ROIObjectRegion(hRegion), roiColor.ToString());
+                HCtrl.addImageVar(himage);
             }
             catch { }
         }
@@ -140,7 +126,7 @@ namespace BingLibrary.Vision
         {
             try
             {
-                RCtrl.showROIShape(new ROIRegion(hRegion), roiColor.ToString());
+                RCtrl.AddROI(new ROIRegion(hRegion));
             }
             catch { }
         }
@@ -150,7 +136,7 @@ namespace BingLibrary.Vision
         /// </summary>
         /// <param name="index"></param>
         /// <param name="color"></param>
-        public void SetActive(int index, string color = "red")
+        public void SetActive(int index)
         {
             try
             {
@@ -161,8 +147,6 @@ namespace BingLibrary.Vision
             catch { }
         }
 
-      
-
         /// <summary>
         /// 将消息显示到窗口
         /// </summary>
@@ -170,11 +154,11 @@ namespace BingLibrary.Vision
         /// <param name="row"></param>
         /// <param name="column"></param>
         /// <param name="fontSize"></param>
-        public void AddMessageToWindow(string message, int row, int column, int fontSize = 12,string color="black",string mode="window")
+        public void AddMessageToWindow(string message, int row, int column, int fontSize = 12, ROIColors color = ROIColors.black, string mode = "window")
         {
             try
             {
-                HCtrl.addMessageVar(message, row, column, fontSize,color,mode);
+                HCtrl.addMessageVar(message, row, column, fontSize, color, mode);
             }
             catch { }
         }
@@ -198,7 +182,7 @@ namespace BingLibrary.Vision
         {
             try
             {
-                AddObjectToWindow(CurrentImage);
+                AddImageToWindow(CurrentImage);
             }
             catch { }
         }

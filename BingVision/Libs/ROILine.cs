@@ -12,7 +12,7 @@ namespace BingLibrary.Vision
 
         public ROILine()
         {
-            NumHandles = 3;        // two end points of line
+            numHandles = 3;        // two end points of line
             activeHandleIdx = 2;
             arrowHandleXLD = new HXLDCont();
             arrowHandleXLD.GenEmptyObj();
@@ -43,13 +43,13 @@ namespace BingLibrary.Vision
         public override double distToClosestHandle(double x, double y)
         {
             double max = 10000;
-            double[] val = new double[NumHandles];
+            double[] val = new double[numHandles];
 
             val[0] = HMisc.DistancePp(y, x, row1, col1); // upper left
             val[1] = HMisc.DistancePp(y, x, row2, col2); // upper right
             val[2] = HMisc.DistancePp(y, x, midR, midC); // midpoint
 
-            for (int i = 0; i < NumHandles; i++)
+            for (int i = 0; i < numHandles; i++)
             {
                 if (val[i] < max)
                 {

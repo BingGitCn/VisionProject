@@ -25,7 +25,7 @@ namespace BingLibrary.Vision
 
         public ROIRectangle2()
         {
-            NumHandles = 6; // 4 corners +  1 midpoint + 1 rotationpoint
+            numHandles = 6; // 4 corners +  1 midpoint + 1 rotationpoint
             activeHandleIdx = 4;
         }
 
@@ -76,7 +76,7 @@ namespace BingLibrary.Vision
             window.DispRectangle2(midR, midC, -phi, length1, length2);
             if (SizeEnable && ShowRect)
             {
-                for (int i = 0; i < NumHandles; i++)
+                for (int i = 0; i < numHandles; i++)
                     window.DispRectangle2(rows[i].D, cols[i].D, -phi, 5, 5);
 
                 window.DispArrow(midR, midC, midR + (Math.Sin(phi) * length1 * 1.2),
@@ -87,12 +87,12 @@ namespace BingLibrary.Vision
         public override double distToClosestHandle(double x, double y)
         {
             double max = 10000;
-            double[] val = new double[NumHandles];
+            double[] val = new double[numHandles];
 
-            for (int i = 0; i < NumHandles; i++)
+            for (int i = 0; i < numHandles; i++)
                 val[i] = HMisc.DistancePp(y, x, rows[i].D, cols[i].D);
 
-            for (int i = 0; i < NumHandles; i++)
+            for (int i = 0; i < numHandles; i++)
             {
                 if (val[i] < max)
                 {

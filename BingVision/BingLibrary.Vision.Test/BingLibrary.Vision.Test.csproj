@@ -104,10 +104,6 @@
       <Project>{c4f5c5de-7ea8-47fe-8218-48138f48965f}</Project>
       <Name>BingLibrary.Vision</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BingLibrary.Vision.Units\BingLibrary.Vision.Units.csproj">
-      <Project>{b05f6add-2c97-47b7-93f2-2e48914d8d12}</Project>
-      <Name>BingLibrary.Vision.Units</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

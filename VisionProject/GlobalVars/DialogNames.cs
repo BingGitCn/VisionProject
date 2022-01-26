@@ -18,8 +18,9 @@ namespace VisionProject.GlobalVars
             { "无",""},
             { "测试","E1B3C54E-93A6-421D-9D8A-F592B13E8B1A"},
             { "保存图像","A5E81A1F-EDDA-447C-B196-8ABF2F04B58E"},
+            { "分离产品","C3D5C5B4-DBE3-4299-AAF0-4DFD54FBAF3E"},
         };
-            
+
     }
 
    

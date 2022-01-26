@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BingLibrary.Vision", "BingL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BingLibrary.Vision.Test", "BingLibrary.Vision.Test\BingLibrary.Vision.Test.csproj", "{726C509E-8256-4A8F-9D14-FA4745F83AED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BingLibrary.Vision.Units", "BingLibrary.Vision.Units\BingLibrary.Vision.Units.csproj", "{B05F6ADD-2C97-47B7-93F2-2E48914D8D12}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{726C509E-8256-4A8F-9D14-FA4745F83AED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{726C509E-8256-4A8F-9D14-FA4745F83AED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{726C509E-8256-4A8F-9D14-FA4745F83AED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B05F6ADD-2C97-47B7-93F2-2E48914D8D12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B05F6ADD-2C97-47B7-93F2-2E48914D8D12}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B05F6ADD-2C97-47B7-93F2-2E48914D8D12}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B05F6ADD-2C97-47B7-93F2-2E48914D8D12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

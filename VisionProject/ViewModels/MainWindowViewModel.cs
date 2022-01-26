@@ -415,7 +415,6 @@ namespace VisionProject.ViewModels
                             }
                             catch {  Log.Error("导出产量统计失败。"); }
                         }
-
                         break;
                 }
             }));

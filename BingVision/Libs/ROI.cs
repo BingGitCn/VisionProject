@@ -5,7 +5,7 @@ namespace BingLibrary.Vision
 {
     public enum ROIColors
     {
-        red, green, blue, violet, gray, cyan, magenta, yelow, coral, pink, orange, gold, navy
+        red, green, blue, violet, gray, cyan, magenta, yelow, coral, pink, orange, gold, navy, black
     }
 
     [Serializable]
@@ -17,27 +17,24 @@ namespace BingLibrary.Vision
 
         public string ROIColor { set; get; }
 
-        public int ROIId { get; set; }
-        private bool mSizeEnable = true;
-        public bool SizeEnable { get { return mSizeEnable; } set { mSizeEnable = value; } }
-        private bool mShowRect = false;
-        public bool ShowRect { get { return mShowRect; } set { mShowRect = value; } }
+        public int ROIID { get; set; }
+        public bool SizeEnable { set; get; } = true;
+
+        public bool ShowRect { set; get; }
 
         public virtual void show()
         {
         }
 
-        protected int NumHandles;
+        protected int numHandles;//可以调整（拖动）的句柄数
 
         protected int activeHandleIdx;
 
-        protected int OperatorFlag;
-
         public HTuple flagLineStyle = new HTuple();//halcon13修改=new htuple(),否则报null错误
 
-        public const int POSITIVE_FLAG = ROIController.MODE_ROI_POS;
+        public ModeROI POSITIVE_FLAG = ModeROI.Roi_Positive;
 
-        public const int NEGATIVE_FLAG = ROIController.MODE_ROI_NEG;
+        public ModeROI NEGATIVE_FLAG = ModeROI.Roi_Negative;
 
         public const int ROI_TYPE_LINE = 10;
         public const int ROI_TYPE_CIRCLE = 11;
@@ -103,7 +100,7 @@ namespace BingLibrary.Vision
 
         public int getNumHandles()
         {
-            return NumHandles;
+            return numHandles;
         }
 
         public int getActHandleIdx()
@@ -111,22 +108,15 @@ namespace BingLibrary.Vision
             return activeHandleIdx;
         }
 
-        public int getOperatorFlag()
+        public void setOperatorFlag(ModeROI flag)
         {
-            return OperatorFlag;
-        }
-
-        public void setOperatorFlag(int flag)
-        {
-            OperatorFlag = flag;
-
-            switch (OperatorFlag)
+            switch (flag)
             {
-                case ROI.POSITIVE_FLAG:
+                case ModeROI.Roi_Positive:
                     flagLineStyle = posOperation;
                     break;
 
-                case ROI.NEGATIVE_FLAG:
+                case ModeROI.Roi_Negative:
                     flagLineStyle = negOperation;
                     break;
 

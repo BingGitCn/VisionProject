@@ -102,7 +102,7 @@ namespace VisionProject.ViewModels
             while (true)
             {
                 await Task.Delay(100);
-
+                
                 if (false)
                 {
                     int index = 1;//产品位置索引

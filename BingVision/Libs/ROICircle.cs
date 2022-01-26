@@ -11,7 +11,7 @@ namespace BingLibrary.Vision
 
         public ROICircle()
         {
-            NumHandles = 2; // one at corner of circle + midpoint
+            numHandles = 2; // one at corner of circle + midpoint
             activeHandleIdx = 1;
         }
 
@@ -48,11 +48,11 @@ namespace BingLibrary.Vision
         public override double distToClosestHandle(double x, double y)
         {
             double max = 10000;
-            double[] val = new double[NumHandles];
+            double[] val = new double[numHandles];
 
             val[0] = HMisc.DistancePp(y, x, row1, col1); // border handle
             val[1] = HMisc.DistancePp(y, x, midR, midC); // midpoint
-            for (int i = 0; i < NumHandles; i++)
+            for (int i = 0; i < numHandles; i++)
             {
                 if (val[i] < max)
                 {
@@ -67,7 +67,6 @@ namespace BingLibrary.Vision
         {
             HTuple dismax, dismin = 0;
             HOperatorSet.DistancePr(getRegion(), y, x, out dismin, out dismax);
-            //System.Diagnostics.Debug.Print(dismin + "," + dismax);
             return dismin;
         }
 

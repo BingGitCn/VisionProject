@@ -14,7 +14,6 @@
             <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
-            
             <hwin:HWindowControlWPF x:Name="iwin" HInitWindow="iwin_HInitWindow" PreviewKeyDown="iwin_PreviewKeyDown" PreviewKeyUp="iwin_PreviewKeyUp">
                 <hwin:HWindowControlWPF.ContextMenu>
                     <ContextMenu x:Name="CM">
@@ -35,7 +34,7 @@
                             <MenuItem Header="cadet blue" Click="MenuItem_Click_7"></MenuItem>
                             <MenuItem Header="indian red" Click="MenuItem_Click_8"></MenuItem>
                         </MenuItem>-->
-                        <MenuItem  Visibility="Collapsed" Header="更多.."  IsChecked="False" IsCheckable="True" Click="MenuItem_Click_12" Margin="2"></MenuItem>
+                        <MenuItem  Header="更多.."  IsChecked="False" IsCheckable="True" Click="MenuItem_Click_12" Margin="2"></MenuItem>
                     </ContextMenu>
                 </hwin:HWindowControlWPF.ContextMenu>
             </hwin:HWindowControlWPF>
@@ -54,7 +53,6 @@
             <StackPanel Orientation="Vertical">
                 <CheckBox Margin="5" x:Name="c1" Content="显示水印" Click="CheckBox_Click"></CheckBox>
                 <CheckBox Margin="5" x:Name="c2" Content="显示轮廓" Click="CheckBox_Click_1"></CheckBox>
-                <CheckBox Margin="5" x:Name="c3" Content="显示十字" Click="CheckBox_Click_2"></CheckBox>
                 <CheckBox Margin="5" x:Name="c4" Content="允许编辑" Click="c4_Click"></CheckBox>
                 <ComboBox Margin="5" x:Name="colorSet" DropDownClosed="colorSet_DropDownClosed">
                     <ComboBoxItem Content="White"></ComboBoxItem>
@@ -70,7 +68,8 @@
                 </ComboBox>
 
                 <Button Margin="5" Content="绘制矩形框" Click="Button_Click"></Button>
-                <Button Margin="5" Content="删除矩形框" Click="Button_Click_1"></Button>
+                <Button Margin="5" Content="绘制区域" Click="Button_Click_2"></Button>
+                <Button Margin="5" Content="删除" Click="Button_Click_1"></Button>
             </StackPanel>
         </Grid>
     </Grid>
