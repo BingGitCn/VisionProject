@@ -95,6 +95,7 @@ namespace BingLibrary.Vision
 
             HOperatorSet.ClearWindow(iwin.HalconWindow);
             windowData.Repaint();
+            HOperatorSet.SetSystem("clip_region", "false");
         }
 
         //public BackGroundColor WindowBackgroud
