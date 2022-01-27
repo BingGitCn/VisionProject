@@ -13,7 +13,7 @@
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0">
+        <Grid Grid.Column="0" >
             <hwin:HWindowControlWPF x:Name="iwin" HInitWindow="iwin_HInitWindow" PreviewKeyDown="iwin_PreviewKeyDown" PreviewKeyUp="iwin_PreviewKeyUp">
                 <hwin:HWindowControlWPF.ContextMenu>
                     <ContextMenu x:Name="CM">

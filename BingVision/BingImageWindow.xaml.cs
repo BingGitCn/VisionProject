@@ -20,6 +20,7 @@ namespace BingLibrary.Vision
         public BingImageWindow()
         {
             InitializeComponent();
+
         }
 
         private string OpenImageDialog()
@@ -72,7 +73,7 @@ namespace BingLibrary.Vision
             windowData.InitHWindow(iwin.HalconWindow);
 
             windowData.HCtrl.isShowWaterString = config.IsShowWaterString;
-            windowData.HCtrl.DrawMode = config.IsShowMargin ? "margin" : "fill";
+            windowData.HCtrl.DrawMode = config.IsShowMargin ? HalconDrawing.margin : HalconDrawing.fill;
             windowData.HCtrl.canEdit = config.IsEdit;
             HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color",
                 config.ColorIndex == 0 ? "white"
@@ -95,7 +96,7 @@ namespace BingLibrary.Vision
 
             HOperatorSet.ClearWindow(iwin.HalconWindow);
             windowData.Repaint();
-            HOperatorSet.SetSystem("clip_region", "false");
+            HOperatorSet.SetSystem("clip_region","false");
         }
 
         //public BackGroundColor WindowBackgroud
@@ -208,7 +209,7 @@ namespace BingLibrary.Vision
 
         private void MenuItem_Click_9(object sender, RoutedEventArgs e)
         {
-            windowData.HCtrl.DrawMode = (sender as MenuItem).IsChecked == true ? "margin" : "fill";
+            windowData.HCtrl.DrawMode = (sender as MenuItem).IsChecked == true ? HalconDrawing.margin : HalconDrawing.fill;
             windowData.Repaint();
         }
 
@@ -280,7 +281,7 @@ namespace BingLibrary.Vision
 
         private void CheckBox_Click_1(object sender, RoutedEventArgs e)
         {
-            windowData.HCtrl.DrawMode = (sender as CheckBox).IsChecked == true ? "margin" : "fill";
+            windowData.HCtrl.DrawMode = (sender as CheckBox).IsChecked == true ? HalconDrawing.margin : HalconDrawing.fill;
             windowData.Repaint();
             config.IsShowMargin = (sender as CheckBox).IsChecked == true;
             Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");

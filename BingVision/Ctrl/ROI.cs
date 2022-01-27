@@ -3,10 +3,7 @@ using System;
 
 namespace BingLibrary.Vision
 {
-    public enum ROIColors
-    {
-        red, green, blue, violet, gray, cyan, magenta, yelow, coral, pink, orange, gold, navy, black
-    }
+   
 
     [Serializable]
     public class ROI
@@ -15,7 +12,7 @@ namespace BingLibrary.Vision
 
         public string ROIResult { set; get; }
 
-        public string ROIColor { set; get; }
+        public HalconColors ROIColor { set; get; } = HalconColors.º£¾üÀ¶É«;
 
         public int ROIID { get; set; }
         public bool SizeEnable { set; get; } = true;

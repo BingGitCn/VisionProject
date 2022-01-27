@@ -1,3 +1,4 @@
+using BingLibrary.Extension;
 using HalconDotNet;
 using System;
 using System.Collections.ObjectModel;
@@ -19,9 +20,9 @@ namespace BingLibrary.Vision
         public HWndCtrl viewController;
         public ObservableCollection<ROI> ROIList;
 
-        private string activeCol = "green";//"green,cyan";
-        private string activeHdlCol = "violet";
-        private string inactiveCol = "medium slate blue";//"magenta";//"yellow";
+        private HalconColors activeCol =  HalconColors.бли╚;//"green,cyan";
+        private HalconColors activeHdlCol =  HalconColors.вои╚;
+        private HalconColors inactiveCol =  HalconColors.ю╤и╚;//"magenta";//"yellow";
 
         public ROI roi;
 
@@ -154,34 +155,33 @@ namespace BingLibrary.Vision
         /// </summary>
         /// <param name="window"></param>
         /// <param name="drawMode"></param>
-        public void paintData(HalconDotNet.HWindow window, string drawMode)
+        public void paintData(HalconDotNet.HWindow window, HalconDrawing drawMode)
         {
-            //window.SetDraw("margin");
-            window.SetDraw(drawMode);
+            window.SetDraw(drawMode.ToDescription());
             window.SetLineWidth(2);
 
             if (ROIList.Count > 0)
             {
-                window.SetColor(inactiveCol);
+                window.SetColor(inactiveCol.ToDescription());
 
                 for (int i = 0; i < ROIList.Count; i++)
                 {
-                    if (string.IsNullOrEmpty(ROIList[i].ROIColor))
-                        window.SetColor(inactiveCol);
+                    if (string.IsNullOrEmpty(ROIList[i].ROIColor.ToDescription()))
+                        window.SetColor(inactiveCol.ToDescription());
                     else
-                        window.SetColor(ROIList[i].ROIColor);
+                        window.SetColor(ROIList[i].ROIColor.ToDescription());
                     window.SetLineStyle(((ROI)ROIList[i]).flagLineStyle);
                     ROIList[i].draw(window);
                 }
 
                 if (ActiveROIidx != -1)
                 {
-                    window.SetColor(activeCol);
+                    window.SetColor(activeCol.ToDescription());
                     window.SetLineStyle(((ROI)ROIList[ActiveROIidx]).flagLineStyle);
 
                     ROIList[ActiveROIidx].draw(window);
 
-                    window.SetColor(activeHdlCol);
+                    window.SetColor(activeHdlCol.ToDescription());
                     ROIList[ActiveROIidx].displayActive(window);
                 }
             }

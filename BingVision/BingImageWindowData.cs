@@ -1,4 +1,5 @@
 ﻿using HalconDotNet;
+using BingLibrary.Extension;
 
 namespace BingLibrary.Vision
 {
@@ -45,6 +46,7 @@ namespace BingLibrary.Vision
         public void DrawMode(bool isUse)
         {
             HCtrl.isDrawing = isUse;
+            HalconAPI.CancelDraw();
         }
 
         /// <summary>
@@ -122,11 +124,11 @@ namespace BingLibrary.Vision
         /// </summary>
         /// <param name="hRegion"></param>
         /// <param name="roiColor"></param>
-        public void AddRegionToROIList(HRegion hRegion, ROIColors roiColor = ROIColors.red)
+        public void AddRegionToROIList(HRegion hRegion, HalconColors roiColor = HalconColors.红色)
         {
             try
             {
-                RCtrl.AddROI(new ROIRegion(hRegion));
+                RCtrl.AddROI(new ROIRegion(hRegion) { ROIColor=roiColor});
             }
             catch { }
         }
@@ -154,7 +156,7 @@ namespace BingLibrary.Vision
         /// <param name="row"></param>
         /// <param name="column"></param>
         /// <param name="fontSize"></param>
-        public void AddMessageToWindow(string message, int row, int column, int fontSize = 12, ROIColors color = ROIColors.black, string mode = "window")
+        public void AddMessageToWindow(string message, int row, int column, int fontSize = 12, HalconColors color = HalconColors.黑色, HalconCoordinateSystem mode =  HalconCoordinateSystem.window)
         {
             try
             {

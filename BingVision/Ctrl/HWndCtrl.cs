@@ -1,6 +1,8 @@
+using BingLibrary.Extension;
 using HalconDotNet;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace BingLibrary.Vision
@@ -20,15 +22,15 @@ namespace BingLibrary.Vision
 
         public double PositionY { get; set; } = 0;
 
-        public ROIColors ShowColor { get; set; } = ROIColors.green;
+        public HalconColors ShowColor { get; set; } = HalconColors.绿色;
 
         public string ShowContent { get; set; } = string.Empty;
 
         public int ShowFontSize { set; get; }
 
-        public string ShowMode { set; get; }
+        public HalconCoordinateSystem ShowMode { set; get; }
 
-        public MessageBase(double posX, double posY, string text, int fontsize = 12, ROIColors color = ROIColors.green, string mode = "window")
+        public MessageBase(double posX, double posY, string text, int fontsize = 12, HalconColors color = HalconColors.绿色, HalconCoordinateSystem mode =  HalconCoordinateSystem.window)
         {
             PositionX = posX;
             PositionY = posY;
@@ -52,7 +54,7 @@ namespace BingLibrary.Vision
         public bool canEdit = false;
 
         //显示模式
-        public string DrawMode = "margin";
+        public HalconDrawing DrawMode =  HalconDrawing.margin;
 
         //显示水印
         public bool isShowWaterString = false;
@@ -102,6 +104,7 @@ namespace BingLibrary.Vision
             viewPort.HMouseMove += ViewPort_HMouseMove;
             viewPort.HMouseWheel += ViewPort_HMouseWheel;
             viewPort.SizeChanged += ViewPort_SizeChanged;
+          
 
             initFont(viewPort.HalconWindow);
         }
@@ -181,6 +184,10 @@ namespace BingLibrary.Vision
         private void ViewPort_HMouseUp(object sender, HMouseEventArgsWPF e)
         {
             mousePressed = false;
+
+            if (e.Button == System.Windows.Input.MouseButton.Left)
+                if (isDrawing)
+                    HalconMicroSoft.FinishDraw();
         }
 
         private void ViewPort_HMouseWheel(object sender, HMouseEventArgsWPF e)
@@ -389,15 +396,15 @@ namespace BingLibrary.Vision
                     roiManager.paintData(window, DrawMode);
 
                 HSystem.SetSystem("flush_graphic", "true");
-                window.SetDraw(DrawMode);
-                window.SetColor("black");
+                window.SetDraw(DrawMode.ToDescription());
+                window.SetColor(HalconColors.黑色.ToDescription());
                 window.DispLine(-100.0, -100.0, -101.0, -101.0);
 
                 if (isShowWaterString)
                 {
                     try
                     {
-                        HOperatorSet.DispText(window, WaterString, "window", "bottom",
+                        HOperatorSet.DispText(window, WaterString, HalconCoordinateSystem.window.ToDescription(), "bottom",
                             "left", "black", "box_color", "#ffffff77");
                     }
                     catch { }
@@ -421,8 +428,8 @@ namespace BingLibrary.Vision
                                 HOperatorSet.SetFont(window, (hv_Font.TupleSelect(0)) + "-" + messages[i].ShowFontSize.ToString());
                             }
                         }
-                        HOperatorSet.DispText(window, messages[i].ShowContent, messages[i].ShowMode, new HTuple(messages[i].PositionX),
-                            new HTuple(messages[i].PositionY), messages[i].ShowColor.ToString(), "box_color", "#ffffff77");
+                        HOperatorSet.DispText(window, messages[i].ShowContent, messages[i].ShowMode.ToDescription(), new HTuple(messages[i].PositionX),
+                            new HTuple(messages[i].PositionY), messages[i].ShowColor.ToDescription(), "box_color", "#ffffff77");
                     }
                     catch { }
                 }
@@ -439,7 +446,7 @@ namespace BingLibrary.Vision
 
         private List<MessageBase> messages = new List<MessageBase>();
 
-        public void addMessageVar(string message, int row, int column, int fontsize = 12, ROIColors color = ROIColors.green, string mode = "window")
+        public void addMessageVar(string message, int row, int column, int fontsize = 12, HalconColors color = HalconColors.绿色, HalconCoordinateSystem mode =  HalconCoordinateSystem.window)
         {
             messages.Add(new MessageBase(row, column, message, fontsize, color, mode));
         }
