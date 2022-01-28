@@ -50,10 +50,10 @@ namespace BingLibrary.Vision
             updateHandlePos();
         }
 
-        public void createROI(double midX, double midY, double mphi, double mlength1, double mlength2)
+        public override void createROIRect2(double midX, double midY, double mphi, double mlength1, double mlength2)
         {
-            midR = midY;
-            midC = midX;
+            midR = midY; 
+            midC = midX; 
 
             length1 = mlength1;
             length2 = mlength2;
@@ -77,7 +77,7 @@ namespace BingLibrary.Vision
             if (SizeEnable && ShowRect)
             {
                 for (int i = 0; i < numHandles; i++)
-                    window.DispRectangle2(rows[i].D, cols[i].D, -phi, 5, 5);
+                    window.DispRectangle2(rows[i].D, cols[i].D, -phi, 15, 15);
 
                 window.DispArrow(midR, midC, midR + (Math.Sin(phi) * length1 * 1.2),
                     midC + (Math.Cos(phi) * length1 * 1.2), 2.0);
@@ -117,13 +117,13 @@ namespace BingLibrary.Vision
                 return;
             window.DispRectangle2(rows[activeHandleIdx].D,
                                   cols[activeHandleIdx].D,
-                                  -phi, 5, 5);
+                                  -phi, 15, 15);
 
             if (activeHandleIdx == 5)
                 window.DispArrow(midR, midC,
                                  midR + (Math.Sin(phi) * length1 * 1.2),
                                  midC + (Math.Cos(phi) * length1 * 1.2),
-                                 2.0);
+                                 15.0);
         }
 
         public override HRegion getRegion()

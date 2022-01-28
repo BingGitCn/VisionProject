@@ -30,6 +30,7 @@ namespace BingLibrary.Vision
 
         public HalconCoordinateSystem ShowMode { set; get; }
 
+
         public MessageBase(double posX, double posY, string text, int fontsize = 12, HalconColors color = HalconColors.绿色, HalconCoordinateSystem mode =  HalconCoordinateSystem.window)
         {
             PositionX = posX;
@@ -55,6 +56,9 @@ namespace BingLibrary.Vision
 
         //显示模式
         public HalconDrawing DrawMode =  HalconDrawing.margin;
+
+        //绘制结束方式
+        public HalconDrawMode DrawFinishMode = HalconDrawMode.rightButton;
 
         //显示水印
         public bool isShowWaterString = false;
@@ -185,9 +189,10 @@ namespace BingLibrary.Vision
         {
             mousePressed = false;
 
-            if (e.Button == System.Windows.Input.MouseButton.Left)
-                if (isDrawing)
-                    HalconMicroSoft.FinishDraw();
+            if(DrawFinishMode== HalconDrawMode.directly)
+                if (e.Button == System.Windows.Input.MouseButton.Left)
+                    if (isDrawing)
+                        HalconMicroSoft.FinishDraw();
         }
 
         private void ViewPort_HMouseWheel(object sender, HMouseEventArgsWPF e)

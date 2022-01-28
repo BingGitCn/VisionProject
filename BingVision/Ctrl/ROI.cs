@@ -17,7 +17,7 @@ namespace BingLibrary.Vision
         public int ROIID { get; set; }
         public bool SizeEnable { set; get; } = true;
 
-        public bool ShowRect { set; get; }
+        public bool ShowRect { set; get; } = true;
 
         public virtual void show()
         {
@@ -53,7 +53,16 @@ namespace BingLibrary.Vision
         {
         }
 
+        public virtual void createROICircle(double midX, double midY,double radius)
+        {
+        }
+        public virtual void createROILine(double r1, double c1, double r2, double c2) 
+        {
+        }
         public virtual void createROIRect1(double r1, double c1, double r2, double c2)
+        {
+        }
+        public virtual void createROIRect2(double midX, double midY, double mphi, double mlength1, double mlength2)
         {
         }
 

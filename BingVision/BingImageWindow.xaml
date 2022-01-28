@@ -53,8 +53,9 @@
             <StackPanel Orientation="Vertical">
                 <CheckBox Margin="5" x:Name="c1" Content="显示水印" Click="CheckBox_Click"></CheckBox>
                 <CheckBox Margin="5" x:Name="c2" Content="显示轮廓" Click="CheckBox_Click_1"></CheckBox>
+                <CheckBox Margin="5" x:Name="c5" Content="右键结束绘制" Click="c5_Click"></CheckBox>
                 <CheckBox Margin="5" x:Name="c4" Content="允许编辑" Click="c4_Click"></CheckBox>
-                <ComboBox Margin="5" x:Name="colorSet" DropDownClosed="colorSet_DropDownClosed">
+                <ComboBox Visibility="Collapsed" Margin="5" x:Name="colorSet" DropDownClosed="colorSet_DropDownClosed">
                     <ComboBoxItem Content="White"></ComboBoxItem>
                     <ComboBoxItem Content="Black" IsSelected="True"></ComboBoxItem>
                     <ComboBoxItem Content="Gray"></ComboBoxItem>
@@ -66,9 +67,15 @@
                     <ComboBoxItem Content="Indian Red"></ComboBoxItem>
                     <ComboBoxItem Content="Dark Olive Green"></ComboBoxItem>
                 </ComboBox>
-
-                <Button Margin="5" Content="绘制矩形框" Click="Button_Click"></Button>
-                <Button Margin="5" Content="绘制区域" Click="Button_Click_2"></Button>
+                <TextBlock Margin="5 10 5 5" Text="以下示例"></TextBlock>
+                <ComboBox x:Name="cb" Margin="5">
+                    <ComboBoxItem Content="绘制区域" IsSelected="True"></ComboBoxItem>
+                    <ComboBoxItem Content="绘制直线"></ComboBoxItem>
+                    <ComboBoxItem Content="绘制圆"></ComboBoxItem>
+                    <ComboBoxItem Content="绘制矩形"></ComboBoxItem>
+                    <ComboBoxItem Content="绘制旋转矩形"></ComboBoxItem>
+                </ComboBox>
+                <Button Margin="5" Content="点击绘制" Click="Button_Click"></Button>
                 <Button Margin="5" Content="删除" Click="Button_Click_1"></Button>
             </StackPanel>
         </Grid>

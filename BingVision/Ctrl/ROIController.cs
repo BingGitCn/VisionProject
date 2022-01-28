@@ -199,7 +199,7 @@ namespace BingLibrary.Vision
                     if (ROIList[i].SizeEnable == false)//SizeEnable flase¿˝Õ‚
                         continue;
                     dist = ROIList[i].distToClosestROI(imgX, imgY);
-                    ROIList[i].ShowRect = false;
+                    ROIList[i].ShowRect = true;
                     if (dist == 0.0)
                     {
                         idxROI = i;

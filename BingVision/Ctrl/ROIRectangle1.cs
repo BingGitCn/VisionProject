@@ -47,7 +47,7 @@ namespace BingLibrary.Vision
             col2 = c2;
         }
 
-        private int smallregionwidth = 10;//4边小矩形的大小
+        private int smallregionwidth = 15;//4边小矩形的大小
         private HTuple hv_Font = new HTuple();
         private HTuple hv_OS = new HTuple();
 

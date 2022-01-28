@@ -26,9 +26,11 @@ namespace BingLibrary.Vision
             col1 = midC + radius;
         }
 
-        public void createROI(double midX, double midY, double mradius)
+        
+
+        public override void createROICircle(double midX, double midY, double mradius)
         {
-            midR = midY;
+            midR = midY; 
             midC = midX;
             radius = mradius;
             row1 = midR;
@@ -40,8 +42,8 @@ namespace BingLibrary.Vision
             window.DispCircle(midR, midC, radius);
             if (SizeEnable && ShowRect)
             {
-                window.DispRectangle2(row1, col1, 0, 5, 5);
-                window.DispRectangle2(midR, midC, 0, 5, 5);
+                window.DispRectangle2(row1, col1, 0, 15, 15);
+                window.DispRectangle2(midR, midC, 0, 15, 15);
             }
         }
 
@@ -77,11 +79,11 @@ namespace BingLibrary.Vision
             switch (activeHandleIdx)
             {
                 case 0:
-                    window.DispRectangle2(row1, col1, 0, 5, 5);
+                    window.DispRectangle2(row1, col1, 0, 15, 15);
                     break;
 
                 case 1:
-                    window.DispRectangle2(midR, midC, 0, 5, 5);
+                    window.DispRectangle2(midR, midC, 0, 15, 15);
                     break;
             }
         }

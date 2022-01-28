@@ -1,5 +1,6 @@
 ﻿using HalconDotNet;
 using BingLibrary.Extension;
+using System.Collections.ObjectModel;
 
 namespace BingLibrary.Vision
 {
@@ -134,6 +135,17 @@ namespace BingLibrary.Vision
         }
 
         /// <summary>
+        /// 获取Roi List
+        /// </summary>
+        /// <param name="hRegion"></param>
+        /// <param name="roiColor"></param>
+        /// <returns></returns>
+        public ObservableCollection<ROI> GetROIList(HRegion hRegion, HalconColors roiColor = HalconColors.红色)
+        {
+               return RCtrl.ROIList;
+        }
+
+        /// <summary>
         /// 设置ROI当前索引
         /// </summary>
         /// <param name="index"></param>
@@ -147,6 +159,16 @@ namespace BingLibrary.Vision
                     Repaint();
             }
             catch { }
+        }
+
+        /// <summary>
+        /// 获取活动的ROI
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public ROI GetActive(int index)
+        {
+              return  RCtrl.getActiveROI();
         }
 
         /// <summary>

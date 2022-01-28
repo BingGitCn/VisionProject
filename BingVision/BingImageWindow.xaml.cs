@@ -75,6 +75,8 @@ namespace BingLibrary.Vision
             windowData.HCtrl.isShowWaterString = config.IsShowWaterString;
             windowData.HCtrl.DrawMode = config.IsShowMargin ? HalconDrawing.margin : HalconDrawing.fill;
             windowData.HCtrl.canEdit = config.IsEdit;
+            windowData.HCtrl.DrawFinishMode = config.IsDrawFinish? HalconDrawMode.rightButton: HalconDrawMode.directly;
+
             HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color",
                 config.ColorIndex == 0 ? "white"
                : config.ColorIndex == 1 ? "black"
@@ -89,9 +91,11 @@ namespace BingLibrary.Vision
 
                : "black");
 
+
             c1.IsChecked = config.IsShowWaterString;
             c2.IsChecked = config.IsShowMargin;
             c4.IsChecked = config.IsEdit;
+            c5.IsChecked = config.IsDrawFinish;
             colorSet.SelectedIndex = config.ColorIndex;
 
             HOperatorSet.ClearWindow(iwin.HalconWindow);
@@ -316,13 +320,57 @@ namespace BingLibrary.Vision
         {
             (sender as Button).IsEnabled = false;
             windowData.DrawMode(true);
-            ROIRectangle1 rr = new ROIRectangle1();
-            double r1, c1, r2, c2;
-            windowData.hWindow.DrawRectangle1(out r1, out c1, out r2, out c2);
-            rr.createROIRect1(r1, c1, r2, c2);
-            rr.draw(iwin.HalconWindow);
-            rr.ROIName = getRoiName();
-            windowData.RCtrl.ROIList.Add(rr);
+
+            if (cb.SelectedIndex == 0)
+            {
+
+                ROIRegion rr0 = new ROIRegion(windowData.hWindow.DrawRegion());
+                rr0.draw(iwin.HalconWindow);
+                rr0.ROIName = getRoiName();
+                windowData.RCtrl.ROIList.Add(rr0);
+            }
+            else if (cb.SelectedIndex == 1)
+            {
+                ROILine rl1 = new ROILine();
+                double r1, c1, r2, c2;
+                windowData.hWindow.DrawLine(out r1, out c1, out r2, out c2);
+                rl1.createROILine(r1, c1, r2, c2);
+                rl1.draw(iwin.HalconWindow);
+                rl1.ROIName = getRoiName();
+                windowData.RCtrl.ROIList.Add(rl1);
+            }
+            else if (cb.SelectedIndex == 2)
+            {
+                ROICircle rc2 = new ROICircle();
+                double r1, c1, r;
+                windowData.hWindow.DrawCircle(out r1, out c1, out r);
+                rc2.createROICircle(c1, r1, r);
+                rc2.draw(iwin.HalconWindow);
+                rc2.ROIName = getRoiName();
+                windowData.RCtrl.ROIList.Add(rc2);
+            }
+            else if (cb.SelectedIndex == 3)
+            {
+                ROIRectangle1 rr3 = new ROIRectangle1();
+                double r1, c1, r2, c2;
+                windowData.hWindow.DrawRectangle1(out r1, out c1, out r2, out c2);
+                rr3.createROIRect1(r1, c1, r2, c2);
+                rr3.draw(iwin.HalconWindow);
+                rr3.ROIName = getRoiName();
+                windowData.RCtrl.ROIList.Add(rr3);
+            }
+
+            else if (cb.SelectedIndex == 4)
+            {
+                ROIRectangle2 rr4 = new ROIRectangle2();
+                double r1, c1, p, l1,l2;
+                windowData.hWindow.DrawRectangle2(out c1, out r1, out p, out l1, out l2);
+                rr4.createROIRect2(r1, c1, -p, l1, l2);
+                rr4.draw(iwin.HalconWindow);
+                rr4.ROIName = getRoiName();
+                windowData.RCtrl.ROIList.Add(rr4);
+            }
+
 
             windowData.DrawMode(false);
             (sender as Button).IsEnabled = true;
@@ -372,6 +420,13 @@ namespace BingLibrary.Vision
             (sender as Button).IsEnabled = true;
         }
 
+        private void c5_Click(object sender, RoutedEventArgs e)
+        {
+            windowData.HCtrl.DrawFinishMode = ((sender as CheckBox).IsChecked == true) ? HalconDrawMode.rightButton : HalconDrawMode.directly;
+            config.IsDrawFinish = (sender as CheckBox).IsChecked == true;
+            Serialize.WriteJson(config, System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
+        }
+
         private void iwin_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             mouse_X0_old = 0; mouse_Y0_old = 0;
@@ -391,11 +446,13 @@ namespace BingLibrary.Vision
 
     public class Config
     {
-        public bool IsShowHat { set; get; } = false;
+        public bool IsDrawFinish { set; get; } = false; 
         public bool IsShowMargin { set; get; } = true;
         public bool IsShowWaterString { set; get; } = false;
         public bool IsEdit { set; get; } = false;
         public int ColorIndex { set; get; } = 1;
+
+
     }
 
     public class Serialize

@@ -18,15 +18,15 @@ namespace BingLibrary.Vision
             arrowHandleXLD.GenEmptyObj();
         }
 
-        public override void createROI(double midX, double midY)
+        public override void createROILine(double row1, double col1, double row2, double col2)
         {
-            midR = midY;
-            midC = midX;
+            midR = (row1+row2)/2;
+            midC = (col1+col2)/2;
 
-            row1 = midR;
-            col1 = midC - 50;
-            row2 = midR;
-            col2 = midC + 50;
+           this. row1 = row1;
+            this.col1 = col1;
+          this.row2 = row2;
+            this.col2 = col2;
 
             updateArrowHandle();
         }
@@ -35,9 +35,9 @@ namespace BingLibrary.Vision
         {
             window.DispLine(row1, col1, row2, col2);
 
-            window.DispRectangle2(row1, col1, 0, 5, 5);
+            window.DispRectangle2(row1, col1, 0, 15, 15);
             window.DispObj(arrowHandleXLD);  //window.DispRectangle2( row2, col2, 0, 5, 5);
-            window.DispRectangle2(midR, midC, 0, 5, 5);
+            window.DispRectangle2(midR, midC, 0, 15, 15);
         }
 
         public override double distToClosestHandle(double x, double y)
@@ -66,7 +66,7 @@ namespace BingLibrary.Vision
             switch (activeHandleIdx)
             {
                 case 0:
-                    window.DispRectangle2(row1, col1, 0, 5, 5);
+                    window.DispRectangle2(row1, col1, 0, 15, 15);
                     break;
 
                 case 1:
@@ -74,7 +74,7 @@ namespace BingLibrary.Vision
                     break;
 
                 case 2:
-                    window.DispRectangle2(midR, midC, 0, 5, 5);
+                    window.DispRectangle2(midR, midC, 0, 15, 15);
                     break;
             }
         }
