@@ -101,7 +101,7 @@ namespace BingLibrary.Location
                     File.WriteAllText(selectLanguagePath, selectLanguage);
                 }
                 catch (Exception ex) { }
-            }
+            }  
         }
          
         public override event Action<CultureInfo> LanguageChanged;
