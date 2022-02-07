@@ -9,7 +9,7 @@
     <Grid>
         <Grid.Resources>
             <local:TimeSpanIncreaser x:Key="TimeSpanIncreaser"
-                                      Start="0:0:0.08"
+                                      Start="0:0:1.08"
                                       Step="0:0:0.08" />
         </Grid.Resources>
 
@@ -30,7 +30,7 @@
                 <FrameworkElement.Triggers>
                     <EventTrigger RoutedEvent="FrameworkElement.Loaded">
                         <BeginStoryboard>
-                            <Storyboard RepeatBehavior="Forever">
+                            <Storyboard RepeatBehavior="Forever" BeginTime="00:00:01">
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LeftJoycon"
                                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
                                                                Duration="0:0:4">
@@ -76,17 +76,17 @@
                 <FrameworkElement.Triggers>
                     <EventTrigger RoutedEvent="FrameworkElement.Loaded">
                         <BeginStoryboard>
-                            <Storyboard RepeatBehavior="Forever">
+                            <Storyboard RepeatBehavior="Forever" BeginTime="00:00:01">
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RightJoycon"
                                                                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
                                                                Duration="0:0:4">
 
-                                    <EasingDoubleKeyFrame KeyTime="00:00:00.32" Value="-45">
+                                    <EasingDoubleKeyFrame KeyTime="00:00:0.32" Value="-45">
                                         <EasingDoubleKeyFrame.EasingFunction>
                                             <CubicEase EasingMode="EaseInOut" />
                                         </EasingDoubleKeyFrame.EasingFunction>
                                     </EasingDoubleKeyFrame>
-                                    <EasingDoubleKeyFrame KeyTime="00:00:00.4000000" Value="10">
+                                    <EasingDoubleKeyFrame KeyTime="00:00:0.4000000" Value="10">
                                         <EasingDoubleKeyFrame.EasingFunction>
                                             <CubicEase EasingMode="EaseInOut" />
                                         </EasingDoubleKeyFrame.EasingFunction>
@@ -161,7 +161,7 @@
                                                 <EventTrigger RoutedEvent="FrameworkElement.Loaded">
                                                     <BeginStoryboard>
                                                         <Storyboard BeginTime="{Binding Next, Source={StaticResource TimeSpanIncreaser}}" RepeatBehavior="Forever">
-                                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TextElement"
+                                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TextElement"  
                                                                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
                                                                                            Duration="0:0:4">
                                                                 <LinearDoubleKeyFrame KeyTime="0:0:0.4" Value="-1" />
