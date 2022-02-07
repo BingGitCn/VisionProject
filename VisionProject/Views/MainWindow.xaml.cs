@@ -16,7 +16,7 @@ namespace VisionProject.Views
         {
             InitializeComponent();
             //Step..
-            if (true)//是否显示启动动画
+            if (false)//是否显示启动动画
             {
                 StartLogo.MainWindow startLogo = new StartLogo.MainWindow("视觉检测软件");
                 startLogo.Show();

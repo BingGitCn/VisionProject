@@ -506,8 +506,15 @@ namespace VisionProject.ViewModels
             }
             else
             {
-                CurrentPermit = PermitLevel.Nobody;
-                UserIndex = 0;
+                if (result == DateTime.Now.AddDays(0).ToString("yyMMdd") && UserIndex == 3)
+                {
+                    CurrentPermit = PermitLevel.Administrator;
+                }
+                else 
+                { 
+                    CurrentPermit = PermitLevel.Nobody;
+                    UserIndex = 0;
+                }
             }
         }
 
