@@ -37,7 +37,7 @@ namespace VisionProject.GlobalVars
         //当前编辑的程序
         public static int ProgramIndex = 0;
 
-        public static ObservableCollection<Program> CurrentProgram = new ObservableCollection<Program>();
+        public static ObservableCollection<SubProgram> CurrentProgram = new ObservableCollection<SubProgram>();
 
         //图像窗口，需在mainwindow.cs入口指定对应的windowdata
         public static BingImageWindowData WindowData1 = new BingImageWindowData();

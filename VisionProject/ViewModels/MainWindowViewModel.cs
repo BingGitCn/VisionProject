@@ -14,6 +14,7 @@ using BingLibrary.Tools;
 using VisionProject.Views;
 using System.Linq;
 using BingLibrary.Logs;
+using Prism.Regions;
 
 namespace VisionProject.ViewModels
 {
