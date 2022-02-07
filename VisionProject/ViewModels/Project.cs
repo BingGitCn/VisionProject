@@ -319,7 +319,8 @@ namespace VisionProject.ViewModels
                     case "add":
                         try
                         {
-                            for (int i = 0; i < ProgramsName.Count+1; i++)
+                            if (Variables.ShowConfirm("确认添加新程序？") == true)
+                                for (int i = 0; i < ProgramsName.Count+1; i++)
                             {
                                 if (!programsName.Contains("P" + i.ToString())) {
                                     ProgramsName.Add("P" + i.ToString());
