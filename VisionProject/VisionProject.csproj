@@ -196,8 +196,8 @@
       <Project>{84ec4a6f-7159-42bb-aa0d-01ac2795c3e9}</Project>
       <Name>BingLibrary.Location</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BingVision\BingLibrary.Vision.csproj">
-      <Project>{c4f5c5de-7ea8-47fe-8218-48138f48965f}</Project>
+    <ProjectReference Include="..\BingLibrary.Vision\BingLibrary.Vision.csproj">
+      <Project>{281775f6-4a65-40ab-a5ba-d90876c42119}</Project>
       <Name>BingLibrary.Vision</Name>
     </ProjectReference>
     <ProjectReference Include="..\StartLogo\StartLogo.csproj">
