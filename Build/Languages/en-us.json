@@ -31,7 +31,7 @@
     "ButtonRefresh": "Refresh",
     "ButtonExport": "export",
     "ButtonUpdatePassword": "Update password",
-    "ShowTextWarn": "Note: system related settings take effect after software restart.",
+    "ShowTextWarn": "Note: system related settings will take effect after software restart.",
     "IDUser": "user",
     "IDTechnician": "technician",
     "IDEngineer": "engineer",
@@ -44,6 +44,6 @@
     "ShowTextWarn2": "Remember the path where the project file was last opened and saved",
     "Drive": "Drive letter selection",
     "AlarmThreshold": "Alarm threshold (GB remaining)",
-    "Language": "Language selection",
+    "Language": "Language choice",
     "MachineID": "Device ID:"
 }

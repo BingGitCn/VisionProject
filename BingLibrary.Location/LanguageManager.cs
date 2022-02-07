@@ -103,7 +103,7 @@ namespace BingLibrary.Location
                 catch (Exception ex) { }
             }
         }
-
+         
         public override event Action<CultureInfo> LanguageChanged;
 
         private JObject LoadLang(string LanguageId)
