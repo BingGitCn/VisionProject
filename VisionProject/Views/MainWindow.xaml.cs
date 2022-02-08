@@ -12,7 +12,7 @@ namespace VisionProject.Views
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(IRegionManager regionManager)
+        public MainWindow()
         {
             InitializeComponent();
             //Step..
@@ -48,7 +48,7 @@ namespace VisionProject.Views
                 Application.Current.Shutdown();
                 return;
             }
-
+           
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

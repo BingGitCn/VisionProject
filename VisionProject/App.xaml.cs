@@ -1,4 +1,6 @@
 ﻿using Prism.Ioc;
+using Prism.Mvvm;
+using System;
 using System.Windows;
 using VisionProject.ViewModels;
 using VisionProject.Views;

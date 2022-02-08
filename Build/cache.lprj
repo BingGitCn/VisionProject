@@ -8,20 +8,77 @@
       {
         "$id": "3",
         "$type": "System.Collections.ObjectModel.ObservableCollection`1[[VisionProject.ViewModels.SubProgram, VisionProject]], System",
-        "$values": []
+        "$values": [
+          {
+            "$id": "4",
+            "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+            "Parameters": {
+              "$id": "5",
+              "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
+            },
+            "IsUse": true,
+            "ProductIndex": 1,
+            "InspectFunction": "保存图像",
+            "Content": null
+          },
+          {
+            "$id": "6",
+            "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+            "Parameters": {
+              "$id": "7",
+              "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
+            },
+            "IsUse": true,
+            "ProductIndex": 1,
+            "InspectFunction": "无",
+            "Content": null
+          },
+          {
+            "$id": "8",
+            "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+            "Parameters": {
+              "$id": "9",
+              "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
+            },
+            "IsUse": true,
+            "ProductIndex": 0,
+            "InspectFunction": "无",
+            "Content": null
+          }
+        ]
       },
       {
-        "$id": "4",
+        "$id": "10",
         "$type": "System.Collections.ObjectModel.ObservableCollection`1[[VisionProject.ViewModels.SubProgram, VisionProject]], System",
-        "$values": []
-      },
-      {
-        "$id": "5",
-        "$type": "System.Collections.ObjectModel.ObservableCollection`1[[VisionProject.ViewModels.SubProgram, VisionProject]], System",
-        "$values": []
+        "$values": [
+          {
+            "$id": "11",
+            "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+            "Parameters": {
+              "$id": "12",
+              "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
+            },
+            "IsUse": true,
+            "ProductIndex": 0,
+            "InspectFunction": "分离产品",
+            "Content": null
+          },
+          {
+            "$id": "13",
+            "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+            "Parameters": {
+              "$id": "14",
+              "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
+            },
+            "IsUse": true,
+            "ProductIndex": 2,
+            "InspectFunction": "无",
+            "Content": null
+          }
+        ]
       }
     ]
   },
-  "CreateDate": "2022-02-07 13:15:26",
-  "LastDate": "2022-02-07 13:15:26"
+  "CreateDate": "2022-02-08 10:37:23",
+  "LastDate": "2022-02-08 10:37:38"
 }

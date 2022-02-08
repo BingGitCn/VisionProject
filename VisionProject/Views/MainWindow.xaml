@@ -102,7 +102,21 @@
                         </Grid.ColumnDefinitions>
 
                         <Grid Grid.Column="0">
-                            <bingVision:BingImageWindow x:Name="ImageWindow1"></bingVision:BingImageWindow>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+
+
+                            <Grid Grid.RowSpan="2" Grid.ColumnSpan="2">
+                                <bingVision:BingImageWindow x:Name="ImageWindow1"></bingVision:BingImageWindow>
+                            </Grid>
+                           
                         </Grid>
 
                         <Grid Grid.Column="1">
