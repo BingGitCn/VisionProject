@@ -134,6 +134,8 @@ namespace BingLibrary.Vision
             catch { }
         }
 
+      
+
         /// <summary>
         /// 获取Roi List
         /// </summary>

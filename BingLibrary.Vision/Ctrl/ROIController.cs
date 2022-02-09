@@ -257,6 +257,7 @@ namespace BingLibrary.Vision
                             break;
                         }
                     }
+                   
                     else
                     {
                         dist = ((ROI)ROIList[i]).distToClosestHandle(imgX, imgY);
@@ -294,10 +295,11 @@ namespace BingLibrary.Vision
                 return;
             try
             {
-                if (ROIList[ActiveROIidx] is ROIRegion)//ROIRegion¿˝Õ‚
+                if (ROIList[ActiveROIidx] is ROIRegion)//ROIRegion
                 {
                     ((ROIRegion)ROIList[ActiveROIidx]).mCurHRegion = ((ROIRegion)ROIList[ActiveROIidx]).mCurHRegion.MoveRegion((int)motionY, (int)motionX);
                 }
+               
                 else
                 {
                     ROIList[ActiveROIidx].moveByHandle(newX, newY);
