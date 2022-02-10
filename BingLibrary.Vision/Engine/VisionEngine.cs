@@ -34,72 +34,7 @@ namespace BingLibrary.Vision
 
         private List<string> procedureNames = new List<string>();
 
-        /// <summary>
-        /// 创建一个新的字典
-        /// </summary>
-        /// <returns></returns>
-        public HTuple GetNewEmptyHDict()
-        {
-            HTuple hDict;
-            HOperatorSet.CreateDict(out hDict);
-            return hDict;
-        }
-
-        /// <summary>
-        /// 设置字典参数
-        /// </summary>
-        /// <param name="hDict"></param>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public bool SetHDictObject(ref HTuple hDict, string key, HObject value)
-        {
-            try
-            {
-                HOperatorSet.SetDictObject(value, hDict, key);
-                return true;
-            }
-            catch { return false; }
-        }
-
-        /// <summary>
-        /// 设置字典参数
-        /// </summary>
-        /// <param name="hDict"></param>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public bool SetHDictTuple(ref HTuple hDict, string key, HTuple value)
-        {
-            try
-            {
-                HOperatorSet.SetDictTuple(hDict, key, value);
-                return true;
-            }
-            catch { return false; }
-        }
-
-        public HObject GetHDictObject(HTuple hDict, string key)
-        {
-            HObject hObject = new HObject();
-            try
-            {
-                HOperatorSet.GetDictObject(out hObject, hDict, key);
-            }
-            catch { }
-            return hObject;
-        }
-
-        public HTuple GetHDictTuple(HTuple hDict, string key)
-        {
-            HTuple hTuple = new HTuple();
-            try
-            {
-                HOperatorSet.GetDictTuple(hDict, key, out hTuple);
-            }
-            catch { }
-            return hTuple;
-        }
+        private HDevProgramCall devProgramCall;
 
         /// <summary>
         /// 清除
@@ -133,6 +68,7 @@ namespace BingLibrary.Vision
             devEngine = new HDevEngine();
             devEngine.SetProcedurePath(procedurePath);
             HDevProgram devProgram = new HDevProgram(programFilePath);
+            devProgramCall = new HDevProgramCall(devProgram);
             foreach (var p in procedureNames)
                 devProcedureCalls.Add(p, new HDevProcedureCall(new HDevProcedure(devProgram, p)));
         }
@@ -199,7 +135,7 @@ namespace BingLibrary.Vision
         /// <param name="procedureName"></param>
         /// <param name="param"></param>
         /// <returns></returns>
-        public bool Inspect(string procedureName, HTuple param)
+        public bool InspectProcedure(string procedureName, HTuple param)
         {
             try
             {
@@ -216,14 +152,76 @@ namespace BingLibrary.Vision
         }
 
         /// <summary>
+        /// 运行程序
+        /// </summary>
+        /// <returns></returns>
+        public bool InspectProgram()
+        {
+            try
+            {
+                devEngine.UnloadAllProcedures();//可实时更新脚本
+                devProgramCall.Execute();
+                return true;
+            }
+            catch { return false; }
+        }
+
+        /// <summary>
+        /// 获取程序结果
+        /// </summary>
+        /// <param name="tupleName"></param>
+        /// <returns></returns>
+        public HTuple GetResultProgramTuple(string tupleName)
+        {
+            HTuple tuple = new HTuple();
+            try
+            {
+                tuple = devProgramCall.GetCtrlVarTuple(tupleName);
+                return tuple;
+            }
+            catch { return tuple; }
+        }
+
+        /// <summary>
+        /// 获取程序结果
+        /// </summary>
+        /// <param name="regionName"></param>
+        /// <returns></returns>
+        public HRegion GetResultProgramRegion(string regionName)
+        {
+            HRegion region = new HRegion();
+            try
+            {
+                region = devProgramCall.GetIconicVarRegion(regionName);
+                return region;
+            }
+            catch { return region; }
+        }
+
+        /// <summary>
+        /// 获取程序结果
+        /// </summary>
+        /// <param name="imageName"></param>
+        /// <returns></returns>
+        public HImage GetResultProgramImage(string imageName)
+        {
+            HImage image = new HImage();
+            try
+            {
+                image = devProgramCall.GetIconicVarImage(imageName);
+                return image;
+            }
+            catch { return image; }
+        }
+
+        /// <summary>
         /// 获取Tuple结果
         /// </summary>
         /// <param name="procedureName"></param>
         /// <returns></returns>
         public HTuple GetResultTuple(string procedureName, string tupleName)
         {
-            HTuple tuple;
-            HOperatorSet.CreateDict(out tuple);
+            HTuple tuple = new HTuple();
             try
             {
                 if (devProcedureCalls.Keys.Contains(procedureName))
@@ -267,6 +265,73 @@ namespace BingLibrary.Vision
                 return region;
             }
             catch { return region; }
+        }
+
+        /// <summary>
+        /// 创建一个新的字典
+        /// </summary>
+        /// <returns></returns>
+        public HTuple GetNewEmptyHDict()
+        {
+            HTuple hDict;
+            HOperatorSet.CreateDict(out hDict);
+            return hDict;
+        }
+
+        /// <summary>
+        /// 设置字典参数
+        /// </summary>
+        /// <param name="hDict"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool SetHDictObject(ref HTuple hDict, string key, HObject value)
+        {
+            try
+            {
+                HOperatorSet.SetDictObject(value, hDict, key);
+                return true;
+            }
+            catch { return false; }
+        }
+
+        /// <summary>
+        /// 设置字典参数
+        /// </summary>
+        /// <param name="hDict"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool SetHDictTuple(ref HTuple hDict, string key, HTuple value)
+        {
+            try
+            {
+                HOperatorSet.SetDictTuple(hDict, key, value);
+                return true;
+            }
+            catch { return false; }
+        }
+
+        public HObject GetHDictObject(HTuple hDict, string key)
+        {
+            HObject hObject = new HObject();
+            try
+            {
+                HOperatorSet.GetDictObject(out hObject, hDict, key);
+            }
+            catch { }
+            return hObject;
+        }
+
+        public HTuple GetHDictTuple(HTuple hDict, string key)
+        {
+            HTuple hTuple = new HTuple();
+            try
+            {
+                HOperatorSet.GetDictTuple(hDict, key, out hTuple);
+            }
+            catch { }
+            return hTuple;
         }
     }
 }
