@@ -432,11 +432,12 @@ namespace VisionProject.ViewModels
             _program1Config ?? (_program1Config = new DelegateCommand<string>((param)=> {
                 try
                 {
+                    Variables.ProgramIndex = Program1Index;
                     Programs1.Clear();
                     for (int i = 0; i < Programs[ProgramsIndex].Count; i++)
                         Programs1.Add(Programs[ProgramsIndex][i]);
 
-                    Variables.ProgramIndex = Program1Index;
+                    
                     Variables.CurrentProgram.Clear();
                     for (int i = 0; i < Programs1.Count; i++)
                         Variables.CurrentProgram.Add(Programs1[i]);

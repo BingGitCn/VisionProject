@@ -84,7 +84,7 @@ namespace VisionProject.ViewModels
                     break;
                 await Task.Delay(1000);
             }
-
+            
             Log.Info(Variables.HCPLC.IsConnected ? "PLC连接成功" : "PLC连接失败");
             PLCStatus.Value = Variables.HCPLC.IsConnected;
 
