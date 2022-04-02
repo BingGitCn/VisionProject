@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HalconDotNet;
+using System.Xml;
+using System.IO;
+
 
 /*************************************************************************************
  *
@@ -378,7 +381,14 @@ namespace BingLibrary.Vision.Engine
         }
 
 
+
+
+    
     }
+    
+
+
+
     public class ProcedureInfo
     { 
         public int InputCtrlParamCount { set; get; } 
@@ -391,5 +401,9 @@ namespace BingLibrary.Vision.Engine
         public List<string> OutputCtrlParamNames { set; get; } = new List<string>(); 
         public List<string> OutputIconicParamNames { set; get; } = new List<string>();
     }
+
+
+  
+   
 }
 
