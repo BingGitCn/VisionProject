@@ -115,6 +115,68 @@ namespace BingLibrary.Vision.Engine
             } catch { return new ProcedureInfo(); }
         }
 
+        /// <summary>
+        /// 设置参数
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="procedureName"></param>
+        /// <param name="paramName"></param>
+        /// <param name="paramValue"></param>
+        /// <returns></returns>
+        public bool SetParam<T>(string procedureName, string paramName, T paramValue)
+        {
+            try
+            {
+
+                if (paramValue is HImage || paramValue is HRegion)
+                {
+                    if (devProcedureCalls.Keys.Contains(procedureName))
+                        devProcedureCalls[procedureName].SetInputIconicParamObject(paramName, paramValue as HObject);
+                }
+                else if (paramValue is HTuple)
+                {
+                    if (devProcedureCalls.Keys.Contains(procedureName))
+                        devProcedureCalls[procedureName].SetInputCtrlParamTuple(paramName, paramValue as HTuple);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+        /// <summary>
+        /// 获取参数
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="procedureName"></param>
+        /// <param name="paramName"></param>
+        /// <returns></returns>
+        public T GetParam<T>(string procedureName, string paramName)where T : class
+        {
+            try {
+                if (typeof(T) == typeof(HImage)) { 
+                    if (devProcedureCalls.Keys.Contains(procedureName))
+                        return devProcedureCalls[procedureName].GetOutputIconicParamImage(paramName) as T;
+                }
+                else if (typeof(T) == typeof(HRegion))
+                {
+                    if (devProcedureCalls.Keys.Contains(procedureName))
+                        return devProcedureCalls[procedureName].GetOutputIconicParamImage(paramName) as T;
+                }
+                else if (typeof(T) == typeof(HTuple))
+                {
+                    if (devProcedureCalls.Keys.Contains(procedureName))
+                        return devProcedureCalls[procedureName].GetOutputCtrlParamTuple(paramName) as T;
+                }
+                    return default(T);
+
+            }
+            catch { return default(T); }
+        
+        }
+
 
         /// <summary>
         /// 设置图像参数
@@ -328,10 +390,6 @@ namespace BingLibrary.Vision.Engine
         public List<string> InputIconicParamNames { set; get; } = new List<string>();
         public List<string> OutputCtrlParamNames { set; get; } = new List<string>(); 
         public List<string> OutputIconicParamNames { set; get; } = new List<string>();
-
-
-
-
-
     }
 }
+
