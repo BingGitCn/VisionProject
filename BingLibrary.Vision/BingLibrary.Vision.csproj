@@ -121,6 +121,7 @@
     <Compile Include="Ctrl\ROIRectangle2.cs" />
     <Compile Include="Ctrl\ROIRegion.cs" />
     <Compile Include="Engine\VisionEngine.cs" />
+    <Compile Include="Engine\VisionEngine2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -1,26 +1,30 @@
-﻿using HalconDotNet;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using HalconDotNet;
 
 /*************************************************************************************
  *
- * 文 件 名:   VisionEngine
- * 描    述:   step1: AddProcedure 添加需要使用的过程
- *             step2：Init 初始化主程序文件路径以及过程路径
- *
+ * 文 件 名:   VisionEngine2
+ * 描    述: 
+ * 
  * 版    本：  V1.0.0.0
  * 创 建 者：  Bing
- * 创建时间：  2022/2/9 14:37:38
+ * 创建时间：  2022/4/2 10:10:02
  * ======================================
  * 历史更新记录
  * 版本：V          修改时间：         修改人：
  * 修改内容：
  * ======================================
 *************************************************************************************/
-
 namespace BingLibrary.Vision.Engine
 {
-    public class VisionEngine
+    /// <summary>
+    /// 脱离 program，直接调用 procedure，推荐使用。
+    /// </summary>
+    public class VisionEngine2 
     {
         /// <summary>
         /// 引擎
@@ -33,8 +37,6 @@ namespace BingLibrary.Vision.Engine
         private Dictionary<string, HDevProcedureCall> devProcedureCalls = new Dictionary<string, HDevProcedureCall>();
 
         private List<string> procedureNames = new List<string>();
-
-        private HDevProgramCall devProgramCall;
 
         /// <summary>
         /// 清除
@@ -61,17 +63,58 @@ namespace BingLibrary.Vision.Engine
         /// <summary>
         /// 初始化
         /// </summary>
-        /// <param name="programFilePath"></param>
         /// <param name="procedurePath"></param>
-        public void Init(string programFilePath, string procedurePath)
+        public void Init( string procedurePath)
         {
             devEngine = new HDevEngine();
             devEngine.SetProcedurePath(procedurePath);
-            HDevProgram devProgram = new HDevProgram(programFilePath);
-            devProgramCall = new HDevProgramCall(devProgram);
             foreach (var p in procedureNames)
-                devProcedureCalls.Add(p, new HDevProcedureCall(new HDevProcedure(devProgram, p)));
+                devProcedureCalls.Add(p, new HDevProcedureCall(new HDevProcedure( p)));
         }
+
+
+        /// <summary>
+        /// 获取 procedur 参数信息
+        /// </summary>
+        /// <param name="procedureName"></param>
+        /// <returns></returns>
+        public ProcedureInfo GetProcedureInfo(string procedureName)
+        {
+            try {
+                ProcedureInfo procedureInfo=new ProcedureInfo();
+                procedureInfo.InputCtrlParamCount = devProcedureCalls[procedureName].GetProcedure().GetInputCtrlParamCount();
+                procedureInfo.IntputIconicParamCount = devProcedureCalls[procedureName].GetProcedure().GetInputIconicParamCount();
+
+                procedureInfo.OutputCtrlParamCount = devProcedureCalls[procedureName].GetProcedure().GetOutputCtrlParamCount();
+                procedureInfo.OutputIconicParamCount = devProcedureCalls[procedureName].GetProcedure().GetOutputIconicParamCount();
+
+                for (int i = 1; i <= procedureInfo.InputCtrlParamCount; i++)
+                {
+                    procedureInfo.InputCtrlParamNames.Add(devProcedureCalls[procedureName].GetProcedure().GetInputCtrlParamName(i));
+                }
+
+                for (int i = 1; i <= procedureInfo.IntputIconicParamCount; i++)
+                {
+                    procedureInfo.InputIconicParamNames.Add(devProcedureCalls[procedureName].GetProcedure().GetInputIconicParamName(i));
+                }
+
+                for (int i = 1; i <= procedureInfo.OutputCtrlParamCount; i++)
+                {
+                    procedureInfo.OutputCtrlParamNames.Add( devProcedureCalls[procedureName].GetProcedure().GetOutputCtrlParamName(i));
+                }
+
+                for (int i = 1; i <= procedureInfo.OutputIconicParamCount; i++)
+                {
+                    procedureInfo.OutputIconicParamNames.Add( devProcedureCalls[procedureName].GetProcedure().GetOutputIconicParamName(i));
+                }
+
+
+
+                return procedureInfo;
+
+            } catch { return new ProcedureInfo(); }
+        }
+
 
         /// <summary>
         /// 设置图像参数
@@ -151,69 +194,7 @@ namespace BingLibrary.Vision.Engine
             catch { return false; }
         }
 
-        /// <summary>
-        /// 运行程序
-        /// </summary>
-        /// <returns></returns>
-        public bool InspectProgram()
-        {
-            try
-            {
-                devEngine.UnloadAllProcedures();//可实时更新脚本
-                devProgramCall.Execute();
-                return true;
-            }
-            catch { return false; }
-        }
-
-        /// <summary>
-        /// 获取程序结果
-        /// </summary>
-        /// <param name="tupleName"></param>
-        /// <returns></returns>
-        public HTuple GetResultProgramTuple(string tupleName)
-        {
-            HTuple tuple = new HTuple();
-            try
-            {
-                tuple = devProgramCall.GetCtrlVarTuple(tupleName);
-                return tuple;
-            }
-            catch { return tuple; }
-        }
-
-        /// <summary>
-        /// 获取程序结果
-        /// </summary>
-        /// <param name="regionName"></param>
-        /// <returns></returns>
-        public HRegion GetResultProgramRegion(string regionName)
-        {
-            HRegion region = new HRegion();
-            try
-            {
-                region = devProgramCall.GetIconicVarRegion(regionName);
-                return region;
-            }
-            catch { return region; }
-        }
-
-        /// <summary>
-        /// 获取程序结果
-        /// </summary>
-        /// <param name="imageName"></param>
-        /// <returns></returns>
-        public HImage GetResultProgramImage(string imageName)
-        {
-            HImage image = new HImage();
-            try
-            {
-                image = devProgramCall.GetIconicVarImage(imageName);
-                return image;
-            }
-            catch { return image; }
-        }
-
+      
         /// <summary>
         /// 获取Tuple结果
         /// </summary>
@@ -333,5 +314,24 @@ namespace BingLibrary.Vision.Engine
             catch { }
             return hTuple;
         }
+
+
+    }
+    public class ProcedureInfo
+    { 
+        public int InputCtrlParamCount { set; get; } 
+        public int IntputIconicParamCount { set; get; } 
+        public int OutputCtrlParamCount { set; get; }
+        public int OutputIconicParamCount { set; get; }
+          
+        public List<string> InputCtrlParamNames { set; get; }=  new List<string>();
+        public List<string> InputIconicParamNames { set; get; } = new List<string>();
+        public List<string> OutputCtrlParamNames { set; get; } = new List<string>(); 
+        public List<string> OutputIconicParamNames { set; get; } = new List<string>();
+
+
+
+
+
     }
 }
