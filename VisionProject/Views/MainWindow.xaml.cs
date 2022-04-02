@@ -22,10 +22,7 @@ namespace VisionProject.Views
                 startLogo.Show();
             }
 
-           BingLibrary.Vision.Engine.HdvpProcedure hp=new BingLibrary.Vision.Engine.HdvpProcedure();
-            hp.ReadHdvp(@"C:\Users\N294\Desktop\HalconTest","test");
-            hp.SaveHdvp();
-            
+         
 
             //excel授权
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
