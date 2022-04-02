@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="20.11.1.0">
+<procedure name="lvba">
+<interface>
+<io>
+<par name="image" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="region" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="count" base_type="ctrl" dimension="0"/>
+<par name="area" base_type="ctrl" dimension="0"/>
+<par name="contrast" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="isok" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>isok:=1</l>
+<l>gen_empty_region (region)</l>
+<l>rgb1_to_gray (image, grayImage)</l>
+<l>mean_image (grayImage, grayImage, 5, 5)</l>
+<l>dev_set_draw ('fill')</l>
+<l>threshold (grayImage, Region1, 200, 255)</l>
+<l>closing_circle (Region1, Region1, 13.5)</l>
+<l>connection (Region1, ConnectedRegions2)</l>
+<l>fill_up (ConnectedRegions2, RegionFillUp)</l>
+<l>shape_trans (RegionFillUp, RegionTrans, 'inner_circle')</l>
+<l>select_shape (RegionTrans, SelectedRegions2, 'inner_radius', 'and', 550, 590)</l>
+<l>erosion_circle (SelectedRegions2, RegionErosion1, 40)</l>
+<l>union1 (RegionErosion1, large)</l>
+<c></c>
+<l>count_obj (RegionErosion1, c)</l>
+<l>if(c=count)</l>
+<l>    area_center (SelectedRegions2, Area, Row, Column)</l>
+<l>    gen_empty_region (small)</l>
+<l>    for Index1 := 0 to |Row|-1 by 1</l>
+<l>        gen_circle (Circle, Row[Index1], Column[Index1], 110)</l>
+<l>        concat_obj (small, Circle, small)</l>
+<l>    endfor</l>
+<l>    union1 (small, small)</l>
+<l>    difference (large, small, RegionDifference)</l>
+<l>    reduce_domain (grayImage, RegionDifference, ImageReduced1)</l>
+<c>    </c>
+<l>    sobel_dir (ImageReduced1, EdgeAmplitude, EdgeDirection, 'sum_abs', 5)</l>
+<l>    emphasize (EdgeAmplitude, EdgeAmplitude, 9, 9, 1.6)</l>
+<l>*     add_image (EdgeAmplitude, EdgeAmplitude, EdgeAmplitude, 1.6, 0)</l>
+<c>    </c>
+<l>    threshold (EdgeAmplitude, Region, 40, 255)</l>
+<l>    closing_circle (Region, RegionClosing1, 21)</l>
+<l>    connection (RegionClosing1, ConnectedRegions)</l>
+<l>    select_shape (ConnectedRegions, SelectedRegions, 'area', 'and', area, 999999)</l>
+<c>    </c>
+<l>    dilation_circle (SelectedRegions, RegionDilation, 4)</l>
+<c>    </c>
+<c>    </c>
+<l>    count_obj (RegionDilation, Number)</l>
+<l>    for Index := 1 to Number by 1</l>
+<l>        select_obj (RegionDilation, ObjectSelected, Index)</l>
+<l>        reduce_domain (grayImage, ObjectSelected, ImageReduced2)</l>
+<l>        min_max_gray (ObjectSelected, ImageReduced2, 5, Min, Max, Range)</l>
+<l>        if(Range&gt;contrast)</l>
+<l>            concat_obj (region, ObjectSelected, region)</l>
+<l>        endif</l>
+<c>        </c>
+<c>        </c>
+<l>    endfor</l>
+<l>    union1 (region, region)</l>
+<l>    area_center (region, Area1, Row1, Column1)</l>
+<l>    if(Area1&gt;0)</l>
+<l>        isok:=0</l>
+<l>    endif</l>
+<c>    </c>
+<c>    </c>
+<c>    </c>
+<l>else</l>
+<l>    isok:=0</l>
+<l>endif</l>
+<c></c>
+<c></c>
+<c></c>
+<l>return ()</l>
+</body>
+<docu id="lvba">
+<parameters>
+<parameter id="area">
+<default_type>integer</default_type>
+<default_value>60</default_value>
+<sem_type>integer</sem_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="contrast">
+<default_type>integer</default_type>
+<default_value>30</default_value>
+<sem_type>integer</sem_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="count">
+<default_type>integer</default_type>
+<default_value>4</default_value>
+<description lang="zh_CN">铝巴数量</description>
+<sem_type>integer</sem_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="image">
+<description lang="zh_CN">输入图像</description>
+<sem_type>image</sem_type>
+</parameter>
+<parameter id="isok">
+<default_type>integer</default_type>
+<sem_type>integer</sem_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="region">
+<description lang="zh_CN">输出结果</description>
+<sem_type>region</sem_type>
+</parameter>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>

@@ -7,14 +7,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using VisionProject.ViewModels;
+using BingLibrary.Vision.Engine;
 
 namespace VisionProject.GlobalVars
 {
     public static class Variables
     {
       
-
-
+        //V2 引擎
+        public static VisionEngine2 V2Engine=new VisionEngine2();
 
         //PLC
         public static HuiChuanPLC HCPLC = new HuiChuanPLC();

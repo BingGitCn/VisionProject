@@ -14,7 +14,7 @@ namespace VisionProject.ViewModels
     {
         #region 初始化
 
-       
+
 
         private void initAll()
         {
@@ -23,18 +23,29 @@ namespace VisionProject.ViewModels
             initFreeSpace();
             Variables.Title = SystemConfig.Title;
             Title = Variables.Title;
-            
+
 
             //测试
             //IsLogin = true;
 
             initProjects();
             initPLC();
-
+            initEngine();
 
             run();
+
+
+
         }
 
+        private void initEngine()
+        {
+            try {
+                Variables.V2Engine.AddProcedure("lvba");
+                Variables.V2Engine.Init(System.AppDomain.CurrentDomain.BaseDirectory+ "Projects\\Scripts");
+            
+            } catch { }
+}
 
         private async void initFreeSpace()
         {

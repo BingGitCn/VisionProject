@@ -86,12 +86,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModels\Tools\Function_ScriptTestViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_SpliteViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_SaveImageViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_TestViewModel.cs" />
     <Compile Include="ViewModels\NumberPadViewModel.cs" />
     <Compile Include="Views\Tools\Function_SaveImage.xaml.cs">
       <DependentUpon>Function_SaveImage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tools\Function_ScriptTest.xaml.cs">
+      <DependentUpon>Function_ScriptTest.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Tools\Function_Splite.xaml.cs">
       <DependentUpon>Function_Splite.xaml</DependentUpon>
@@ -107,6 +111,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Tools\Function_SaveImage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Tools\Function_ScriptTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
