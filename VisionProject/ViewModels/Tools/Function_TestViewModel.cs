@@ -49,9 +49,8 @@ namespace VisionProject.ViewModels
             await Task.Delay(300);
             try
             {
-                if (Variables.CurrentProgram[Variables.ProgramIndex].Parameters.ContainsKey("Param1"))
-                    Param1 = (double)Variables.CurrentProgram[Variables.ProgramIndex]
-                    .Parameters["Param1"];
+                if (Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID].ContainsKey("Param1"))
+                    Param1 = (double)Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID]["Param1"];
 
                 Variables.ImageWindowDataForFunction.CurrentImage = Variables.CurrentImageForFunction;
 

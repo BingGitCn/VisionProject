@@ -150,6 +150,11 @@ namespace VisionProject.ViewModels
                             LastDate = Variables.CurrentProject.LastDate;
                             ProjectPath = SelectProjectName.Path;
                             Log.Info("打开了项目 "+ ProjectName);
+
+                            ProgramsName.Clear();
+                            for (int i = 0; i < Programs.Count; i++)
+                                if (!programsName.Contains("P" + i.ToString()))
+                                    ProgramsName.Add("P" + i.ToString());
                         }
                         catch { }
                         break;
@@ -192,6 +197,12 @@ namespace VisionProject.ViewModels
                                 CreateDate = Variables.CurrentProject.CreateDate;
                                 LastDate = Variables.CurrentProject.LastDate;
                                 ProjectPath = dig_openFileDialog.FileName;
+
+                                ProgramsName.Clear();
+                                for (int i = 0; i < Programs.Count; i++)
+                                    if (!programsName.Contains("P" + i.ToString()))
+                                        ProgramsName.Add("P" + i.ToString());
+
                                 Log.Info("打开了项目 " + ProjectName);
 
                             }
@@ -320,18 +331,19 @@ namespace VisionProject.ViewModels
                         try
                         {
                             if (Variables.ShowConfirm("确认添加新程序？") == true)
-                                for (int i = 0; i < ProgramsName.Count+1; i++)
-                            {
-                                if (!programsName.Contains("P" + i.ToString())) {
-                                    ProgramsName.Add("P" + i.ToString());
-                                    Programs.Add(new ObservableCollection<SubProgram>());
-                                    Log.Info("增加了程序");
-                                    break;
-                                }
-                               
-                            }
+                                for (int i = 0; i < ProgramsName.Count + 1; i++)
+                                {
+                                    if (!programsName.Contains("P" + i.ToString()))
+                                    {
+                                        ProgramsName.Add("P" + i.ToString());
+                                        Programs.Add(new ObservableCollection<SubProgram>());
+                                        Log.Info("增加了程序");
+                                        break;
+                                    }
 
-                           
+                                }
+
+
                         }
                         catch { }
                         break;
@@ -345,7 +357,12 @@ namespace VisionProject.ViewModels
                                 {
                                     Variables.ShowMessage("禁止删除，至少保留一个程序。");
                                 }
-                                else { 
+                                else {
+                                    var p = Programs[ProgramsIndex];
+                                    for (int i = 0; i < p.Count; i++)
+                                        Variables.CurrentProject.Parameters.Remove(p[i].ID);
+
+
                                 Programs.RemoveAt(ProgramsIndex);
                                 ProgramsName.RemoveAt(ProgramsIndex);
                                 }
@@ -395,7 +412,15 @@ namespace VisionProject.ViewModels
                     case "add":
                         try
                         {
-                            Programs1.Add(new SubProgram());
+                            SubProgram sp = new SubProgram();
+                            sp.ID = Guid.NewGuid().ToString();
+                            Programs1.Add(sp);
+                            if (Variables.CurrentProject.Parameters.ContainsKey(sp.ID))
+                                Variables.CurrentProject.Parameters.Remove(sp.ID);
+                            Variables.CurrentProject.Parameters.Add(sp.ID, new Dictionary<string, object>());
+
+
+
                         }
                         catch { }
                         break;
@@ -404,7 +429,11 @@ namespace VisionProject.ViewModels
                         try
                         {
                             if (Variables.ShowConfirm("确认删除当前子程序？") == true)
+                            {
+                                string id = Programs1[Program1Index].ID;
+                                Variables.CurrentProject.Parameters.Remove(id);
                                 Programs1.RemoveAt(Program1Index);
+                            }
                         }
                         catch { }
                         break;
@@ -416,6 +445,9 @@ namespace VisionProject.ViewModels
                     Programs[ProgramsIndex].Clear();
                     for (int i = 0; i < Programs1.Count; i++)
                         Programs[ProgramsIndex].Add(Programs1[i]);
+
+                  
+
                 }
                 catch (Exception ex) { }
 
@@ -502,6 +534,16 @@ namespace VisionProject.ViewModels
       
         public ObservableCollection<ObservableCollection<SubProgram>> Programs = new ObservableCollection<ObservableCollection<SubProgram>>();
 
+        /// <summary>
+        /// 检测参数
+        /// </summary>
+        public Dictionary<string, Dictionary<string, object>> Parameters = new Dictionary<string, Dictionary<string, object>>();
+        /// <summary>
+        /// 检测结果
+        /// </summary>
+        [JsonIgnore]
+        public Dictionary<string, Dictionary<string, object>> Results = new Dictionary<string, Dictionary<string, object>>();
+
         public string CreateDate = "";
         public string LastDate = "";
     }
@@ -519,16 +561,7 @@ namespace VisionProject.ViewModels
         public int ProductIndex { set; get; } = 0; 
 
         public string InspectFunction { set; get; } = "无";
-        /// <summary>
-        /// 检测参数
-        /// </summary>
-
-        public Dictionary<string, object> Parameters = new Dictionary<string, object>();
-        /// <summary>
-        /// 检测结果
-        /// </summary>
-        [JsonIgnore]
-        public Dictionary<string, object> Results = new Dictionary<string, object>();
+        
 
         public string Content { set; get; }
 
@@ -545,9 +578,11 @@ namespace VisionProject.ViewModels
             ProductIndexs.Clear();
             for (int i = 0; i < 48; i++) ProductIndexs.Add(i);
 
-
+           
         }
 
+     
+        public string ID { set; get; }
 
     }
 

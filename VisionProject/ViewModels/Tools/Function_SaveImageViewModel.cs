@@ -9,8 +9,11 @@ using System.IO;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
 
+
+
 namespace VisionProject.ViewModels
 {
+    
     public class Function_SaveImageViewModel : BindableBase, IDialogAware
     {
         #region 窗口相关
@@ -42,25 +45,22 @@ namespace VisionProject.ViewModels
 
         public Function_SaveImageViewModel()
         {
-            init();
+            init(); 
         }
         private async void init()
         {
             await Task.Delay(300);
             try
             {
-                if (Variables.CurrentProgram[Variables.ProgramIndex].Parameters.ContainsKey("SaveMode"))
-                    SaveMode = int.Parse(Variables.CurrentProgram[Variables.ProgramIndex]
-                    .Parameters["SaveMode"].ToString());
-                if (Variables.CurrentProgram[Variables.ProgramIndex].Parameters.ContainsKey("SaveFormat"))
-                    SaveFormat = int.Parse(Variables.CurrentProgram[Variables.ProgramIndex]
-                    .Parameters["SaveFormat"].ToString());
-                if (Variables.CurrentProgram[Variables.ProgramIndex].Parameters.ContainsKey("SaveCount"))
-                    SaveCount = (string)Variables.CurrentProgram[Variables.ProgramIndex]
-                    .Parameters["SaveCount"];
-                if (Variables.CurrentProgram[Variables.ProgramIndex].Parameters.ContainsKey("SavePath"))
-                    SavePath = (string)Variables.CurrentProgram[Variables.ProgramIndex]
-                    .Parameters["SavePath"];
+                if (Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID].ContainsKey("SaveMode"))
+                    SaveMode = int.Parse(Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID]["SaveMode"].ToString());
+                if (Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID].ContainsKey("SaveFormat"))
+                    SaveFormat = int.Parse(Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID]["SaveFormat"].ToString());
+                
+                if (Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID].ContainsKey("SaveCount"))
+                    SaveCount = (string)Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID]["SaveCount"];
+                if (Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID].ContainsKey("SavePath"))
+                    SavePath = (string)Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID]["SavePath"];
 
 
 
@@ -114,28 +114,30 @@ namespace VisionProject.ViewModels
 
             }));
          
+        
 
         private DelegateCommand _saveParam;
         public DelegateCommand SaveParam =>
             _saveParam ?? (_saveParam = new DelegateCommand(() => {
-                if (Variables.CurrentProgram[Variables.ProgramIndex].Parameters.ContainsKey("SaveMode"))
-                    Variables.CurrentProgram[Variables.ProgramIndex].Parameters["SaveMode"] = SaveMode;
-                else
-                    Variables.CurrentProgram[Variables.ProgramIndex].Parameters.Add("SaveMode", SaveMode);
 
-                if (Variables.CurrentProgram[Variables.ProgramIndex].Parameters.ContainsKey("SaveFormat"))
-                    Variables.CurrentProgram[Variables.ProgramIndex].Parameters["SaveFormat"] = SaveFormat;
+                if (Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID].ContainsKey("SaveMode"))
+                   Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID]["SaveMode"] = SaveMode;
                 else
-                    Variables.CurrentProgram[Variables.ProgramIndex].Parameters.Add("SaveFormat", SaveFormat);
+                   Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID].Add("SaveMode", SaveMode);
 
-                if (Variables.CurrentProgram[Variables.ProgramIndex].Parameters.ContainsKey("SaveCount"))
-                    Variables.CurrentProgram[Variables.ProgramIndex].Parameters["SaveCount"] = SaveCount;
+                if (Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID].ContainsKey("SaveFormat"))
+                   Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID]["SaveFormat"] = SaveFormat;
                 else
-                    Variables.CurrentProgram[Variables.ProgramIndex].Parameters.Add("SaveCount", SaveCount);
-                if (Variables.CurrentProgram[Variables.ProgramIndex].Parameters.ContainsKey("SavePath"))
-                    Variables.CurrentProgram[Variables.ProgramIndex].Parameters["SavePath"] = SavePath;
+                   Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID].Add("SaveFormat", SaveFormat);
+
+                if (Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID].ContainsKey("SaveCount"))
+                   Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID]["SaveCount"] = SaveCount;
                 else
-                    Variables.CurrentProgram[Variables.ProgramIndex].Parameters.Add("SavePath", SavePath);
+                   Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID].Add("SaveCount", SaveCount);
+                if (Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID].ContainsKey("SavePath"))
+                   Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID]["SavePath"] = SavePath;
+                else
+                   Variables.CurrentProject.Parameters[Variables.CurrentProgram[Variables.ProgramIndex].ID].Add("SavePath", SavePath);
 
 
             }));
