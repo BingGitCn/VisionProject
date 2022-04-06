@@ -32,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BingLibraryLite, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BingLibraryLite.1.3.0\lib\net472\BingLibraryLite.dll</HintPath>
+    <Reference Include="BingLibraryLite, Version=1.3.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BingLibraryLite.1.3.4\lib\net472\BingLibraryLite.dll</HintPath>
     </Reference>
     <Reference Include="CSRedisCore, Version=3.6.8.0, Culture=neutral, PublicKeyToken=9aa6a3079358d437, processorArchitecture=MSIL">
       <HintPath>..\packages\CSRedisCore.3.6.8\lib\net45\CSRedisCore.dll</HintPath>

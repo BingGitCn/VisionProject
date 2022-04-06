@@ -1,31 +1,65 @@
-﻿<UserControl x:Class="VisionProject.Views.AboutDialog"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:prism="http://prismlibrary.com/"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             
-             Width="480" Height="280"
-             prism:ViewModelLocator.AutoWireViewModel="True">
+﻿<UserControl
+    x:Class="VisionProject.Views.AboutDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:prism="http://prismlibrary.com/"
+    Width="480"
+    Height="280"
+    prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid Background="{StaticResource BackgroundBrush}">
-        <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Orientation="Vertical">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"></ColumnDefinition>
-                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0">
-                    <Image  Margin="5" Source="..\爱宠29.ico" Width="60" Stretch="UniformToFill"></Image>
+                    <Image
+                        Width="60"
+                        Margin="5"
+                        Source="..\爱宠29.ico"
+                        Stretch="UniformToFill" />
                 </Grid>
                 <Grid Grid.Column="1">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <TextBlock   Margin="5"  Text="{Binding Name}" FontSize="28" Style="{StaticResource   TextBlockBoldBaseStyle}"></TextBlock>
-                        <TextBlock   Margin="5"  Text="{Binding Version}" FontSize="14"  Foreground="DarkGray" ><Run Text="(内部版本)(64位)  .NET 4.72"></Run></TextBlock>
+                    <StackPanel
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Orientation="Vertical">
+                        <TextBlock
+                            Margin="5"
+                            FontSize="28"
+                            Style="{StaticResource TextBlockBoldBaseStyle}"
+                            Text="{Binding Name}" />
+                        <TextBlock
+                            Margin="5"
+                            FontSize="14"
+                            Foreground="DarkGray"
+                            Text="{Binding Version}"><Run Text="(内部版本)(64位)  .NET 4.72" /></TextBlock>
                     </StackPanel>
                 </Grid>
             </Grid>
 
-            <TextBlock FontSize="14"  HorizontalAlignment="Left"  Margin="5 45 5 0"  Text="{Binding Name}" Style="{ StaticResource    TextBlockDefaultThiLight}" ></TextBlock>
-            <TextBlock FontSize="14"  HorizontalAlignment="Left"    Margin="5 0 5 5"  Text="© 2021-2022 Leader。保留所有权利。" Style="{ StaticResource    TextBlockDefaultThiLight}" ></TextBlock>
-            <TextBlock FontSize="14"  HorizontalAlignment="Left"    Margin="5 0 5 5"  Text="{Binding MachineID,Source={StaticResource BingLocation},Mode=OneWay}" Style="{ StaticResource    TextBlockDefaultThiLight}" ><Run Text="{Binding MachineID}"></Run></TextBlock>
+            <TextBlock
+                Margin="5,45,5,0"
+                HorizontalAlignment="Left"
+                FontSize="14"
+                Style="{StaticResource TextBlockDefaultThiLight}"
+                Text="{Binding Name}" />
+            <TextBlock
+                Margin="5,0,5,5"
+                HorizontalAlignment="Left"
+                FontSize="14"
+                Style="{StaticResource TextBlockDefaultThiLight}"
+                Text="© 2021-2022 Leader。保留所有权利。" />
+            <TextBlock
+                Margin="5,0,5,5"
+                HorizontalAlignment="Left"
+                FontSize="14"
+                Style="{StaticResource TextBlockDefaultThiLight}"
+                Text="{Binding MachineID, Source={StaticResource BingLocation}, Mode=OneWay}"><Run Text="{Binding MachineID}" /></TextBlock>
         </StackPanel>
     </Grid>
 </UserControl>

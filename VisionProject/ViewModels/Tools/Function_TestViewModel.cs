@@ -39,6 +39,7 @@ namespace VisionProject.ViewModels
         public Function_TestViewModel()
         {
             init();
+          
         }
 
         private HImage currentImage = new HImage();

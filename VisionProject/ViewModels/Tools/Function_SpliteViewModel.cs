@@ -41,6 +41,7 @@ namespace VisionProject.ViewModels
         public Function_SpliteViewModel()
         {
             init();
+        
         }
 
         private HImage currentImage = new HImage();
