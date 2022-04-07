@@ -9,7 +9,7 @@ namespace VisionProject.ViewModels
 {
    
 
-    public class Function_SpliteViewModel : BindableBase, IDialogAware
+    public class Function_SpliteViewModel : BindableBase, IDialogAware,IFunction_ViewModel_Interface
     {
         #region 窗口相关
 
@@ -40,13 +40,13 @@ namespace VisionProject.ViewModels
 
         public Function_SpliteViewModel()
         {
-            init();
+            _=Init();
         
         }
 
         private HImage currentImage = new HImage();
 
-        private async void init()
+        public async Task<bool> Init()
         {
             await Task.Delay(300);
             try
@@ -59,8 +59,17 @@ namespace VisionProject.ViewModels
                 //显示彩色图像
                 Variables.ImageWindowDataForFunction.ClearHObjects();
                 Variables.ImageWindowDataForFunction.Repaint();
+
+                Variables.ClearCurrentParamsKeys();
+                Update();
+                return true;
             }
-            catch { }
+            catch { return false; }
+        }
+
+        public bool Update()
+        {
+            return true;
         }
 
         private double _param1;

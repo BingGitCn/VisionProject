@@ -93,6 +93,7 @@
     <Compile Include="ViewModels\Tools\Function_SaveImageViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_TestViewModel.cs" />
     <Compile Include="ViewModels\NumberPadViewModel.cs" />
+    <Compile Include="ViewModels\Tools\Function_ViewModel_Interface.cs" />
     <Compile Include="Views\Tools\Function_SaveImage.xaml.cs">
       <DependentUpon>Function_SaveImage.xaml</DependentUpon>
     </Compile>

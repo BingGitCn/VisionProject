@@ -117,7 +117,7 @@ namespace VisionProject.ViewModels
                 if (false)
                 {
                     int index = 1;//产品位置索引
-                    var currentProduct = (from step in Programs1
+                    var currentProduct = (from step in Program1
                                           where step.ProductIndex == index
                                           select step)
                                           .ToList();

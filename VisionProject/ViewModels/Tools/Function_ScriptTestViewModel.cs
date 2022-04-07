@@ -7,10 +7,11 @@ using System.Linq;
 using BingLibrary.Vision.Engine;
 using System.Collections.ObjectModel;
 using VisionProject.GlobalVars;
+using System.Threading.Tasks;
 
 namespace VisionProject.ViewModels
 {
-    public class Function_ScriptTestViewModel : BindableBase, IDialogAware
+    public class Function_ScriptTestViewModel : BindableBase, IDialogAware,IFunction_ViewModel_Interface
     {
         #region 窗口相关
 
@@ -37,33 +38,53 @@ namespace VisionProject.ViewModels
         {
         }
 
+       
+
         #endregion 窗口相关
         public Function_ScriptTestViewModel()
         {
-            IOVariables1.Clear();
-            IOVariables2.Clear();
-            IOVariables3.Clear();
-            IOVariables4.Clear();
-            var rst =   Variables.V2Engine.GetProcedureInfo("lvba");
+           
+            _=Init();
+        }
+        public async Task<bool> Init()
+        {
+            await Task.Delay(300);
+            try
+            {
+                IOVariables1.Clear();
+                IOVariables2.Clear();
+                IOVariables3.Clear();
+                IOVariables4.Clear();
+                var rst = Variables.V2Engine.GetProcedureInfo("lvba");
 
-            for (int i = 0; i < rst.InputCtrlParamNames.Count; i++)
-            {
-                IOVariables1.Add(rst.InputCtrlParamNames[i]);
-            }
-            for (int i = 0; i < rst.InputIconicParamNames.Count; i++)
-            {
-                IOVariables2.Add( rst.InputIconicParamNames[i]);
-            }
-            for (int i = 0; i < rst.OutputCtrlParamNames.Count; i++)
-            {
-                IOVariables3.Add( rst.OutputCtrlParamNames[i]);
-            }
-            for (int i = 0; i < rst.OutputIconicParamNames.Count; i++)
-            {
-                IOVariables4.Add(rst.OutputIconicParamNames[i]);
-            }
+                for (int i = 0; i < rst.InputCtrlParamNames.Count; i++)
+                {
+                    IOVariables1.Add(rst.InputCtrlParamNames[i]);
+                }
+                for (int i = 0; i < rst.InputIconicParamNames.Count; i++)
+                {
+                    IOVariables2.Add(rst.InputIconicParamNames[i]);
+                }
+                for (int i = 0; i < rst.OutputCtrlParamNames.Count; i++)
+                {
+                    IOVariables3.Add(rst.OutputCtrlParamNames[i]);
+                }
+                for (int i = 0; i < rst.OutputIconicParamNames.Count; i++)
+                {
+                    IOVariables4.Add(rst.OutputIconicParamNames[i]);
+                }
 
+                Variables.ClearCurrentParamsKeys();
+                Update();
+                return true;
+            }
+            catch { return false; }
 
+        }
+
+        public bool Update()
+        {
+            return true;
         }
 
         private ObservableCollection<string> _iOVariables1=new ObservableCollection<string>();

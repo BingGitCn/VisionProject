@@ -2,12 +2,14 @@
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
+using System.Linq;
 
 namespace VisionProject.ViewModels
 {
-    public class Function_TestViewModel : BindableBase, IDialogAware
+    public class Function_TestViewModel : BindableBase, IDialogAware,IFunction_ViewModel_Interface
     {
         #region 窗口相关
 
@@ -38,13 +40,13 @@ namespace VisionProject.ViewModels
 
         public Function_TestViewModel()
         {
-            init();
+            _=Init();
           
         }
 
         private HImage currentImage = new HImage();
 
-        private async void init()
+        public async Task<bool> Init()
         {
             await Task.Delay(300);
             try
@@ -57,8 +59,22 @@ namespace VisionProject.ViewModels
                 //显示彩色图像
                 Variables.ImageWindowDataForFunction.ClearHObjects();
                 Variables.ImageWindowDataForFunction.Repaint();
+
+              InputParams=  Variables.GetInputParams(Variables.ProgramName, Variables.ProgramIndex).Keys.ToList();
+
+                //清除当前工具的参数
+                Variables.ClearCurrentParamsKeys();
+                //重新保存进去，此步骤清除多余的参数
+                Update();
+
+                return true;
             }
-            catch { }
+            catch { return false; }
+        }
+
+        public bool Update()
+        {
+            return true;
         }
 
         private double _param1;
@@ -67,6 +83,13 @@ namespace VisionProject.ViewModels
         {
             get { return _param1; }
             set { SetProperty(ref _param1, value); }
+        }
+
+        private List<string> _inputParams; 
+        public List<string> InputParams
+        {
+            get { return _inputParams; }
+            set { SetProperty(ref _inputParams, value); }
         }
     }
 }

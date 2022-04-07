@@ -396,6 +396,7 @@
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
                                             </ComboBox>
+                                            <TextBox Margin="5" Style="{StaticResource TextBoxExtend}" Width="100" Text="{Binding ProgramName}"></TextBox>
                                             <Button
                                                 Width="100"
                                                 Margin="5"
@@ -461,7 +462,7 @@
                                                 hc:DataGridAttach.ShowRowNumber="True"
                                                 AutoGenerateColumns="False"
                                                 HeadersVisibility="All"
-                                                ItemsSource="{Binding Programs1}"
+                                                ItemsSource="{Binding Program1}"
                                                 SelectedIndex="{Binding Program1Index}"
                                                 SelectedItem="{Binding SelectedProgram1}">
                                                 <DataGrid.Columns>
