@@ -74,8 +74,7 @@ namespace VisionProject.ViewModels
                     IOVariables4.Add(rst.OutputIconicParamNames[i]);
                 }
 
-                Variables.ClearCurrentParamsKeys();
-                Update();
+              
                 return true;
             }
             catch { return false; }

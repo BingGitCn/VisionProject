@@ -82,14 +82,7 @@
                         Content="保存参数"
                         Style="{StaticResource ButtonPrimary}" />
                 </StackPanel>
-                <hc:ComboBox
-                    Width="260"
-                    Margin="5"
-                    hc:InfoElement.Title="输入变量"
-                    hc:InfoElement.TitlePlacement="Left"
-                    hc:InfoElement.TitleWidth="100"
-                    ItemsSource="{Binding InputParams}"
-                    Style="{StaticResource ComboBoxExtend}" />
+
             </StackPanel>
         </Grid>
     </Grid>

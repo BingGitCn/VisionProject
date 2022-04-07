@@ -452,13 +452,8 @@ namespace VisionProject.ViewModels
                     for (int i = 0; i < Program1.Count; i++)
                         Programs[ProgramsName[ProgramsIndex]].Add(Program1[i]);
 
-                  
-
                 }
                 catch (Exception ex) { }
-
-
-
 
 
             }));
@@ -470,28 +465,8 @@ namespace VisionProject.ViewModels
             _program1Config ?? (_program1Config = new DelegateCommand<string>((param)=> {
                 try
                 {
-                    Variables.ProgramIndex = Program1Index;
-                    //Program1.Clear();
-                    //for (int i = 0; i < Programs[ProgramsName[ProgramsIndex]].Count; i++)
-                    //    Program1.Add(Programs[ProgramsName[ProgramsIndex]][i]);
-
-
-                    Variables.CurrentProgram.Clear();
-                    for (int i = 0; i < Program1.Count; i++)
-                        Variables.CurrentProgram.Add(Program1[i]);
-
-                    Variables.CurrentImage1 = Variables.WindowData1.CurrentImage;
-
+                    Variables.CurrentSubProgram = Program1[Program1Index];
                     curDialogService.ShowDialog(DialogNames.ToolNams[param]);
-
-                    //Program1.Clear();
-                    //for (int i = 0; i < Variables.CurrentProgram.Count; i++)
-                    //    Program1.Add(Variables.CurrentProgram[i]);
-
-                    //Programs[ProgramsName[ProgramsIndex]].Clear();
-                    //for (int i = 0; i < Program1.Count; i++)
-                    //    Programs[ProgramsName[ProgramsIndex]].Add(Program1[i]);
-
 
                 }
                 catch (Exception ex) { }

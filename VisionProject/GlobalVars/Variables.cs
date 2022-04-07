@@ -37,61 +37,59 @@ namespace VisionProject.GlobalVars
         public static Project CurrentProject = new Project();
 
         //当前编辑的程序
-        public static int ProgramIndex = 0;
-
-        public static ObservableCollection<SubProgram> CurrentProgram = new ObservableCollection<SubProgram>();
+        public static SubProgram CurrentSubProgram = new SubProgram();  
 
         //当前编辑的程序名字
         public static string ProgramName = "";
-        /// <summary>
-        /// 获取输入参数
-        /// </summary>
-        /// <param name="programName">程序名字</param>
-        /// <param name="index">获取到第几步</param>
-        /// <returns></returns>
-        public static Dictionary<string, object> GetInputParams(string programName,int index)
-        {
-            Dictionary<string, object> inputParams = new Dictionary<string, object>();
-            try
-            {
-                var p = Variables.CurrentProject.Programs[programName];
+        ///// <summary>
+        ///// 获取输入参数
+        ///// </summary>
+        ///// <param name="programName">程序名字</param>
+        ///// <param name="index">获取到第几步</param>
+        ///// <returns></returns>
+        //public static Dictionary<string, object> GetInputParams(string programName,int index)
+        //{
+        //    Dictionary<string, object> inputParams = new Dictionary<string, object>();
+        //    try
+        //    {
+        //        var p = Variables.CurrentProject.Programs[programName];
 
-                if (index > p.Count)
-                    index = p.Count;
-                for (int i = 0; i < index; i++)
-                {
-                    var d = Variables.CurrentProject.Parameters[p[i].ID];
-                    for (int j = 0; j < d.Keys.Count; j++)
-                    {
-                        inputParams.Add(programName + ";" + p[i].InspectFunction + ";" + d.Keys.ToList()[j], d[d.Keys.ToList()[j]]); ;
-                    }
-                }
+        //        if (index > p.Count)
+        //            index = p.Count;
+        //        for (int i = 0; i < index; i++)
+        //        {
+        //            var d = Variables.CurrentProject.Parameters[p[i].ID];
+        //            for (int j = 0; j < d.Keys.Count; j++)
+        //            {
+        //                inputParams.Add(programName + "."+ i + "." + p[i].InspectFunction + "." + d.Keys.ToList()[j], d[d.Keys.ToList()[j]]); ;
+        //            }
+        //        }
                
-            }
-            catch { }
+        //    }
+        //    catch { }
 
-            return inputParams;
+        //    return inputParams;
 
-        }
-
-
-        public static void ClearCurrentParamsKeys()  
-        {
-           List<string> keys = new List<string>();
-            try
-            {
-                   var p = Variables.CurrentProject.Programs[Variables.ProgramName];
+        //}
 
 
-                Variables.CurrentProject.Parameters[p[Variables.ProgramIndex].ID].Clear();
+        //public static void ClearCurrentParamsKeys()  
+        //{
+        //   List<string> keys = new List<string>();
+        //    try
+        //    {
+        //           var p = Variables.CurrentProject.Programs[Variables.ProgramName];
+
+
+        //        Variables.CurrentProject.Parameters[p[Variables.ProgramIndex].ID].Clear();
 
 
 
-            }
-            catch { }
+        //    }
+        //    catch { }
 
 
-        }
+        //}
 
 
 

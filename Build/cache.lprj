@@ -13,99 +13,38 @@
           "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
           "IsUse": true,
           "ProductIndex": 0,
-          "InspectFunction": "脚本测试",
+          "InspectFunction": "保存图像",
           "Content": null,
-          "ID": "9deea7e8-9307-4bd1-9530-04c9c730d92c"
+          "ID": "d460025d-dbe0-4a7d-b856-5f818036dae6"
         },
         {
           "$id": "5",
           "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
           "IsUse": true,
           "ProductIndex": 0,
-          "InspectFunction": "保存图像",
-          "Content": null,
-          "ID": "86f86d07-f88a-4d75-8f39-0f4e462396d7"
-        },
-        {
-          "$id": "6",
-          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
-          "IsUse": true,
-          "ProductIndex": 0,
           "InspectFunction": "测试",
           "Content": null,
-          "ID": "6b97252b-6531-4968-8653-0b3b0fdacb1e"
-        }
-      ]
-    },
-    "456": {
-      "$id": "7",
-      "$type": "System.Collections.ObjectModel.ObservableCollection`1[[VisionProject.ViewModels.SubProgram, VisionProject]], System",
-      "$values": [
-        {
-          "$id": "8",
-          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
-          "IsUse": true,
-          "ProductIndex": 0,
-          "InspectFunction": "无",
-          "Content": null,
-          "ID": "96d4252b-149c-43b0-a41d-65bd56062b24"
-        },
-        {
-          "$id": "9",
-          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
-          "IsUse": true,
-          "ProductIndex": 0,
-          "InspectFunction": "保存图像",
-          "Content": null,
-          "ID": "f703471d-5882-4976-b139-6f08fb201faf"
+          "ID": "1e615f53-5ffd-4719-a981-2d9150fd45a4"
         }
       ]
     }
   },
   "Parameters": {
-    "$id": "10",
+    "$id": "6",
     "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib]], mscorlib",
-    "59a125f3-f089-4587-a8c0-0cb94c63f07a": {
-      "$id": "11",
-      "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
-    },
-    "4e6dd70c-f32e-4a7d-8b55-44dfdffb9f1d": {
-      "$id": "12",
-      "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
-    },
-    "85c71360-1f55-479c-b8a0-ee347562aa65": {
-      "$id": "13",
-      "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
-    },
-    "9deea7e8-9307-4bd1-9530-04c9c730d92c": {
-      "$id": "14",
-      "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
-    },
-    "86f86d07-f88a-4d75-8f39-0f4e462396d7": {
-      "$id": "15",
+    "d460025d-dbe0-4a7d-b856-5f818036dae6": {
+      "$id": "7",
       "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib",
       "SaveMode": 0,
       "SaveFormat": 0,
       "SaveCount": null,
       "SavePath": "C:\\Users\\N294\\Desktop"
     },
-    "6b97252b-6531-4968-8653-0b3b0fdacb1e": {
-      "$id": "16",
-      "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
-    },
-    "96d4252b-149c-43b0-a41d-65bd56062b24": {
-      "$id": "17",
-      "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib",
-      "SaveMode": 0,
-      "SaveFormat": 0,
-      "SaveCount": null,
-      "SavePath": "C:\\Users\\N294\\Downloads"
-    },
-    "f703471d-5882-4976-b139-6f08fb201faf": {
-      "$id": "18",
+    "1e615f53-5ffd-4719-a981-2d9150fd45a4": {
+      "$id": "8",
       "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
     }
   },
-  "CreateDate": "2022-04-07 13:38:30",
-  "LastDate": "2022-04-07 17:29:23"
+  "CreateDate": "2022-04-07 19:26:18",
+  "LastDate": "2022-04-07 19:26:18"
 }
