@@ -116,7 +116,7 @@ namespace VisionProject.ViewModels
                 
                 if (false)
                 {
-                    var program= Variables.CurrentProject.Programs.Values.ToList()[0];
+                    var program = Variables.CurrentProject.Programs.ElementAt(0).Value;
 
                     int index = 1;//产品位置索引
                     var currentProduct = (from step in program

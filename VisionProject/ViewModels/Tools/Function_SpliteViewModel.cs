@@ -51,8 +51,8 @@ namespace VisionProject.ViewModels
             await Task.Delay(300);
             try
             {
-                if (Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID].ContainsKey("Param1"))
-                    Param1 = (double)Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID]["Param1"];
+                if (Variables.CurrentSubProgram.Parameters.ContainsKey("Param1"))
+                    Param1 = (double)Variables.CurrentSubProgram.Parameters["Param1"];
 
                 Variables.ImageWindowDataForFunction.CurrentImage = Variables.CurrentImageForFunction;
 
@@ -60,7 +60,9 @@ namespace VisionProject.ViewModels
                 Variables.ImageWindowDataForFunction.ClearHObjects();
                 Variables.ImageWindowDataForFunction.Repaint();
 
-               
+                //清除多余的key，仅保留当前设置。
+                Variables.CurrentSubProgram.Parameters.Clear();
+                Update();
                 return true;
             }
             catch { return false; }

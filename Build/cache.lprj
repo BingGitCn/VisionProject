@@ -4,47 +4,53 @@
   "Programs": {
     "$id": "2",
     "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.ObjectModel.ObservableCollection`1[[VisionProject.ViewModels.SubProgram, VisionProject]], System]], mscorlib",
-    "123": {
+    "qqq": {
       "$id": "3",
       "$type": "System.Collections.ObjectModel.ObservableCollection`1[[VisionProject.ViewModels.SubProgram, VisionProject]], System",
       "$values": [
         {
           "$id": "4",
           "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+          "Parameters": {
+            "$id": "5",
+            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib",
+            "SaveMode": 0,
+            "SaveFormat": 0,
+            "SaveCount": null,
+            "SavePath": "C:\\Users\\N294\\Desktop"
+          },
           "IsUse": true,
           "ProductIndex": 0,
           "InspectFunction": "保存图像",
-          "Content": null,
-          "ID": "d460025d-dbe0-4a7d-b856-5f818036dae6"
+          "Content": null
         },
         {
-          "$id": "5",
+          "$id": "6",
           "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+          "Parameters": {
+            "$id": "7",
+            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
+          },
+          "IsUse": true,
+          "ProductIndex": 0,
+          "InspectFunction": "脚本测试",
+          "Content": null
+        },
+        {
+          "$id": "8",
+          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+          "Parameters": {
+            "$id": "9",
+            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
+          },
           "IsUse": true,
           "ProductIndex": 0,
           "InspectFunction": "测试",
-          "Content": null,
-          "ID": "1e615f53-5ffd-4719-a981-2d9150fd45a4"
+          "Content": null
         }
       ]
     }
   },
-  "Parameters": {
-    "$id": "6",
-    "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib]], mscorlib",
-    "d460025d-dbe0-4a7d-b856-5f818036dae6": {
-      "$id": "7",
-      "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib",
-      "SaveMode": 0,
-      "SaveFormat": 0,
-      "SaveCount": null,
-      "SavePath": "C:\\Users\\N294\\Desktop"
-    },
-    "1e615f53-5ffd-4719-a981-2d9150fd45a4": {
-      "$id": "8",
-      "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
-    }
-  },
-  "CreateDate": "2022-04-07 19:26:18",
-  "LastDate": "2022-04-07 19:26:18"
+  "CreateDate": "2022-04-08 08:47:44",
+  "LastDate": "2022-04-08 08:47:44"
 }

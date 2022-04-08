@@ -52,19 +52,22 @@ namespace VisionProject.ViewModels
             await Task.Delay(300);
             try
             {
-                if (Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID].ContainsKey("SaveMode"))
-                    SaveMode = int.Parse(Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID]["SaveMode"].ToString());
-                if (Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID].ContainsKey("SaveFormat"))
-                    SaveFormat = int.Parse(Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID]["SaveFormat"].ToString());
+                if (Variables.CurrentSubProgram.Parameters.ContainsKey("SaveMode"))
+                    SaveMode = int.Parse(Variables.CurrentSubProgram.Parameters["SaveMode"].ToString());
+                if (Variables.CurrentSubProgram.Parameters.ContainsKey("SaveFormat"))
+                    SaveFormat = int.Parse(Variables.CurrentSubProgram.Parameters["SaveFormat"].ToString());
                 
-                if (Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID].ContainsKey("SaveCount"))
-                    SaveCount = (string)Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID]["SaveCount"];
-                if (Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID].ContainsKey("SavePath"))
-                    SavePath = (string)Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID]["SavePath"];
+                if (Variables.CurrentSubProgram.Parameters.ContainsKey("SaveCount"))
+                    SaveCount = (string)Variables.CurrentSubProgram.Parameters["SaveCount"];
+                if (Variables.CurrentSubProgram.Parameters.ContainsKey("SavePath"))
+                    SavePath = (string)Variables.CurrentSubProgram.Parameters["SavePath"];
+
+                //清除多余的key，仅保留当前设置。
+                Variables.CurrentSubProgram.Parameters.Clear();
+                Update();
 
 
 
-              
                 return true;
 
                
@@ -132,24 +135,24 @@ namespace VisionProject.ViewModels
 
       public  bool Update()
         {
-            if (Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID].ContainsKey("SaveMode"))
-                Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID]["SaveMode"] = SaveMode;
+            if (Variables.CurrentSubProgram.Parameters.ContainsKey("SaveMode"))
+                Variables.CurrentSubProgram.Parameters["SaveMode"] = SaveMode;
             else
-                Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID].Add("SaveMode", SaveMode);
+                Variables.CurrentSubProgram.Parameters.Add("SaveMode", SaveMode);
 
-            if (Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID].ContainsKey("SaveFormat"))
-                Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID]["SaveFormat"] = SaveFormat;
+            if (Variables.CurrentSubProgram.Parameters.ContainsKey("SaveFormat"))
+                Variables.CurrentSubProgram.Parameters["SaveFormat"] = SaveFormat;
             else
-                Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID].Add("SaveFormat", SaveFormat);
+                Variables.CurrentSubProgram.Parameters.Add("SaveFormat", SaveFormat);
 
-            if (Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID].ContainsKey("SaveCount"))
-                Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID]["SaveCount"] = SaveCount;
+            if (Variables.CurrentSubProgram.Parameters.ContainsKey("SaveCount"))
+                Variables.CurrentSubProgram.Parameters["SaveCount"] = SaveCount;
             else
-                Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID].Add("SaveCount", SaveCount);
-            if (Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID].ContainsKey("SavePath"))
-                Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID]["SavePath"] = SavePath;
+                Variables.CurrentSubProgram.Parameters.Add("SaveCount", SaveCount);
+            if (Variables.CurrentSubProgram.Parameters.ContainsKey("SavePath"))
+                Variables.CurrentSubProgram.Parameters["SavePath"] = SavePath;
             else
-                Variables.CurrentProject.Parameters[Variables.CurrentSubProgram.ID].Add("SavePath", SavePath);
+                Variables.CurrentSubProgram.Parameters.Add("SavePath", SavePath);
             
             return true;
         }

@@ -74,7 +74,9 @@ namespace VisionProject.ViewModels
                     IOVariables4.Add(rst.OutputIconicParamNames[i]);
                 }
 
-              
+                //清除多余的key，仅保留当前设置。
+                Variables.CurrentSubProgram.Parameters.Clear();
+                Update();
                 return true;
             }
             catch { return false; }
