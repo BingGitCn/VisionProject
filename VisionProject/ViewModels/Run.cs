@@ -137,17 +137,9 @@ namespace VisionProject.ViewModels
                             //Do Something
                         
                         }
-
-
                     }
-
-                    
-
                 }
                
-                                   
-
-
             }
         }
 

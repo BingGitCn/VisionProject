@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace VisionProject.ViewModels
 {
@@ -46,6 +47,13 @@ namespace VisionProject.ViewModels
 
         private HImage currentImage = new HImage();
 
+
+        private List<string> _inputParams=new List<string>  ();
+        public List<string> InputParams
+        {
+            get { return _inputParams; } 
+            set { SetProperty(ref _inputParams, value); }
+        }
         public async Task<bool> Init()
         {
             await Task.Delay(300);
@@ -60,7 +68,7 @@ namespace VisionProject.ViewModels
                 Variables.ImageWindowDataForFunction.ClearHObjects();
                 Variables.ImageWindowDataForFunction.Repaint();
 
-
+                InputParams = Variables.GetInputParams(Variables.ProgramName).Keys.ToList();
 
                 //清除多余的key，仅保留当前设置。
                 Variables.CurrentSubProgram.Parameters.Clear();
@@ -84,11 +92,6 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _param1, value); }
         }
 
-        private List<string> _inputParams; 
-        public List<string> InputParams
-        {
-            get { return _inputParams; }
-            set { SetProperty(ref _inputParams, value); }
-        }
+      
     }
 }

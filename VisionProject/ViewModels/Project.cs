@@ -362,9 +362,6 @@ namespace VisionProject.ViewModels
                         {   //删除确认
                             if (Variables.ShowConfirm("确认删除当前程序？") == true)
                             {
-                               
-                                
-
                                 Programs.Remove(ProgramsName[ProgramsIndex]);
                                 ProgramsName.Remove(ProgramsName[ProgramsIndex]);
                                 Variables.ProgramName = ProgramsName[ProgramsIndex];
@@ -442,6 +439,7 @@ namespace VisionProject.ViewModels
                 try
                 {
                     Variables.CurrentSubProgram = Program1[Program1Index].Clone();
+                    Variables.CurrentSubProgram.Index = Program1Index;
                     curDialogService.ShowDialog(DialogNames.ToolNams[param]);
                     Program1[Program1Index] = Variables.CurrentSubProgram.Clone(); ;
 
@@ -459,6 +457,7 @@ namespace VisionProject.ViewModels
         public string CreateDate = "";
         public string LastDate = "";
     }
+
 
     //程序类
     public class SubProgram
@@ -494,6 +493,8 @@ namespace VisionProject.ViewModels
         /// </summary>
         [JsonIgnore]
         public List<int> ProductIndexs { set; get; } = new List<int>() { 0, 1, 2, };
+        [JsonIgnore]
+        public int Index { set; get; }
         [JsonIgnore]
         public List<string> ToolNames { set; get; } = DialogNames.ToolNams.Keys.ToList();
     
