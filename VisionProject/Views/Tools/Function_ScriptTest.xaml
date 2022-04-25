@@ -57,6 +57,11 @@
                     <Button
                         Width="100"
                         Margin="5"
+                        Content="编辑脚本" Command="{Binding EditScript}"
+                        Style="{StaticResource ButtonPrimary}" />
+                    <Button
+                        Width="100"
+                        Margin="5"
                         Content="保存参数"
                         Style="{StaticResource ButtonPrimary}" />
                 </StackPanel>

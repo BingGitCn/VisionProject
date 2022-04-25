@@ -130,6 +130,7 @@ namespace VisionProject.ViewModels
                         {
                             //Do Something
                             //Function_SaveImageViewModel.SaveImages(new HalconDotNet.HImage(),"123", currentProduct[i].Parameters);
+                         
                         }
                   
                        else if (currentProduct[i].InspectFunction == ToolNames[1])

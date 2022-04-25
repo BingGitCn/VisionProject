@@ -27,6 +27,8 @@ namespace VisionProject
             containerRegistry.RegisterDialog<Function_ScriptTest, Function_ScriptTestViewModel>(GlobalVars.DialogNames.ToolNams["脚本测试"]);
             //测试窗口
             containerRegistry.RegisterDialog<Function_Test, Function_TestViewModel>(GlobalVars.DialogNames.ToolNams["测试"]);
+            //测试窗口1
+            containerRegistry.RegisterDialog<Function_Test1, Function_Test1ViewModel>(GlobalVars.DialogNames.ToolNams["测试1"]);
             //保存图像窗口
             containerRegistry.RegisterDialog<Function_SaveImage, Function_SaveImageViewModel>(GlobalVars.DialogNames.ToolNams["保存图像"]);
             //分离产品窗口

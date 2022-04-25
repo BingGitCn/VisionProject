@@ -9,12 +9,21 @@ using System.IO;
 using System.Linq;
 using VisionProject.ViewModels;
 using BingLibrary.Vision.Engine;
+using Prism.Services.Dialogs;
 
 namespace VisionProject.GlobalVars
 {
     public static class Variables
     {
+        //全局Dialog服务
+        public static IDialogService CurDialogService;
+
+        //脚本代码
+        public static string ScriptCode = "";
+       public static ScriptEdit scriptEdit = new ScriptEdit();
       
+
+
         //V2 引擎
         public static VisionEngine2 V2Engine=new VisionEngine2();
 
@@ -53,7 +62,7 @@ namespace VisionProject.GlobalVars
             try
             {
                 var p = Variables.CurrentProject.Programs[programName];
-             int   index = Variables.CurrentSubProgram.Index;
+            int   index = Variables.CurrentSubProgram.Index;
 
                 if (index > p.Count)
                     index = p.Count;

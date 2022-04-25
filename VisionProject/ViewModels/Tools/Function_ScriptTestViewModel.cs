@@ -8,6 +8,8 @@ using BingLibrary.Vision.Engine;
 using System.Collections.ObjectModel;
 using VisionProject.GlobalVars;
 using System.Threading.Tasks;
+using BingLibrary.Vision;
+
 
 namespace VisionProject.ViewModels
 {
@@ -143,6 +145,30 @@ namespace VisionProject.ViewModels
         {
             get { return _iOIndex4; }
             set { SetProperty(ref _iOIndex4, value); }
+        }
+
+        private DelegateCommand _editScript;
+        public DelegateCommand EditScript =>
+            _editScript ?? (_editScript = new DelegateCommand(ExecuteEditScript));
+
+        void ExecuteEditScript()
+        {
+            
+            Variables.scriptEdit.SetProcedurePath(AppDomain.CurrentDomain.BaseDirectory+ "Projects\\Scripts");
+            //打开脚本窗口
+            ScriptDIalog sd = new ScriptDIalog();
+            //读取并显示脚本
+            sd.SetCode(Variables.scriptEdit.ReadProcedure("lvba"));
+            sd.ShowDialog();
+            //保存脚本
+            Variables.scriptEdit.SaveProcedure(sd.GetCode());
+
+            sd.Close();
+
+          
+          
+
+           
         }
 
     }

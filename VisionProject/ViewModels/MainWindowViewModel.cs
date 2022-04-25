@@ -38,11 +38,11 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _title, value); }
         }
 
-        private IDialogService curDialogService;
+       
 
         public MainWindowViewModel(IDialogService dialogService)
         {
-            curDialogService = dialogService;
+            Variables.CurDialogService = dialogService;
             initAll();
         }
 
@@ -454,7 +454,7 @@ namespace VisionProject.ViewModels
         public DelegateCommand ShowAboutDialog =>
             _showAboutDialog ?? (_showAboutDialog = new DelegateCommand(() =>
             {
-                curDialogService.ShowDialog(GlobalVars.DialogNames.ShowAboutWindow);
+                Variables.CurDialogService.ShowDialog(GlobalVars.DialogNames.ShowAboutWindow);
             }));
 
         #endregion 底部Status

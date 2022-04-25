@@ -440,7 +440,7 @@ namespace VisionProject.ViewModels
                 {
                     Variables.CurrentSubProgram = Program1[Program1Index].Clone();
                     Variables.CurrentSubProgram.Index = Program1Index;
-                    curDialogService.ShowDialog(DialogNames.ToolNams[param]);
+                    Variables.CurDialogService.ShowDialog(DialogNames.ToolNams[param]);
                     Program1[Program1Index] = Variables.CurrentSubProgram.Clone(); ;
 
                 }
