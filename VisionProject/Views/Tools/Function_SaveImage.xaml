@@ -10,7 +10,7 @@
     <Grid>
         <StackPanel Orientation="Vertical">
 
-            <!--<hc:ComboBox Margin="5" hc:InfoElement.Title="保存方式" SelectedIndex="{Binding SaveMode}"  FontWeight="Bold"  Style="{StaticResource    ComboBoxExtend}"  >
+            <!--<hc:ComboBox Margin="5" hc:InfoElement.Title="保存方式" SelectedIndex="{Binding SaveMode}"  FontWeight="Bold"  Style="{StaticResource    ComboBoxExtend}">
                 <ComboBoxItem Content="按日期" IsSelected="True"></ComboBoxItem>
                 <ComboBoxItem Content="按序列1,2.." ></ComboBoxItem>
             </hc:ComboBox>-->
@@ -58,12 +58,7 @@
                     Command="{Binding SaveParam}"
                     Content="保  存"
                     Style="{StaticResource ButtonPrimary}" />
-
             </StackPanel>
-
-
-
-
         </StackPanel>
     </Grid>
 </UserControl>

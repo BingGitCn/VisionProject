@@ -24,9 +24,9 @@ namespace VisionProject.ViewModels
                 try
                 {
                     Serialize.WriteJsonV2(SystemConfig, Variables.BaseDirectory + "system.config");
-                     Log.Info("系统设置保存成功。");
+                    Log.Info("系统设置保存成功。");
                 }
-                catch {  Log.Error("系统设置保存失败。"); }
+                catch { Log.Error("系统设置保存失败。"); }
             }));
 
         private void getSystemConfig()
@@ -36,9 +36,9 @@ namespace VisionProject.ViewModels
                 SystemConfig = Serialize.ReadJsonV2<SystemConfigData>(Variables.BaseDirectory + "system.config");
                 if (SystemConfig == null)
                     SystemConfig = new SystemConfigData();
-                 Log.Info("系统设置加载成功。");
+                Log.Info("系统设置加载成功。");
             }
-            catch {  Log.Error("系统设置保存失败。"); }
+            catch { Log.Error("系统设置保存失败。"); }
         }
 
         private DelegateCommand _updatePassword;
@@ -63,18 +63,18 @@ namespace VisionProject.ViewModels
                         SystemConfig.Passwords[SystemConfig.UserIndex + 1] = SystemConfig.NewPassword;
 
                         Variables.ShowMessage("密码更新成功，请立即保存！\r\n此为唯一密码！");
-                         Log.Info("更新密码操作。");
+                        Log.Info("更新密码操作。");
                     }
-                } else if(SystemConfig.UserIndex + 1 < UserIndex)
-                
+                }
+                else if (SystemConfig.UserIndex + 1 < UserIndex)
+
                 {
                     SystemConfig.Passwords[SystemConfig.UserIndex + 1] = SystemConfig.NewPassword;
 
                     Variables.ShowMessage("密码更新成功，请立即保存！\r\n此为唯一密码！");
-                     Log.Info("更新密码操作。");
+                    Log.Info("更新密码操作。");
                 }
 
-               
                 SystemConfig.NewPassword = "";
                 SystemConfig.CurrentPassword = "";
             }));
@@ -92,6 +92,7 @@ namespace VisionProject.ViewModels
         public Dictionary<int, string> Passwords { set; get; } = new Dictionary<int, string>() {
             { 1,"123456"},{ 2,"123456"},{ 3,"123456"}
         };
+
         public string CurrentPassword { set; get; }
         public string NewPassword { set; get; }
         public bool IsRestoreDirectory { set; get; }

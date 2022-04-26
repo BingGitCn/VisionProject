@@ -2,7 +2,6 @@ using BingLibrary.Extension;
 using HalconDotNet;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace BingLibrary.Vision
@@ -30,8 +29,7 @@ namespace BingLibrary.Vision
 
         public HalconCoordinateSystem ShowMode { set; get; }
 
-
-        public MessageBase(double posX, double posY, string text, int fontsize = 12, HalconColors color = HalconColors.绿色, HalconCoordinateSystem mode =  HalconCoordinateSystem.window)
+        public MessageBase(double posX, double posY, string text, int fontsize = 12, HalconColors color = HalconColors.绿色, HalconCoordinateSystem mode = HalconCoordinateSystem.window)
         {
             PositionX = posX;
             PositionY = posY;
@@ -55,7 +53,7 @@ namespace BingLibrary.Vision
         public bool canEdit = false;
 
         //显示模式
-        public HalconDrawing DrawMode =  HalconDrawing.margin;
+        public HalconDrawing DrawMode = HalconDrawing.margin;
 
         //绘制结束方式
         public HalconDrawMode DrawFinishMode = HalconDrawMode.rightButton;
@@ -108,7 +106,6 @@ namespace BingLibrary.Vision
             viewPort.HMouseMove += ViewPort_HMouseMove;
             viewPort.HMouseWheel += ViewPort_HMouseWheel;
             viewPort.SizeChanged += ViewPort_SizeChanged;
-          
 
             initFont(viewPort.HalconWindow);
         }
@@ -189,7 +186,7 @@ namespace BingLibrary.Vision
         {
             mousePressed = false;
 
-            if(DrawFinishMode== HalconDrawMode.directly)
+            if (DrawFinishMode == HalconDrawMode.directly)
                 if (e.Button == System.Windows.Input.MouseButton.Left)
                     if (isDrawing)
                         HalconMicroSoft.FinishDraw();
@@ -451,7 +448,7 @@ namespace BingLibrary.Vision
 
         private List<MessageBase> messages = new List<MessageBase>();
 
-        public void addMessageVar(string message, int row, int column, int fontsize = 12, HalconColors color = HalconColors.绿色, HalconCoordinateSystem mode =  HalconCoordinateSystem.window)
+        public void addMessageVar(string message, int row, int column, int fontsize = 12, HalconColors color = HalconColors.绿色, HalconCoordinateSystem mode = HalconCoordinateSystem.window)
         {
             messages.Add(new MessageBase(row, column, message, fontsize, color, mode));
         }

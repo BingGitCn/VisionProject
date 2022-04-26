@@ -20,9 +20,9 @@ namespace BingLibrary.Vision
         public HWndCtrl viewController;
         public ObservableCollection<ROI> ROIList;
 
-        private HalconColors activeCol =  HalconColors.绿色;//"green,cyan";
-        private HalconColors activeHdlCol =  HalconColors.紫色;
-        private HalconColors inactiveCol =  HalconColors.蓝色;//"magenta";//"yellow";
+        private HalconColors activeCol = HalconColors.绿色;//"green,cyan";
+        private HalconColors activeHdlCol = HalconColors.紫色;
+        private HalconColors inactiveCol = HalconColors.蓝色;//"magenta";//"yellow";
 
         public ROI roi;
 
@@ -257,7 +257,6 @@ namespace BingLibrary.Vision
                             break;
                         }
                     }
-                   
                     else
                     {
                         dist = ((ROI)ROIList[i]).distToClosestHandle(imgX, imgY);
@@ -299,7 +298,6 @@ namespace BingLibrary.Vision
                 {
                     ((ROIRegion)ROIList[ActiveROIidx]).mCurHRegion = ((ROIRegion)ROIList[ActiveROIidx]).mCurHRegion.MoveRegion((int)motionY, (int)motionX);
                 }
-               
                 else
                 {
                     ROIList[ActiveROIidx].moveByHandle(newX, newY);

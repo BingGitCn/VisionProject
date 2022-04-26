@@ -1,20 +1,15 @@
-﻿using Prism.Commands;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Controls.Primitives;
-using VisionProject.GlobalVars;
-using System.Linq;
-using System.Collections.ObjectModel;
-using BingLibrary.Logs;
+﻿using BingLibrary.Logs;
+using Prism.Commands;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
 {
     public partial class MainWindowViewModel
     {
         #region 初始化
-
-
 
         private void initAll()
         {
@@ -24,7 +19,6 @@ namespace VisionProject.ViewModels
             Variables.Title = SystemConfig.Title;
             Title = Variables.Title;
 
-
             //测试
             //IsLogin = true;
 
@@ -33,55 +27,50 @@ namespace VisionProject.ViewModels
             initEngine();
 
             run();
-
-
-
         }
 
         private void initEngine()
         {
-            try {
+            try
+            {
                 Variables.V2Engine.AddProcedure("lvba");
-                Variables.V2Engine.Init(System.AppDomain.CurrentDomain.BaseDirectory+ "Projects\\Scripts");
-            
-            } catch { }
-}
+                Variables.V2Engine.Init(System.AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts");
+            }
+            catch { }
+        }
 
         private async void initFreeSpace()
         {
             while (true)
             {
                 await Task.Delay(5000);
-                try {
-                 FreeSpace = (SystemConfig.HardDrive == 0 ? "C:\\"
-                        : SystemConfig.HardDrive == 1 ? "D:\\"
-                         : SystemConfig.HardDrive == 2 ? "E:\\"
-                          : SystemConfig.HardDrive == 3 ? "F:\\"
-                           : SystemConfig.HardDrive == 4 ? "G:\\"
-                        : "C:\\")+"可用容量："+
-                        Variables.GetFreeSpace(SystemConfig.HardDrive == 0 ? "C:\\"
-                        :SystemConfig.HardDrive == 1 ? "D:\\"
-                         : SystemConfig.HardDrive == 2 ? "E:\\"
-                          : SystemConfig.HardDrive == 3 ? "F:\\"
-                           : SystemConfig.HardDrive == 4 ? "G:\\"
-                        : "C:\\") ;
+                try
+                {
+                    FreeSpace = (SystemConfig.HardDrive == 0 ? "C:\\"
+                           : SystemConfig.HardDrive == 1 ? "D:\\"
+                            : SystemConfig.HardDrive == 2 ? "E:\\"
+                             : SystemConfig.HardDrive == 3 ? "F:\\"
+                              : SystemConfig.HardDrive == 4 ? "G:\\"
+                           : "C:\\") + "可用容量：" +
+                           Variables.GetFreeSpace(SystemConfig.HardDrive == 0 ? "C:\\"
+                           : SystemConfig.HardDrive == 1 ? "D:\\"
+                            : SystemConfig.HardDrive == 2 ? "E:\\"
+                             : SystemConfig.HardDrive == 3 ? "F:\\"
+                              : SystemConfig.HardDrive == 4 ? "G:\\"
+                           : "C:\\");
 
                     double freeSpace = Variables.GetFreeSpaceRateValue(SystemConfig.HardDrive == 0 ? "C:\\"
                         : SystemConfig.HardDrive == 1 ? "D:\\"
                          : SystemConfig.HardDrive == 2 ? "E:\\"
                           : SystemConfig.HardDrive == 3 ? "F:\\"
                            : SystemConfig.HardDrive == 4 ? "G:\\"
-                        : "C:\\"); 
-
+                        : "C:\\");
 
                     HardWareStatus.Value = freeSpace >= SystemConfig.FreeSpace ? true : false;
-
-
-                } catch { }
+                }
+                catch { }
             }
-        
         }
-
 
         //PLC初始化
         private async void initPLC()
@@ -95,10 +84,9 @@ namespace VisionProject.ViewModels
                     break;
                 await Task.Delay(1000);
             }
-            
+
             Log.Info(Variables.HCPLC.IsConnected ? "PLC连接成功" : "PLC连接失败");
             PLCStatus.Value = Variables.HCPLC.IsConnected;
-
         }
 
         #endregion 初始化
@@ -113,7 +101,7 @@ namespace VisionProject.ViewModels
             while (true)
             {
                 await Task.Delay(100);
-                
+
                 if (false)
                 {
                     var program = Variables.CurrentProject.Programs.ElementAt(0).Value;
@@ -124,57 +112,28 @@ namespace VisionProject.ViewModels
                                           select step)
                                           .ToList();
 
-                    for (int i = 0; i < currentProduct.Count-1; i++)
+                    for (int i = 0; i < currentProduct.Count - 1; i++)
                     {
                         if (currentProduct[i].InspectFunction == ToolNames[0])
                         {
                             //Do Something
                             //Function_SaveImageViewModel.SaveImages(new HalconDotNet.HImage(),"123", currentProduct[i].Parameters);
-                         
                         }
-                  
-                       else if (currentProduct[i].InspectFunction == ToolNames[1])
+                        else if (currentProduct[i].InspectFunction == ToolNames[1])
                         {
                             //Do Something
-                        
                         }
                     }
                 }
-               
             }
         }
 
-
-
         private DelegateCommand _test;
+
         public DelegateCommand Test =>
-            _test ?? (_test = new DelegateCommand(()=> {
-
+            _test ?? (_test = new DelegateCommand(() =>
+            {
                 //Do Something..
-               
-
-
             }));
-
-       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }

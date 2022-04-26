@@ -52,8 +52,8 @@ namespace BingLibrary.Vision
 
         public override void createROIRect2(double midX, double midY, double mphi, double mlength1, double mlength2)
         {
-            midR = midY; 
-            midC = midX; 
+            midR = midY;
+            midC = midX;
 
             length1 = mlength1;
             length2 = mlength2;

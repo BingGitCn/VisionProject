@@ -3,14 +3,13 @@ using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
-using System.Linq;
-using System.Collections.ObjectModel;
 
 namespace VisionProject.ViewModels
 {
-    public class Function_TestViewModel : BindableBase, IDialogAware,IFunction_ViewModel_Interface
+    public class Function_TestViewModel : BindableBase, IDialogAware, IFunction_ViewModel_Interface
     {
         #region 窗口相关
 
@@ -41,19 +40,19 @@ namespace VisionProject.ViewModels
 
         public Function_TestViewModel()
         {
-            _=Init();
-          
+            _ = Init();
         }
 
         private HImage currentImage = new HImage();
 
+        private List<string> _inputParams = new List<string>();
 
-        private List<string> _inputParams=new List<string>  ();
         public List<string> InputParams
         {
-            get { return _inputParams; } 
+            get { return _inputParams; }
             set { SetProperty(ref _inputParams, value); }
         }
+
         public async Task<bool> Init()
         {
             await Task.Delay(300);
@@ -91,7 +90,5 @@ namespace VisionProject.ViewModels
             get { return _param1; }
             set { SetProperty(ref _param1, value); }
         }
-
-      
     }
 }

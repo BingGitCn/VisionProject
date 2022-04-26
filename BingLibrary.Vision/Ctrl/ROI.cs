@@ -3,8 +3,6 @@ using System;
 
 namespace BingLibrary.Vision
 {
-   
-
     [Serializable]
     public class ROI
     {
@@ -53,15 +51,18 @@ namespace BingLibrary.Vision
         {
         }
 
-        public virtual void createROICircle(double midX, double midY,double radius)
+        public virtual void createROICircle(double midX, double midY, double radius)
         {
         }
-        public virtual void createROILine(double r1, double c1, double r2, double c2) 
+
+        public virtual void createROILine(double r1, double c1, double r2, double c2)
         {
         }
+
         public virtual void createROIRect1(double r1, double c1, double r2, double c2)
         {
         }
+
         public virtual void createROIRect2(double midX, double midY, double mphi, double mlength1, double mlength2)
         {
         }

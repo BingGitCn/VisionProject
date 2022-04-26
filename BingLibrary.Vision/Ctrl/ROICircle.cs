@@ -26,11 +26,9 @@ namespace BingLibrary.Vision
             col1 = midC + radius;
         }
 
-        
-
         public override void createROICircle(double midX, double midY, double mradius)
         {
-            midR = midY; 
+            midR = midY;
             midC = midX;
             radius = mradius;
             row1 = midR;

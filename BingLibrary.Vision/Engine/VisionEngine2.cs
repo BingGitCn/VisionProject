@@ -1,18 +1,13 @@
-﻿using System;
+﻿using HalconDotNet;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HalconDotNet;
-using System.Xml;
-using System.IO;
-
 
 /*************************************************************************************
  *
  * 文 件 名:   VisionEngine2
- * 描    述: 
- * 
+ * 描    述:
+ *
  * 版    本：  V1.0.0.0
  * 创 建 者：  Bing
  * 创建时间：  2022/4/2 10:10:02
@@ -22,12 +17,13 @@ using System.IO;
  * 修改内容：
  * ======================================
 *************************************************************************************/
+
 namespace BingLibrary.Vision.Engine
 {
     /// <summary>
     /// 脱离 program，直接调用 procedure，推荐使用。
     /// </summary>
-    public class VisionEngine2 
+    public class VisionEngine2
     {
         /// <summary>
         /// 引擎
@@ -67,14 +63,13 @@ namespace BingLibrary.Vision.Engine
         /// 初始化
         /// </summary>
         /// <param name="procedurePath"></param>
-        public void Init( string procedurePath)
+        public void Init(string procedurePath)
         {
             devEngine = new HDevEngine();
             devEngine.SetProcedurePath(procedurePath);
             foreach (var p in procedureNames)
-                devProcedureCalls.Add(p, new HDevProcedureCall(new HDevProcedure( p)));
+                devProcedureCalls.Add(p, new HDevProcedureCall(new HDevProcedure(p)));
         }
-
 
         /// <summary>
         /// 获取 procedur 参数信息
@@ -83,8 +78,9 @@ namespace BingLibrary.Vision.Engine
         /// <returns></returns>
         public ProcedureInfo GetProcedureInfo(string procedureName)
         {
-            try {
-                ProcedureInfo procedureInfo=new ProcedureInfo();
+            try
+            {
+                ProcedureInfo procedureInfo = new ProcedureInfo();
                 procedureInfo.InputCtrlParamCount = devProcedureCalls[procedureName].GetProcedure().GetInputCtrlParamCount();
                 procedureInfo.IntputIconicParamCount = devProcedureCalls[procedureName].GetProcedure().GetInputIconicParamCount();
 
@@ -103,19 +99,17 @@ namespace BingLibrary.Vision.Engine
 
                 for (int i = 1; i <= procedureInfo.OutputCtrlParamCount; i++)
                 {
-                    procedureInfo.OutputCtrlParamNames.Add( devProcedureCalls[procedureName].GetProcedure().GetOutputCtrlParamName(i));
+                    procedureInfo.OutputCtrlParamNames.Add(devProcedureCalls[procedureName].GetProcedure().GetOutputCtrlParamName(i));
                 }
 
                 for (int i = 1; i <= procedureInfo.OutputIconicParamCount; i++)
                 {
-                    procedureInfo.OutputIconicParamNames.Add( devProcedureCalls[procedureName].GetProcedure().GetOutputIconicParamName(i));
+                    procedureInfo.OutputIconicParamNames.Add(devProcedureCalls[procedureName].GetProcedure().GetOutputIconicParamName(i));
                 }
 
-
-
                 return procedureInfo;
-
-            } catch { return new ProcedureInfo(); }
+            }
+            catch { return new ProcedureInfo(); }
         }
 
         /// <summary>
@@ -130,7 +124,6 @@ namespace BingLibrary.Vision.Engine
         {
             try
             {
-
                 if (paramValue is HImage || paramValue is HRegion)
                 {
                     if (devProcedureCalls.Keys.Contains(procedureName))
@@ -147,8 +140,8 @@ namespace BingLibrary.Vision.Engine
             {
                 return false;
             }
-
         }
+
         /// <summary>
         /// 获取参数
         /// </summary>
@@ -156,10 +149,12 @@ namespace BingLibrary.Vision.Engine
         /// <param name="procedureName"></param>
         /// <param name="paramName"></param>
         /// <returns></returns>
-        public T GetParam<T>(string procedureName, string paramName)where T : class
+        public T GetParam<T>(string procedureName, string paramName) where T : class
         {
-            try {
-                if (typeof(T) == typeof(HImage)) { 
+            try
+            {
+                if (typeof(T) == typeof(HImage))
+                {
                     if (devProcedureCalls.Keys.Contains(procedureName))
                         return devProcedureCalls[procedureName].GetOutputIconicParamImage(paramName) as T;
                 }
@@ -173,11 +168,9 @@ namespace BingLibrary.Vision.Engine
                     if (devProcedureCalls.Keys.Contains(procedureName))
                         return devProcedureCalls[procedureName].GetOutputCtrlParamTuple(paramName) as T;
                 }
-                    return default(T);
-
+                return default(T);
             }
             catch { return default(T); }
-        
         }
 
         /// <summary>
@@ -200,9 +193,6 @@ namespace BingLibrary.Vision.Engine
             }
             catch { return false; }
         }
-
-
-
 
         //#region
 
@@ -383,32 +373,18 @@ namespace BingLibrary.Vision.Engine
         //}
 
         //#endregion
-        
-      
-
-
-
-    
     }
-    
-
-
 
     public class ProcedureInfo
-    { 
-        public int InputCtrlParamCount { set; get; } 
-        public int IntputIconicParamCount { set; get; } 
+    {
+        public int InputCtrlParamCount { set; get; }
+        public int IntputIconicParamCount { set; get; }
         public int OutputCtrlParamCount { set; get; }
         public int OutputIconicParamCount { set; get; }
-          
-        public List<string> InputCtrlParamNames { set; get; }=  new List<string>();
+
+        public List<string> InputCtrlParamNames { set; get; } = new List<string>();
         public List<string> InputIconicParamNames { set; get; } = new List<string>();
-        public List<string> OutputCtrlParamNames { set; get; } = new List<string>(); 
+        public List<string> OutputCtrlParamNames { set; get; } = new List<string>();
         public List<string> OutputIconicParamNames { set; get; } = new List<string>();
     }
-
-
-  
-   
 }
-

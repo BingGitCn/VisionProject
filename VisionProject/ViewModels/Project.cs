@@ -11,14 +11,14 @@ using System.IO;
 using System.Linq;
 using VisionProject.GlobalVars;
 
-
 namespace VisionProject.ViewModels
 {
     public partial class MainWindowViewModel
     {
         #region 项目编辑
-        
+
         private ObservableCollection<ProjectInfo> _projectNames = new ObservableCollection<ProjectInfo>();
+
         /// <summary>
         /// 项目合集
         /// </summary>
@@ -29,6 +29,7 @@ namespace VisionProject.ViewModels
         }
 
         private ProjectInfo _selectProjectName = new ProjectInfo();
+
         /// <summary>
         /// 选择的项目
         /// </summary>
@@ -52,11 +53,10 @@ namespace VisionProject.ViewModels
                 if (fileInfo.Extension == ".lprj")
                     ProjectNames.Add(new ProjectInfo() { Name = fileInfo.Name.Replace(".lprj", ""), Path = files[i] });
             }
-
-          
         }
 
         private string _projectName;
+
         /// <summary>
         /// 项目名称
         /// </summary>
@@ -67,6 +67,7 @@ namespace VisionProject.ViewModels
         }
 
         private int _projectIndex = -1;
+
         /// <summary>
         /// 项目索引
         /// </summary>
@@ -77,6 +78,7 @@ namespace VisionProject.ViewModels
         }
 
         private string _projectPath;
+
         /// <summary>
         /// 项目路径
         /// </summary>
@@ -86,7 +88,8 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _projectPath, value); }
         }
 
-        private string _createDate ;
+        private string _createDate;
+
         /// <summary>
         /// 项目创建日期
         /// </summary>
@@ -97,6 +100,7 @@ namespace VisionProject.ViewModels
         }
 
         private string _lastDate;
+
         /// <summary>
         /// 项目更新日期
         /// </summary>
@@ -109,6 +113,7 @@ namespace VisionProject.ViewModels
         private int projectIndex = -1;
 
         private DelegateCommand<string> _openProject;
+
         /// <summary>
         /// 打开项目
         /// </summary>
@@ -150,11 +155,11 @@ namespace VisionProject.ViewModels
                             CreateDate = Variables.CurrentProject.CreateDate;
                             LastDate = Variables.CurrentProject.LastDate;
                             ProjectPath = SelectProjectName.Path;
-                            Log.Info("打开了项目 "+ ProjectName);
+                            Log.Info("打开了项目 " + ProjectName);
 
                             ProgramsName.Clear();
                             for (int i = 0; i < Programs.Keys.Count; i++)
-                                    ProgramsName.Add(Programs.Keys.ToList()[i]);
+                                ProgramsName.Add(Programs.Keys.ToList()[i]);
 
                             Variables.ProgramName = ProgramsName[ProgramsIndex];
                         }
@@ -208,7 +213,6 @@ namespace VisionProject.ViewModels
                                 Variables.ProgramName = ProgramsName[ProgramsIndex];
 
                                 Log.Info("打开了项目 " + ProjectName);
-
                             }
                         }
                         catch { }
@@ -272,7 +276,7 @@ namespace VisionProject.ViewModels
          * Program1 为当前程序用。主要是界面交互。
          * Programs 为程序合集。
          * Variables.CurrentProgram 为全局变量，主要是用于子工具中使用。
-         * 
+         *
          */
 
         //程序索引
@@ -284,11 +288,12 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref program1Index, value); }
         }
 
-
         //界面上的多程序
         public Dictionary<string, ObservableCollection<SubProgram>> Programs = new Dictionary<string, ObservableCollection<SubProgram>>();
+
         //程序列表
         private ObservableCollection<SubProgram> program1 = new ObservableCollection<SubProgram>();
+
         /// <summary>
         /// 界面上当前编辑的程序
         /// </summary>
@@ -298,16 +303,15 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref program1, value); }
         }
 
-      
-
         //各程序索引
-        private int programsIndex=0;
+        private int programsIndex = 0;
 
         public int ProgramsIndex
         {
             get { return programsIndex; }
             set { SetProperty(ref programsIndex, value); }
         }
+
         //各程序名称
         private ObservableCollection<string> programsName = new ObservableCollection<string>();
 
@@ -317,7 +321,8 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref programsName, value); }
         }
 
-        private string _programName="";
+        private string _programName = "";
+
         public string ProgramName
         {
             get { return _programName; }
@@ -346,13 +351,8 @@ namespace VisionProject.ViewModels
                                         Variables.ProgramName = ProgramsName[ProgramsIndex];
                                         Log.Info("增加了程序");
                                     }
-                                
                                 }
-                            
                             }
-
-
-
                         }
                         catch { }
                         break;
@@ -367,10 +367,6 @@ namespace VisionProject.ViewModels
                                 Variables.ProgramName = ProgramsName[ProgramsIndex];
                                 Log.Info("删除了程序");
                             }
-
-
-                           
-                            
                         }
                         catch { }
                         break;
@@ -378,8 +374,10 @@ namespace VisionProject.ViewModels
             }));
 
         private DelegateCommand _selectProgram;
+
         public DelegateCommand SelectProgram =>
-            _selectProgram ?? (_selectProgram = new DelegateCommand(()=> {
+            _selectProgram ?? (_selectProgram = new DelegateCommand(() =>
+            {
                 try
                 {
                     //将程序集合中选中的程序给到界面
@@ -389,7 +387,6 @@ namespace VisionProject.ViewModels
                     Variables.ProgramName = ProgramsName[ProgramsIndex];
                 }
                 catch (Exception ex) { }
-               
             }));
 
         //增加删除子程序
@@ -424,30 +421,27 @@ namespace VisionProject.ViewModels
                     Programs[ProgramsName[ProgramsIndex]].Clear();
                     for (int i = 0; i < Program1.Count; i++)
                         Programs[ProgramsName[ProgramsIndex]].Add(Program1[i]);
-
                 }
                 catch (Exception ex) { }
-
-
             }));
-
 
         //Step..
         private DelegateCommand<string> _program1Config;
+
         public DelegateCommand<string> Program1Config =>
-            _program1Config ?? (_program1Config = new DelegateCommand<string>((param)=> {
+            _program1Config ?? (_program1Config = new DelegateCommand<string>((param) =>
+            {
                 try
                 {
                     Variables.CurrentSubProgram = Program1[Program1Index].Clone();
                     Variables.CurrentSubProgram.Index = Program1Index;
                     Variables.CurDialogService.ShowDialog(DialogNames.ToolNams[param]);
                     Program1[Program1Index] = Variables.CurrentSubProgram.Clone(); ;
-
                 }
                 catch (Exception ex) { }
             }));
 
-        #endregion 程序1编辑
+        #endregion 程序编辑
     }
 
     //项目类
@@ -458,7 +452,6 @@ namespace VisionProject.ViewModels
         public string LastDate = "";
     }
 
-
     //程序类
     public class SubProgram
     {
@@ -466,13 +459,14 @@ namespace VisionProject.ViewModels
         /// 是否启用
         /// </summary>
         public bool IsUse { set; get; } = true;
+
         /// <summary>
         /// 产品索引
         /// </summary>
-        public int ProductIndex { set; get; } = 0; 
+        public int ProductIndex { set; get; } = 0;
 
         public string InspectFunction { set; get; } = "无";
-        
+
         /// <summary>
         /// 备注
         /// </summary>
@@ -482,6 +476,7 @@ namespace VisionProject.ViewModels
         /// 检测参数
         /// </summary>
         public Dictionary<string, object> Parameters = new Dictionary<string, object>();
+
         /// <summary>
         /// 检测结果
         /// </summary>
@@ -493,23 +488,23 @@ namespace VisionProject.ViewModels
         /// </summary>
         [JsonIgnore]
         public List<int> ProductIndexs { set; get; } = new List<int>() { 0, 1, 2, };
+
         [JsonIgnore]
         public int Index { set; get; }
+
         [JsonIgnore]
         public List<string> ToolNames { set; get; } = DialogNames.ToolNams.Keys.ToList();
-    
-        public SubProgram() {
 
+        public SubProgram()
+        {
             ProductIndexs.Clear();
             for (int i = 0; i < 48; i++) ProductIndexs.Add(i);
         }
 
-
-        public SubProgram Clone() 
+        public SubProgram Clone()
         {
             return (SubProgram)this.MemberwiseClone();
         }
-
     }
 
     public class ProjectInfo

@@ -1,6 +1,4 @@
 ﻿using Prism.Ioc;
-using Prism.Mvvm;
-using System;
 using System.Windows;
 using VisionProject.ViewModels;
 using VisionProject.Views;
@@ -34,7 +32,5 @@ namespace VisionProject
             //分离产品窗口
             containerRegistry.RegisterDialog<Function_Splite, Function_SpliteViewModel>(GlobalVars.DialogNames.ToolNams["分离产品"]);
         }
-
-
     }
 }

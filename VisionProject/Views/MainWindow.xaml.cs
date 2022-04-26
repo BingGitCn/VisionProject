@@ -1,6 +1,5 @@
 ﻿using BingLibrary.Tools;
 using OfficeOpenXml;
-using Prism.Regions;
 using System;
 using System.Windows;
 using VisionProject.GlobalVars;
@@ -21,8 +20,6 @@ namespace VisionProject.Views
                 StartLogo.MainWindow startLogo = new StartLogo.MainWindow("视觉检测软件");
                 startLogo.Show();
             }
-            
-         
 
             //excel授权
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -48,16 +45,6 @@ namespace VisionProject.Views
                 Application.Current.Shutdown();
                 return;
             }
-
-
-
-
-
-
-
-
-      
-           
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

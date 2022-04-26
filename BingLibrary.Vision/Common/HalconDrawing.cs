@@ -24,7 +24,7 @@ namespace BingLibrary.Vision
     /// 鼠标绘制结束方式，松开结束绘制，或者点击右键结束绘制
     /// </summary>
     public enum HalconDrawMode
-    { 
-        directly,rightButton
+    {
+        directly, rightButton
     }
 }

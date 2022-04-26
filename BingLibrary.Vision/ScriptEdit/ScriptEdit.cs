@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Xml;
 
@@ -81,7 +82,7 @@ namespace BingLibrary.Vision
         /// <summary>
         /// 保存过程
         /// </summary>
-        public void SaveProcedure(string code)
+        public string SaveProcedure(string code)
         {
             try
             {
@@ -100,25 +101,36 @@ namespace BingLibrary.Vision
                         {
                             body.RemoveAll();
 
-                            string[] codes = code.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                            string[] codes = code.Split(new string[] { "\r\n" }, StringSplitOptions.None);
 
                             foreach (var c in codes)
                             {
-                                XmlElement item = m_xmlDoc.CreateElement("l");
-                                item.InnerText = c;
-
-                                body.AppendChild(item);
+                                if (c != "")
+                                {
+                                    XmlElement item = m_xmlDoc.CreateElement("l");
+                                    item.InnerText = c;
+                                    body.AppendChild(item);
+                                }
+                                else
+                                {
+                                    XmlElement item = m_xmlDoc.CreateElement("c");
+                                    item.InnerText = "";
+                                    body.AppendChild(item);
+                                }
                             }
                         }
                     }
                 }
 
-                string strTempFile = procedurePath + "\\" + procedureName + ".hdvp";
-
+                string strTempFile = procedurePath + "\\temp.hdvp";
                 m_xmlDoc.Save(strTempFile);
+                string strFinalFile = procedurePath + "\\" + procedureName + ".hdvp";
+                File.Copy(strTempFile, strFinalFile, true);
+                return "ok";
             }
             catch (Exception ex)
             {
+                return "error";
             }
         }
     }

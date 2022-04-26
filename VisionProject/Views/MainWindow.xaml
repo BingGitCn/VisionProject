@@ -93,7 +93,6 @@
         </Style>
 
         <bingPermit:PermitLevelConver x:Key="BingPermit" />
-
     </Window.Resources>
 
     <Grid>
@@ -132,11 +131,9 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-
                             <Grid Grid.RowSpan="2" Grid.ColumnSpan="2">
                                 <bingVision:BingImageWindow x:Name="ImageWindow1" />
                             </Grid>
-
                         </Grid>
 
                         <Grid Grid.Column="1">
@@ -227,12 +224,7 @@
                             </StackPanel>
                             <StackPanel VerticalAlignment="Bottom" Orientation="Vertical">
 
-
-
                                 <StackPanel Orientation="Horizontal">
-
-
-
 
                                     <hc:ComboBox
                                         Width="410"
@@ -415,10 +407,8 @@
                                                 Style="{StaticResource ButtonDanger}">
                                                 <TextBlock FontSize="16" Text="&#xe677; "><Run FontSize="12" Text="{Binding ButtonDelete, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                             </Button>
-
                                         </StackPanel>
                                     </Grid>
-
 
                                     <Grid Grid.Row="1">
                                         <Grid.RowDefinitions>
@@ -446,7 +436,6 @@
                                                         Style="{StaticResource ButtonDashedDanger}">
                                                         <TextBlock FontSize="16" Text="&#xe677; "><Run FontSize="12" Text="{Binding ButtonDelete, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                                     </Button>
-
 
                                                     <CheckBox x:Name="IsAllowDrag1" Content="{Binding Dragging, Source={StaticResource BingLocation}, Mode=OneWay}" />
                                                 </StackPanel>
@@ -477,7 +466,6 @@
                                                             </DataTemplate>
                                                         </DataGridTemplateColumn.CellTemplate>
                                                     </DataGridTemplateColumn>
-
 
                                                     <DataGridTemplateColumn Header="检测内容">
                                                         <DataGridTemplateColumn.CellTemplate>
@@ -520,17 +508,8 @@
                                                     </DataGridTemplateColumn>
                                                 </DataGrid.Columns>
                                             </DataGrid>
-
-
                                         </Grid>
-
                                     </Grid>
-
-
-
-
-
-
                                 </Grid>
                             </GroupBox>
                         </Grid>
@@ -659,7 +638,6 @@
                                         <ComboBoxItem Content="G:\\" />
                                     </hc:ComboBox>
 
-
                                     <TextBlock
                                         Margin="5"
                                         VerticalAlignment="Center"
@@ -678,7 +656,6 @@
                                         Minimum="5"
                                         TickFrequency="1"
                                         Value="{Binding FreeSpace}" />
-
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal">
@@ -700,10 +677,7 @@
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </hc:ComboBox>
-
                                 </StackPanel>
-
-
                             </StackPanel>
                         </Grid>
                     </Grid>
@@ -737,7 +711,6 @@
                                     Content="{Binding ButtonExport, Source={StaticResource BingLocation}, Mode=OneWay}"
                                     Style="{StaticResource ButtonInfo}" />
                             </StackPanel>
-
                         </Grid>
 
                         <Grid Grid.Row="1">
@@ -784,7 +757,6 @@
                     HeaderStringFormat="{}&#xe719; {0}">
                     <Grid Background="{StaticResource BackgroundBrush}">
                         <bing:LogWindow FontSize="14" />
-
                     </Grid>
                 </hc:TabItem>
                 <hc:TabItem
@@ -837,7 +809,6 @@
                         Text="硬盘容量:" />
                     <Ellipse DataContext="{Binding HardWareStatus}" Style="{StaticResource StatusEllipse}" />
                 </StackPanel>
-
 
                 <StackPanel VerticalAlignment="Center">
                     <TextBlock

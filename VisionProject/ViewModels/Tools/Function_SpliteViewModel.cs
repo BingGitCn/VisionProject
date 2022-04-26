@@ -7,9 +7,7 @@ using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
 {
-   
-
-    public class Function_SpliteViewModel : BindableBase, IDialogAware,IFunction_ViewModel_Interface
+    public class Function_SpliteViewModel : BindableBase, IDialogAware, IFunction_ViewModel_Interface
     {
         #region 窗口相关
 
@@ -40,8 +38,7 @@ namespace VisionProject.ViewModels
 
         public Function_SpliteViewModel()
         {
-            _=Init();
-        
+            _ = Init();
         }
 
         private HImage currentImage = new HImage();

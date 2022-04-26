@@ -52,7 +52,6 @@
                     SelectedIndex="{Binding IOIndex4}"
                     Style="{StaticResource ComboBoxExtend}" />
 
-
                 <StackPanel Orientation="Horizontal">
                     <Button
                         Width="100"

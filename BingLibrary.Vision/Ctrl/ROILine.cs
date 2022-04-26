@@ -20,12 +20,12 @@ namespace BingLibrary.Vision
 
         public override void createROILine(double row1, double col1, double row2, double col2)
         {
-            midR = (row1+row2)/2;
-            midC = (col1+col2)/2;
+            midR = (row1 + row2) / 2;
+            midC = (col1 + col2) / 2;
 
-           this. row1 = row1;
+            this.row1 = row1;
             this.col1 = col1;
-          this.row2 = row2;
+            this.row2 = row2;
             this.col2 = col2;
 
             updateArrowHandle();

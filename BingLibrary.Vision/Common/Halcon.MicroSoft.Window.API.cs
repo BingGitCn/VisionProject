@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 /*************************************************************************************
  *
  * 文 件 名:   MicroSoft
- * 描    述: 
- * 
+ * 描    述:
+ *
  * 版    本：  V1.0.0.0
  * 创 建 者：  Bing
  * 创建时间：  2022/1/27 14:59:15
@@ -19,11 +15,11 @@ using System.Threading.Tasks;
  * 修改内容：
  * ======================================
 *************************************************************************************/
+
 namespace BingLibrary.Vision
 {
-   public class HalconMicroSoft
+    public class HalconMicroSoft
     {
-
         public static void FinishDraw()
         {
             try
@@ -32,16 +28,20 @@ namespace BingLibrary.Vision
             }
             catch { }
         }
-       
-        [DllImport("user32.dll")] public  static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
+
+        [DllImport("user32.dll")] public static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
+
         [DllImport("user32.dll")] public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         //ShowWindow参数
         public const int SW_SHOWNORMAL = 1;
+
         public const int SW_RESTORE = 9;
         public const int SW_SHOWNOACTIVATE = 4;
+
         //SendMessage参数
         public const int WM_KEYDOWN = 0X100;
+
         public const int WM_KEYUP = 0X101;
         public const int WM_SYSCHAR = 0X106;
         public const int WM_SYSKEYUP = 0X105;

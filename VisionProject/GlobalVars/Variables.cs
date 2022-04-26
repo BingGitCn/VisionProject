@@ -1,15 +1,13 @@
 ﻿using BingLibrary.Communication.PLC;
-using BingLibrary.Logs;
 using BingLibrary.Vision;
+using BingLibrary.Vision.Engine;
 using HalconDotNet;
+using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using VisionProject.ViewModels;
-using BingLibrary.Vision.Engine;
-using Prism.Services.Dialogs;
 
 namespace VisionProject.GlobalVars
 {
@@ -20,12 +18,11 @@ namespace VisionProject.GlobalVars
 
         //脚本代码
         public static string ScriptCode = "";
-       public static ScriptEdit scriptEdit = new ScriptEdit();
-      
 
+        public static ScriptEdit scriptEdit = new ScriptEdit();
 
         //V2 引擎
-        public static VisionEngine2 V2Engine=new VisionEngine2();
+        public static VisionEngine2 V2Engine = new VisionEngine2();
 
         //PLC
         public static HuiChuanPLC HCPLC = new HuiChuanPLC();
@@ -41,15 +38,15 @@ namespace VisionProject.GlobalVars
 
         public static string StatisticDataFilePath = AppDomain.CurrentDomain.BaseDirectory + "Statistics.xlsx";
 
-        
         //项目
         public static Project CurrentProject = new Project();
 
         //当前编辑的程序
-        public static SubProgram CurrentSubProgram = new SubProgram();  
+        public static SubProgram CurrentSubProgram = new SubProgram();
 
         //当前编辑的程序名字
         public static string ProgramName = "";
+
         /// <summary>
         /// 获取输入参数
         /// </summary>
@@ -62,7 +59,7 @@ namespace VisionProject.GlobalVars
             try
             {
                 var p = Variables.CurrentProject.Programs[programName];
-            int   index = Variables.CurrentSubProgram.Index;
+                int index = Variables.CurrentSubProgram.Index;
 
                 if (index > p.Count)
                     index = p.Count;
@@ -74,20 +71,11 @@ namespace VisionProject.GlobalVars
                         inputParams.Add(programName + ":" + i + "." + p[i].InspectFunction + ":" + d.ElementAt(j).Key, d.ElementAt(j).Value); ;
                     }
                 }
-
             }
             catch { }
 
             return inputParams;
-
         }
-
-
-      
-
-
-
-
 
         //图像窗口，需在mainwindow.cs入口指定对应的windowdata
         public static BingImageWindowData WindowData1 = new BingImageWindowData();
@@ -131,21 +119,15 @@ namespace VisionProject.GlobalVars
                     return rst.ToString("f1") + "T";
                 }
             }
-
-
         }
 
-     
         //容量
-        public static double GetFreeSpaceRateValue(string path) 
+        public static double GetFreeSpaceRateValue(string path)
         {
             DirectoryInfo directory = new DirectoryInfo(path);
             DriveInfo savedFolderDrive = new DriveInfo(directory.Root.Name);
-            double rst = savedFolderDrive.AvailableFreeSpace / 1024 / 1024/1024;
+            double rst = savedFolderDrive.AvailableFreeSpace / 1024 / 1024 / 1024;
             return rst;
-               
-         
-
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using DryIoc;
+﻿using BingLibrary.Logs;
+using BingLibrary.Tools;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Prism.Commands;
@@ -10,12 +11,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using VisionProject.GlobalVars;
-using BingLibrary.Tools;
-using VisionProject.Views;
-using System.Linq;
-using BingLibrary.Logs;
-using Prism.Regions;
-using BingLibrary.Vision;
 
 namespace VisionProject.ViewModels
 {
@@ -38,8 +33,6 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _title, value); }
         }
 
-       
-
         public MainWindowViewModel(IDialogService dialogService)
         {
             Variables.CurDialogService = dialogService;
@@ -56,16 +49,13 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _plcStatus, value); }
         }
 
+        private ShowStatus _hardWareStatus = new ShowStatus();
 
-        private ShowStatus _hardWareStatus=new ShowStatus(); 
         public ShowStatus HardWareStatus
         {
             get { return _hardWareStatus; }
             set { SetProperty(ref _hardWareStatus, value); }
         }
-
-
-
 
         #endregion 底部状态显示ConnectStatus
 
@@ -138,8 +128,6 @@ namespace VisionProject.ViewModels
             get { return _allStatisticData; }
             set { SetProperty(ref _allStatisticData, value); }
         }
-
-
 
         //初始化统计数据
         private async void initStatistic()
@@ -243,9 +231,9 @@ namespace VisionProject.ViewModels
                 w.Protection.IsProtected = true;
                 package.Save();
                 package.Dispose();
-                 Log.Info("数据加载成功。");
+                Log.Info("数据加载成功。");
             }
-            catch {  Log.Error("数据加载失败。"); }
+            catch { Log.Error("数据加载失败。"); }
         }
 
         /// <summary>
@@ -404,31 +392,30 @@ namespace VisionProject.ViewModels
                     case "export":
                         System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
                         folderBrowserDialog.Description = "请选择导出的文件路径";
-                         var dlg = folderBrowserDialog.ShowDialog();
+                        var dlg = folderBrowserDialog.ShowDialog();
                         if (dlg == System.Windows.Forms.DialogResult.OK)
                         {
                             string path = folderBrowserDialog.SelectedPath + "\\";
                             try
                             {
                                 File.Copy(AppDomain.CurrentDomain.BaseDirectory + "Statistics.xlsx", path + "产量统计.xlsx");
-                                 Log.Info("导出产量统计成功。");
+                                Log.Info("导出产量统计成功。");
                                 Variables.ShowMessage("导出成功。");
                             }
-                            catch {  Log.Error("导出产量统计失败。"); }
+                            catch { Log.Error("导出产量统计失败。"); }
                         }
                         break;
                 }
             }));
-
-
 
         #endregion 数据统计
 
         #region 底部Status
 
         private string _freeSpace;
+
         public string FreeSpace
-        { 
+        {
             get { return _freeSpace; }
             set { SetProperty(ref _freeSpace, value); }
         }
@@ -460,7 +447,9 @@ namespace VisionProject.ViewModels
         #endregion 底部Status
 
         #region 登录密码
+
         private PermitLevel _currentPermit;
+
         public PermitLevel CurrentPermit
         {
             get { return _currentPermit; }
@@ -484,10 +473,8 @@ namespace VisionProject.ViewModels
                     CurrentPermit = PermitLevel.Nobody;
                 else
                 {
-
                     LoginPad.Open = true;
                     LoginPad.CallBack = finishLogin;
-
                 }
             }));
 
@@ -502,7 +489,6 @@ namespace VisionProject.ViewModels
                     CurrentPermit = PermitLevel.Engineer;
                 if (UserIndex == 3)
                     CurrentPermit = PermitLevel.Administrator;
-
             }
             else
             {
@@ -510,20 +496,15 @@ namespace VisionProject.ViewModels
                 {
                     CurrentPermit = PermitLevel.Administrator;
                 }
-                else 
-                { 
+                else
+                {
                     CurrentPermit = PermitLevel.Nobody;
                     UserIndex = 0;
                 }
             }
         }
 
-       
-
         public NumberPadViewModel LoginPad { get; set; } = new NumberPadViewModel();
-
-
-
 
         #endregion 登录密码
     }

@@ -1,19 +1,15 @@
-﻿using Prism.Commands;
+﻿using BingLibrary.Vision;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using BingLibrary.Vision.Engine;
 using System.Collections.ObjectModel;
-using VisionProject.GlobalVars;
 using System.Threading.Tasks;
-using BingLibrary.Vision;
-
+using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
 {
-    public class Function_ScriptTestViewModel : BindableBase, IDialogAware,IFunction_ViewModel_Interface
+    public class Function_ScriptTestViewModel : BindableBase, IDialogAware, IFunction_ViewModel_Interface
     {
         #region 窗口相关
 
@@ -40,14 +36,13 @@ namespace VisionProject.ViewModels
         {
         }
 
-       
-
         #endregion 窗口相关
+
         public Function_ScriptTestViewModel()
         {
-           
-            _=Init();
+            _ = Init();
         }
+
         public async Task<bool> Init()
         {
             await Task.Delay(300);
@@ -82,7 +77,6 @@ namespace VisionProject.ViewModels
                 return true;
             }
             catch { return false; }
-
         }
 
         public bool Update()
@@ -90,7 +84,8 @@ namespace VisionProject.ViewModels
             return true;
         }
 
-        private ObservableCollection<string> _iOVariables1=new ObservableCollection<string>();
+        private ObservableCollection<string> _iOVariables1 = new ObservableCollection<string>();
+
         public ObservableCollection<string> IOVariables1
         {
             get { return _iOVariables1; }
@@ -98,14 +93,15 @@ namespace VisionProject.ViewModels
         }
 
         private int _iOIndex1;
+
         public int IOIndex1
         {
             get { return _iOIndex1; }
             set { SetProperty(ref _iOIndex1, value); }
         }
 
-
         private ObservableCollection<string> _iOVariables2 = new ObservableCollection<string>();
+
         public ObservableCollection<string> IOVariables2
         {
             get { return _iOVariables2; }
@@ -113,6 +109,7 @@ namespace VisionProject.ViewModels
         }
 
         private int _iOIndex2;
+
         public int IOIndex2
         {
             get { return _iOIndex2; }
@@ -120,6 +117,7 @@ namespace VisionProject.ViewModels
         }
 
         private ObservableCollection<string> _iOVariables3 = new ObservableCollection<string>();
+
         public ObservableCollection<string> IOVariables3
         {
             get { return _iOVariables3; }
@@ -127,6 +125,7 @@ namespace VisionProject.ViewModels
         }
 
         private int _iOIndex3;
+
         public int IOIndex3
         {
             get { return _iOIndex3; }
@@ -134,6 +133,7 @@ namespace VisionProject.ViewModels
         }
 
         private ObservableCollection<string> _iOVariables4 = new ObservableCollection<string>();
+
         public ObservableCollection<string> IOVariables4
         {
             get { return _iOVariables4; }
@@ -141,6 +141,7 @@ namespace VisionProject.ViewModels
         }
 
         private int _iOIndex4;
+
         public int IOIndex4
         {
             get { return _iOIndex4; }
@@ -148,13 +149,13 @@ namespace VisionProject.ViewModels
         }
 
         private DelegateCommand _editScript;
+
         public DelegateCommand EditScript =>
             _editScript ?? (_editScript = new DelegateCommand(ExecuteEditScript));
 
-        void ExecuteEditScript()
+        private void ExecuteEditScript()
         {
-            
-            Variables.scriptEdit.SetProcedurePath(AppDomain.CurrentDomain.BaseDirectory+ "Projects\\Scripts");
+            Variables.scriptEdit.SetProcedurePath(AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts");
             //打开脚本窗口
             ScriptDIalog sd = new ScriptDIalog();
             //读取并显示脚本
@@ -162,14 +163,7 @@ namespace VisionProject.ViewModels
             sd.ShowDialog();
             //保存脚本
             Variables.scriptEdit.SaveProcedure(sd.GetCode());
-
             sd.Close();
-
-          
-          
-
-           
         }
-
     }
 }

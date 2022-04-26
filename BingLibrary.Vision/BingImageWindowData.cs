@@ -1,5 +1,4 @@
 ﻿using HalconDotNet;
-using BingLibrary.Extension;
 using System.Collections.ObjectModel;
 
 namespace BingLibrary.Vision
@@ -28,7 +27,7 @@ namespace BingLibrary.Vision
         /// <param name="isShow"></param>
         public void ShowWaterString(bool isShow = true)
         {
-            HCtrl.isShowWaterString = isShow; 
+            HCtrl.isShowWaterString = isShow;
         }
 
         /// <summary>
@@ -129,12 +128,10 @@ namespace BingLibrary.Vision
         {
             try
             {
-                RCtrl.AddROI(new ROIRegion(hRegion) { ROIColor=roiColor});
+                RCtrl.AddROI(new ROIRegion(hRegion) { ROIColor = roiColor });
             }
             catch { }
         }
-
-      
 
         /// <summary>
         /// 获取Roi List
@@ -144,7 +141,7 @@ namespace BingLibrary.Vision
         /// <returns></returns>
         public ObservableCollection<ROI> GetROIList(HRegion hRegion, HalconColors roiColor = HalconColors.红色)
         {
-               return RCtrl.ROIList;
+            return RCtrl.ROIList;
         }
 
         /// <summary>
@@ -170,7 +167,7 @@ namespace BingLibrary.Vision
         /// <returns></returns>
         public ROI GetActive(int index)
         {
-              return  RCtrl.getActiveROI();
+            return RCtrl.getActiveROI();
         }
 
         /// <summary>
@@ -180,7 +177,7 @@ namespace BingLibrary.Vision
         /// <param name="row"></param>
         /// <param name="column"></param>
         /// <param name="fontSize"></param>
-        public void AddMessageToWindow(string message, int row, int column, int fontSize = 12, HalconColors color = HalconColors.黑色, HalconCoordinateSystem mode =  HalconCoordinateSystem.window)
+        public void AddMessageToWindow(string message, int row, int column, int fontSize = 12, HalconColors color = HalconColors.黑色, HalconCoordinateSystem mode = HalconCoordinateSystem.window)
         {
             try
             {
