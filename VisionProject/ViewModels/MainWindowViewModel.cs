@@ -11,6 +11,8 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using VisionProject.GlobalVars;
+using OxyPlot;
+using OxyPlot.Series;
 
 namespace VisionProject.ViewModels
 {
@@ -231,6 +233,10 @@ namespace VisionProject.ViewModels
                 w.Protection.IsProtected = true;
                 package.Save();
                 package.Dispose();
+
+
+
+
                 Log.Info("数据加载成功。");
             }
             catch { Log.Error("数据加载失败。"); }
@@ -407,6 +413,17 @@ namespace VisionProject.ViewModels
                         break;
                 }
             }));
+
+
+
+
+
+
+
+
+
+
+
 
         #endregion 数据统计
 

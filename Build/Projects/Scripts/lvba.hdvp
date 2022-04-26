@@ -19,7 +19,7 @@
     </interface>
     <body>
       <l>* region 变量定义</l>
-      <l>isok:=2</l>
+      <l>isok:=1</l>
       <l>* 铝巴检测</l>
       <l>gen_empty_region (region)</l>
       <l>rgb1_to_gray (image, grayImage)</l>
@@ -76,20 +76,6 @@
       <l>    isok:=0</l>
       <l>endif</l>
       <l>return ()</l>
-      <c>
-      </c>
-      <c>
-      </c>
-      <c>
-      </c>
-      <c>
-      </c>
-      <c>
-      </c>
-      <c>
-      </c>
-      <c>
-      </c>
       <c>
       </c>
       <c>
