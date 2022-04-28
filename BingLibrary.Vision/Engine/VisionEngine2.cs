@@ -72,6 +72,26 @@ namespace BingLibrary.Vision.Engine
         }
 
         /// <summary>
+        /// 脚本更新后需重新加载，否则不会实时更新。
+        /// </summary>
+        public void Reload()
+        {
+
+            foreach (var p in procedureNames)
+            {
+                if (devProcedureCalls.Keys.Contains(p))
+                {
+                    devProcedureCalls[p] = new HDevProcedureCall(new HDevProcedure(p));
+                }
+                else
+                    devProcedureCalls.Add(p, new HDevProcedureCall(new HDevProcedure(p)));
+
+                devEngine.UnloadAllProcedures();
+               
+            }
+        }
+
+        /// <summary>
         /// 获取 procedur 参数信息
         /// </summary>
         /// <param name="procedureName"></param>

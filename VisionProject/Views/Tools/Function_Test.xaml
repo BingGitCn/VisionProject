@@ -83,10 +83,10 @@
                         Style="{StaticResource ButtonPrimary}" />
                 </StackPanel>
                 <hc:ComboBox
-                Margin="5"
-                hc:InfoElement.Title="输入参数"
-                Style="{StaticResource ComboBoxExtend}" ItemsSource="{Binding InputParams}">
-                </hc:ComboBox>
+                    Margin="5"
+                    hc:InfoElement.Title="输入参数"
+                    ItemsSource="{Binding InputParams}"
+                    Style="{StaticResource ComboBoxExtend}" />
             </StackPanel>
         </Grid>
     </Grid>
