@@ -155,7 +155,7 @@ namespace VisionProject.ViewModels
                             CreateDate = Variables.CurrentProject.CreateDate;
                             LastDate = Variables.CurrentProject.LastDate;
                             ProjectPath = SelectProjectName.Path;
-                            Log.Info("打开了项目 " + ProjectName);
+                            Variables.Log.Info("打开了项目 " + ProjectName);
 
                             ProgramsName.Clear();
                             for (int i = 0; i < Programs.Keys.Count; i++)
@@ -212,7 +212,7 @@ namespace VisionProject.ViewModels
 
                                 Variables.ProgramName = ProgramsName[ProgramsIndex];
 
-                                Log.Info("打开了项目 " + ProjectName);
+                                Variables.Log.Info("打开了项目 " + ProjectName);
                             }
                         }
                         catch { }
@@ -260,7 +260,7 @@ namespace VisionProject.ViewModels
                                     Serialize.WriteJsonV2(Variables.CurrentProject, saveFileDialog.FileName);
                                 }
                             }
-                            Log.Info("保存了项目");
+                            Variables.Log.Info("保存了项目");
                         }
                         catch { }
                         break;
@@ -349,7 +349,7 @@ namespace VisionProject.ViewModels
                                         ProgramsName.Add(ProgramName);
                                         Programs.Add(ProgramName, new ObservableCollection<SubProgram>());
                                         Variables.ProgramName = ProgramsName[ProgramsIndex];
-                                        Log.Info("增加了程序");
+                                        Variables.Log.Info("增加了程序");
                                     }
                                 }
                             }
@@ -365,7 +365,7 @@ namespace VisionProject.ViewModels
                                 Programs.Remove(ProgramsName[ProgramsIndex]);
                                 ProgramsName.Remove(ProgramsName[ProgramsIndex]);
                                 Variables.ProgramName = ProgramsName[ProgramsIndex];
-                                Log.Info("删除了程序");
+                                Variables.Log.Info("删除了程序");
                             }
                         }
                         catch { }

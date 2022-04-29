@@ -235,11 +235,11 @@ namespace VisionProject.ViewModels
                 package.Dispose();
 
 
+                
 
-
-                Log.Info("数据加载成功。");
+                Variables.Log.Info("数据加载成功。");
             }
-            catch { Log.Error("数据加载失败。"); }
+            catch { Variables.Log.Error("数据加载失败。"); }
         }
 
         /// <summary>
@@ -405,10 +405,10 @@ namespace VisionProject.ViewModels
                             try
                             {
                                 File.Copy(AppDomain.CurrentDomain.BaseDirectory + "Statistics.xlsx", path + "产量统计.xlsx");
-                                Log.Info("导出产量统计成功。");
+                                Variables.Log.Info("导出产量统计成功。");
                                 Variables.ShowMessage("导出成功。");
                             }
-                            catch { Log.Error("导出产量统计失败。"); }
+                            catch { Variables.Log.Error("导出产量统计失败。"); }
                         }
                         break;
                 }
@@ -537,4 +537,5 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _value, value); }
         }
     }
+
 }

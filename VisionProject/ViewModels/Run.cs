@@ -85,7 +85,7 @@ namespace VisionProject.ViewModels
                 await Task.Delay(1000);
             }
 
-            Log.Info(Variables.HCPLC.IsConnected ? "PLC连接成功" : "PLC连接失败");
+            Variables.Log.Info(Variables.HCPLC.IsConnected ? "PLC连接成功" : "PLC连接失败");
             PLCStatus.Value = Variables.HCPLC.IsConnected;
         }
 
@@ -104,8 +104,9 @@ namespace VisionProject.ViewModels
 
                 if (false)
                 {
+                    //选择程序
                     var program = Variables.CurrentProject.Programs.ElementAt(0).Value;
-
+                    //选择对应产品的所有检测子程序
                     int index = 1;//产品位置索引
                     var currentProduct = (from step in program
                                           where step.ProductIndex == index
@@ -116,6 +117,7 @@ namespace VisionProject.ViewModels
                     {
                         if (currentProduct[i].InspectFunction == ToolNames[0])
                         {
+                           
                             //Do Something
                             //Function_SaveImageViewModel.SaveImages(new HalconDotNet.HImage(),"123", currentProduct[i].Parameters);
                         }
