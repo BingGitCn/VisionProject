@@ -19,14 +19,14 @@
     </interface>
     <body>
       <l>* region 变量定义</l>
-      <l>isok:=1</l>
+      <l>isok:=2</l>
       <l>* 铝巴检测</l>
       <l>gen_empty_region (region)</l>
       <l>rgb1_to_gray (image, grayImage)</l>
       <c>
       </c>
       <l>* region 图像预处理</l>
-      <l>mean_image (grayImage, grayImage, 5, 5)</l>
+      <l>mean_image (grayImage, grayImage, 15, 15)</l>
       <l>dev_set_draw ('fill')</l>
       <l>threshold (grayImage, Region1, 200, 255)</l>
       <l>closing_circle (Region1, Region1, 13.5)</l>
@@ -76,6 +76,18 @@
       <l>    isok:=0</l>
       <l>endif</l>
       <l>return ()</l>
+      <c>
+      </c>
+      <c>
+      </c>
+      <c>
+      </c>
+      <c>
+      </c>
+      <c>
+      </c>
+      <c>
+      </c>
       <c>
       </c>
       <c>

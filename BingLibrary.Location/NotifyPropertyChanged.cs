@@ -21,7 +21,7 @@ namespace BingLibrary.Location
             RaisePropertyChanged(PropertyName);
         }
 
-        protected void RaiseAllChanged()
+        public void RaiseAllChanged()
         {
             RaisePropertyChanged("");
         }

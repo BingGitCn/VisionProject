@@ -668,7 +668,7 @@
                                         hc:InfoElement.Title="{Binding Language, Source={StaticResource BingLocation}, Mode=OneWay}"
                                         hc:InfoElement.TitlePlacement="Left"
                                         hc:InfoElement.TitleWidth="80"
-                                        DataContext="{x:Static bingLocation:LanguageManager.Instance}"
+                                        DataContext="{StaticResource BingLocation}"
                                         FontSize="14"
                                         ItemsSource="{Binding AvailableCultures}"
                                         SelectedValue="{Binding CurrentCulture, Mode=TwoWay, NotifyOnSourceUpdated=True}">

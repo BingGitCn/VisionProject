@@ -32,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BingLibraryLite, Version=1.5.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BingLibraryLite.1.5.7\lib\net472\BingLibraryLite.dll</HintPath>
+    <Reference Include="BingLibraryLite, Version=1.6.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BingLibraryLite.1.6.0.1-pre\lib\net472\BingLibraryLite.dll</HintPath>
     </Reference>
     <Reference Include="CSRedisCore, Version=3.6.9.0, Culture=neutral, PublicKeyToken=9aa6a3079358d437, processorArchitecture=MSIL">
       <HintPath>..\packages\CSRedisCore.3.6.9\lib\net45\CSRedisCore.dll</HintPath>
@@ -213,7 +213,6 @@
       <DependentUpon>ScriptDIalog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ScriptEdit\ScriptEdit.cs" />
-    <Resource Include="panda.ico" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -235,6 +234,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="panda.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

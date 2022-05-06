@@ -101,9 +101,9 @@ namespace BingLibrary.Location
                     File.WriteAllText(selectLanguagePath, selectLanguage);
                 }
                 catch (Exception ex) { }
-            }  
+            }
         }
-         
+
         public override event Action<CultureInfo> LanguageChanged;
 
         private JObject LoadLang(string LanguageId)
@@ -143,6 +143,6 @@ namespace BingLibrary.Location
             }
         }
 
-        protected override string GetValue(string PropertyName) => this[PropertyName];
+        public override string GetValue(string PropertyName) => this[PropertyName];
     }
 }

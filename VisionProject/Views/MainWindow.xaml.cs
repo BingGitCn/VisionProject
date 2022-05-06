@@ -19,16 +19,10 @@ namespace VisionProject.Views
         public MainWindow()
         {
             InitializeComponent();
+            GlobalTools.EnableGlobalCatchException();
+            GlobalTools.EnableSingleton();
+            GlobalTools.EnableOnUIThread();
 
-            string MName = System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName;
-            string PName = System.IO.Path.GetFileNameWithoutExtension(MName);
-            System.Diagnostics.Process[] myProcess = System.Diagnostics.Process.GetProcessesByName(PName);
-            if (myProcess.Length > 1)
-            {
-                MessageBox.Show("本程序一次只能运行一个实例！", "提示");
-                Application.Current.Shutdown();
-                return;
-            }
 
             //Step..
             if (false)//是否显示启动动画
@@ -45,11 +39,7 @@ namespace VisionProject.Views
             //regionManager.RegisterViewWithRegion(GlobalPrism.RegionNames.StatusRegionName, typeof(Status));
             //GlobalVars.Variables.ImageWindowData = imageWin.windowData;
 
-            //主线程上更新
-            UIThread.InitializeWithDispatcher();
-            //UIThread.OnUIThread(new Action(() => {
-            //    //do something
-            //}));
+          
 
             getPlot(7);
         }

@@ -23,13 +23,10 @@ namespace BingLibrary.Location
                 {
                     switch (c.Name)
                     {
-                       
                         default:
                             return $"{c.DisplayName} ({c.NativeName})";
                     }
                 }
-
-
             }
 
             return Binding.DoNothing;
