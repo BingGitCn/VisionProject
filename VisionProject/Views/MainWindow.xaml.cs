@@ -24,13 +24,6 @@ namespace VisionProject.Views
             GlobalTools.EnableOnUIThread();
 
 
-            //Step..
-            if (false)//是否显示启动动画
-            {
-                StartLogo.MainWindow startLogo = new StartLogo.MainWindow("视觉检测软件");
-                startLogo.Show();
-            }
-
             //excel授权
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             //给图像控件windowdata全局

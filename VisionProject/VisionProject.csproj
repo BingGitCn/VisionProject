@@ -228,10 +228,6 @@
       <Project>{281775f6-4a65-40ab-a5ba-d90876c42119}</Project>
       <Name>BingLibrary.Vision</Name>
     </ProjectReference>
-    <ProjectReference Include="..\StartLogo\StartLogo.csproj">
-      <Project>{79be83b3-bd01-446a-943e-ac9cf5603ab9}</Project>
-      <Name>StartLogo</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="bitbug_favicon.ico" />
