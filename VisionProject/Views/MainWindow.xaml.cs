@@ -19,21 +19,24 @@ namespace VisionProject.Views
         public MainWindow()
         {
             InitializeComponent();
+            //非商业授权
+            GlobalTools.EnableNonCommercial();
+            //全局捕获异常
             GlobalTools.EnableGlobalCatchException();
+            //单例模式，不允许多开
             GlobalTools.EnableSingleton();
+            //线程更新ui
             GlobalTools.EnableOnUIThread();
 
-
             //excel授权
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
             //给图像控件windowdata全局
             Variables.WindowData1 = ImageWindow1.windowData;
 
             //regionManager.RegisterViewWithRegion(GlobalPrism.RegionNames.StatusRegionName, typeof(Status));
             //GlobalVars.Variables.ImageWindowData = imageWin.windowData;
 
-          
-
+            //获取统计图表
             getPlot(7);
         }
 

@@ -20,6 +20,7 @@ namespace BingLibrary.Vision
         public BingImageWindow()
         {
             InitializeComponent();
+            BingLibrary.Tools.GlobalTools.EnableNonCommercial();
         }
 
         private string OpenImageDialog()

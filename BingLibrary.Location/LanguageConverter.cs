@@ -38,14 +38,14 @@ namespace BingLibrary.Location
         }
 
         public Dictionary<string, string> Languages = new Dictionary<string, string>() {
-            { "en","en-US"},//英语
-            { "zh-cn","zh-CN"},//中文简体
-            { "cht","zh-TW"},//中文繁体
-            { "jp","ja-JP"},//日语
-            { "kor","ko-KR"},//韩语
+            { "en","en-us"},//英语
+            { "zh-cn","zh-cn"},//中文简体
+            { "cht","zh-tw"},//中文繁体
+            { "jp","ja-jp"},//日语
+            { "kor","ko-kr"},//韩语
             { "fra","fr"},//法语
             { "spa","es"},//西班牙语
-            { "th","th-TH"},//泰语
+            { "th","th-th"},//泰语
             { "ara","ar"},//阿拉伯语
             { "ru","ru"},//俄语
             { "pt","pt"},//葡萄牙语

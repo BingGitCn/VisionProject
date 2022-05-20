@@ -1,4 +1,4 @@
-﻿using BingLibrary.Communication.PLC;
+﻿using BingLibrary.Communication.Modbus;
 using BingLibrary.Vision;
 using BingLibrary.Vision.Engine;
 using HalconDotNet;
@@ -27,7 +27,7 @@ namespace VisionProject.GlobalVars
         public static VisionEngine2 V2Engine = new VisionEngine2();
 
         //PLC
-        public static HuiChuanPLC HCPLC = new HuiChuanPLC();
+        public static ModbusNet HCPLC = new ModbusNet();
 
         //标题
         public static string Title = "";

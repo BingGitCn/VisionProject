@@ -76,7 +76,7 @@ namespace VisionProject.ViewModels
         private async void initPLC()
         {
             //初始化PLC
-            Variables.HCPLC.Init("192.168.1.10", 502);
+            Variables.HCPLC.Init("192.168.1.10", 502,01);
             await Task.Delay(1000);
             for (int i = 0; i < 10; i++)
             {

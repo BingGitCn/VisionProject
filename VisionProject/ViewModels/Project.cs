@@ -350,6 +350,7 @@ namespace VisionProject.ViewModels
                                         Programs.Add(ProgramName, new ObservableCollection<SubProgram>());
                                         Variables.ProgramName = ProgramsName[ProgramsIndex];
                                         Variables.Log.Info("增加了程序");
+                                        ProgramName = "";
                                     }
                                 }
                             }
@@ -395,6 +396,12 @@ namespace VisionProject.ViewModels
         public DelegateCommand<string> Programs1Operate =>
             _programs1Operate ?? (_programs1Operate = new DelegateCommand<string>((string param) =>
             {
+                if (ProgramsName.Count == 0)
+                {
+                    Variables.ShowMessage("当前无程序");
+                    return;
+                }
+
                 switch (param)
                 {
                     case "add":
