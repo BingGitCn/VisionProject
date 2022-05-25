@@ -76,12 +76,17 @@ namespace VisionProject.ViewModels
         private async void initPLC()
         {
             //初始化PLC
-            Variables.HCPLC.Init("192.168.1.10", 502,01);
+            
             await Task.Delay(1000);
             for (int i = 0; i < 10; i++)
             {
                 if (Variables.HCPLC.IsConnected)
                     break;
+                Variables.HCPLC.Close();
+                await Task.Run(() => {
+                    Variables.HCPLC.Init("127.0.0.1", 502, 01);
+                });
+               
                 await Task.Delay(1000);
             }
 
@@ -113,6 +118,7 @@ namespace VisionProject.ViewModels
                                           select step)
                                           .ToList();
 
+                
                     for (int i = 0; i < currentProduct.Count - 1; i++)
                     {
                         if (currentProduct[i].InspectFunction == ToolNames[0])
