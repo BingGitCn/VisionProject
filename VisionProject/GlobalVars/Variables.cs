@@ -27,6 +27,7 @@ namespace VisionProject.GlobalVars
         public static VisionEngine2 V2Engine = new VisionEngine2();
 
         //PLC
+        //不要在多个异步方法中同时调用一个！可以再申明一个。
         public static ModbusNet HCPLC = new ModbusNet();
 
         //标题

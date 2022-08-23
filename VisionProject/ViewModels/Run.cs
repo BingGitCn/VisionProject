@@ -109,10 +109,10 @@ namespace VisionProject.ViewModels
 
                 if (false)
                 {
-                    //选择程序
+                    //选择程序。这里默认0，第一个
                     var program = Variables.CurrentProject.Programs.ElementAt(0).Value;
                     //选择对应产品的所有检测子程序
-                    int index = 1;//产品位置索引
+                    int index = 1;//产品位置索引，这里通过索引来选择，也可以通过其它的，如ToolNames名称等。
                     var currentProduct = (from step in program
                                           where step.ProductIndex == index
                                           select step)
