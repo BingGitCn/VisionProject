@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
+using Log = BingLibrary.Logs.LogOpreate;
 
 namespace VisionProject.ViewModels
 {
@@ -76,21 +77,22 @@ namespace VisionProject.ViewModels
         private async void initPLC()
         {
             //初始化PLC
-            
+
             await Task.Delay(1000);
             for (int i = 0; i < 10; i++)
             {
                 if (Variables.HCPLC.IsConnected)
                     break;
                 Variables.HCPLC.Close();
-                await Task.Run(() => {
+                await Task.Run(() =>
+                {
                     Variables.HCPLC.Init("127.0.0.1", 502, 01);
                 });
-               
+
                 await Task.Delay(1000);
             }
 
-            Variables.Log.Info(Variables.HCPLC.IsConnected ? "PLC连接成功" : "PLC连接失败");
+            Log.Info(Variables.HCPLC.IsConnected ? "PLC连接成功" : "PLC连接失败");
             PLCStatus.Value = Variables.HCPLC.IsConnected;
         }
 
@@ -118,12 +120,11 @@ namespace VisionProject.ViewModels
                                           select step)
                                           .ToList();
 
-                
                     for (int i = 0; i < currentProduct.Count - 1; i++)
                     {
                         if (currentProduct[i].InspectFunction == ToolNames[0])
                         {
-                           
+                            //这里可以再对应的工具里面写好对应的静态执行方法，直接调用
                             //Do Something
                             //Function_SaveImageViewModel.SaveImages(new HalconDotNet.HImage(),"123", currentProduct[i].Parameters);
                         }

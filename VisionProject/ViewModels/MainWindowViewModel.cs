@@ -13,6 +13,7 @@ using System.Windows;
 using VisionProject.GlobalVars;
 using OxyPlot;
 using OxyPlot.Series;
+using Log = BingLibrary.Logs.LogOpreate;
 
 namespace VisionProject.ViewModels
 {
@@ -234,12 +235,9 @@ namespace VisionProject.ViewModels
                 package.Save();
                 package.Dispose();
 
-
-                
-
-                Variables.Log.Info("数据加载成功。");
+                Log.Info("数据加载成功。");
             }
-            catch { Variables.Log.Error("数据加载失败。"); }
+            catch { Log.Error("数据加载失败。"); }
         }
 
         /// <summary>
@@ -405,25 +403,14 @@ namespace VisionProject.ViewModels
                             try
                             {
                                 File.Copy(AppDomain.CurrentDomain.BaseDirectory + "Statistics.xlsx", path + "产量统计.xlsx");
-                                Variables.Log.Info("导出产量统计成功。");
+                                Log.Info("导出产量统计成功。");
                                 Variables.ShowMessage("导出成功。");
                             }
-                            catch { Variables.Log.Error("导出产量统计失败。"); }
+                            catch { Log.Error("导出产量统计失败。"); }
                         }
                         break;
                 }
             }));
-
-
-
-
-
-
-
-
-
-
-
 
         #endregion 数据统计
 
@@ -537,5 +524,4 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _value, value); }
         }
     }
-
 }

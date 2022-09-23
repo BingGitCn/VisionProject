@@ -3,6 +3,7 @@ using BingLibrary.Logs;
 using Prism.Commands;
 using System.Collections.Generic;
 using VisionProject.GlobalVars;
+using Log = BingLibrary.Logs.LogOpreate;
 
 namespace VisionProject.ViewModels
 {
@@ -24,9 +25,9 @@ namespace VisionProject.ViewModels
                 try
                 {
                     Serialize.WriteJsonV2(SystemConfig, Variables.BaseDirectory + "system.config");
-                    Variables.Log.Info("系统设置保存成功。");
+                    Log.Info("系统设置保存成功。");
                 }
-                catch { Variables.Log.Error("系统设置保存失败。"); }
+                catch { Log.Error("系统设置保存失败。"); }
             }));
 
         private void getSystemConfig()
@@ -36,9 +37,9 @@ namespace VisionProject.ViewModels
                 SystemConfig = Serialize.ReadJsonV2<SystemConfigData>(Variables.BaseDirectory + "system.config");
                 if (SystemConfig == null)
                     SystemConfig = new SystemConfigData();
-                Variables.Log.Info("系统设置加载成功。");
+                Log.Info("系统设置加载成功。");
             }
-            catch { Variables.Log.Error("系统设置保存失败。"); }
+            catch { Log.Error("系统设置保存失败。"); }
         }
 
         private DelegateCommand _updatePassword;
@@ -63,7 +64,7 @@ namespace VisionProject.ViewModels
                         SystemConfig.Passwords[SystemConfig.UserIndex + 1] = SystemConfig.NewPassword;
 
                         Variables.ShowMessage("密码更新成功，请立即保存！\r\n此为唯一密码！");
-                        Variables.Log.Info("更新密码操作。");
+                        Log.Info("更新密码操作。");
                     }
                 }
                 else if (SystemConfig.UserIndex + 1 < UserIndex)
@@ -72,7 +73,7 @@ namespace VisionProject.ViewModels
                     SystemConfig.Passwords[SystemConfig.UserIndex + 1] = SystemConfig.NewPassword;
 
                     Variables.ShowMessage("密码更新成功，请立即保存！\r\n此为唯一密码！");
-                    Variables.Log.Info("更新密码操作。");
+                    Log.Info("更新密码操作。");
                 }
 
                 SystemConfig.NewPassword = "";

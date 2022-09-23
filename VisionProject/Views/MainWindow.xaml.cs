@@ -21,6 +21,8 @@ namespace VisionProject.Views
             InitializeComponent();
             //非商业授权
             GlobalTools.EnableNonCommercial();
+            //日志
+            GlobalTools.EnableLog();
             //全局捕获异常
             GlobalTools.EnableGlobalCatchException();
             //单例模式，不允许多开

@@ -9,12 +9,11 @@ using System.IO;
 using System.Linq;
 using VisionProject.ViewModels;
 using BingLibrary.Logs;
+
 namespace VisionProject.GlobalVars
 {
     public static class Variables
     {
-        //日志
-        public static LogBase Log=new LogBase();
         //全局Dialog服务
         public static IDialogService CurDialogService;
 
