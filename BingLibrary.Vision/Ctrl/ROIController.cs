@@ -20,7 +20,7 @@ namespace BingLibrary.Vision
         public HWndCtrl viewController;
         public ObservableCollection<ROI> ROIList;
 
-        private HalconColors activeCol = HalconColors.绿色;//"green,cyan";
+        private HalconColors activeCol = HalconColors.绿色五成;//"green,cyan";
         private HalconColors activeHdlCol = HalconColors.紫色;
         private HalconColors inactiveCol = HalconColors.蓝色;//"magenta";//"yellow";
 
@@ -164,16 +164,6 @@ namespace BingLibrary.Vision
             {
                 window.SetColor(inactiveCol.ToDescription());
 
-                for (int i = 0; i < ROIList.Count; i++)
-                {
-                    if (string.IsNullOrEmpty(ROIList[i].ROIColor.ToDescription()))
-                        window.SetColor(inactiveCol.ToDescription());
-                    else
-                        window.SetColor(ROIList[i].ROIColor.ToDescription());
-                    window.SetLineStyle(((ROI)ROIList[i]).flagLineStyle);
-                    ROIList[i].draw(window);
-                }
-
                 if (ActiveROIidx != -1)
                 {
                     window.SetColor(activeCol.ToDescription());
@@ -183,6 +173,18 @@ namespace BingLibrary.Vision
 
                     window.SetColor(activeHdlCol.ToDescription());
                     ROIList[ActiveROIidx].displayActive(window);
+                }
+
+                for (int i = 0; i < ROIList.Count; i++)
+                {
+                    if (i == ActiveROIidx)
+                        continue;
+                    if (string.IsNullOrEmpty(ROIList[i].ROIColor.ToDescription()))
+                        window.SetColor(inactiveCol.ToDescription());
+                    else
+                        window.SetColor(ROIList[i].ROIColor.ToDescription());
+                    window.SetLineStyle(((ROI)ROIList[i]).flagLineStyle);
+                    ROIList[i].draw(window);
                 }
             }
         }
