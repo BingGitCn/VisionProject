@@ -7,6 +7,7 @@ using OxyPlot.Series;
 using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using VisionProject.GlobalVars;
 
 namespace VisionProject.Views
@@ -111,14 +112,18 @@ namespace VisionProject.Views
                 Environment.Exit(0);
         }
 
-        private void plotDays_DropDownClosed(object sender, EventArgs e)
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (plotDays.SelectedIndex == 0)
-                getPlot(7);
-            else if (plotDays.SelectedIndex == 1)
-                getPlot(15);
-            else if (plotDays.SelectedIndex == 2)
-                getPlot(30);
+            RadioButton RB = sender as RadioButton;
+            if (RB.IsChecked == true)
+            {
+                if (RB.Name == "r1")
+                    getPlot(7);
+                else if (RB.Name == "r2")
+                    getPlot(15);
+                else if (RB.Name == "r3")
+                    getPlot(30);
+            }
         }
     }
 }

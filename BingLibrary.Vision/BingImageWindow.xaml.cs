@@ -123,6 +123,7 @@ namespace BingLibrary.Vision
                     windowData.CurrentImage?.Dispose();
                     windowData.CurrentImage = new HImage(rst);
                     windowData.AddImageToWindow(windowData.CurrentImage);
+                    windowData.FitWindow();
                     windowData.Repaint();
                 }
             }
@@ -144,7 +145,12 @@ namespace BingLibrary.Vision
 
         private void Fit_Window(object sender, RoutedEventArgs e)
         {
-            try { windowData.HCtrl.FitImage(); windowData.Repaint(); } catch { }
+            try
+            {
+                windowData.FitWindow();
+                windowData.Repaint();
+            }
+            catch { }
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -232,7 +238,7 @@ namespace BingLibrary.Vision
                 {
                     int tempNum = 0;
                     int mouse_X0, mouse_Y0;//用来记录按下鼠标时的坐标位置
-                    windowData.HCtrl.viewPort.HalconWindow.GetMposition(out mouse_X0, out mouse_Y0, out tempNum);
+                    windowData.HCtrl.hWindowControlWPF.HalconWindow.GetMposition(out mouse_X0, out mouse_Y0, out tempNum);
 
                     if (mouse_X0_old == mouse_X0 && mouse_Y0_old == mouse_Y0)
                     {

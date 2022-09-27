@@ -6,43 +6,11 @@ using System.Threading.Tasks;
 
 namespace BingLibrary.Vision
 {
-    public enum ModeCtrl
-    {
-        Include_ROI,
-        Exculude_ROI,
-        View_None,
-        View_Zoom,
-        View_move,
-    }
-
-    public class MessageBase
-    {
-        public double PositionX { get; set; } = 0;
-
-        public double PositionY { get; set; } = 0;
-
-        public HalconColors ShowColor { get; set; } = HalconColors.绿色;
-
-        public string ShowContent { get; set; } = string.Empty;
-
-        public int ShowFontSize { set; get; }
-
-        public HalconCoordinateSystem ShowMode { set; get; }
-
-        public MessageBase(double posX, double posY, string text, int fontsize = 12, HalconColors color = HalconColors.绿色, HalconCoordinateSystem mode = HalconCoordinateSystem.window)
-        {
-            PositionX = posX;
-            PositionY = posY;
-            ShowColor = color;
-            ShowContent = text;
-            ShowFontSize = fontsize;
-            ShowMode = mode;
-        }
-    }
-
     public class HWndCtrl
     {
-        public HWindowControlWPF viewPort;
+        #region 变量
+
+        public HWindowControlWPF hWindowControlWPF;
 
         public ROIController roiManager;
 
@@ -62,7 +30,7 @@ namespace BingLibrary.Vision
         public bool isShowWaterString = false;
 
         //拖动模式
-        private ModeCtrl viewMode = ModeCtrl.View_move;
+        private ModeCtrl modelCtrl = ModeCtrl.View_move;
 
         //显示模式
         private ModeCtrl dispROI = ModeCtrl.Include_ROI;
@@ -88,33 +56,38 @@ namespace BingLibrary.Vision
 
         private HTuple hv_OS = new HTuple();
 
+        #endregion 变量
+
         public HWndCtrl(HWindowControlWPF view)
         {
-            viewPort = view;
-            windowWidth = viewPort.ActualWidth;
-            windowHeight = viewPort.ActualHeight;
+            hWindowControlWPF = view;
+            windowWidth = hWindowControlWPF.ActualWidth;
+            windowHeight = hWindowControlWPF.ActualHeight;
 
-            zoomWndFactor = (double)imageWidth / viewPort.ActualWidth;
+            zoomWndFactor = (double)imageWidth / hWindowControlWPF.ActualWidth;
             zoomAddOn = Math.Pow(0.9, 5);
 
             /*default*/
             CompRangeX = new int[] { 0, 100 };
             CompRangeY = new int[] { 0, 100 };
 
-            viewPort.HMouseDown += ViewPort_HMouseDown;
-            viewPort.HMouseUp += ViewPort_HMouseUp;
-            viewPort.HMouseMove += ViewPort_HMouseMove;
-            viewPort.HMouseWheel += ViewPort_HMouseWheel;
-            viewPort.SizeChanged += ViewPort_SizeChanged;
+            hWindowControlWPF.HMouseDown += HWndCtrl_HMouseDown;
+            hWindowControlWPF.HMouseUp += HWndCtrl_HMouseUp;
+            hWindowControlWPF.HMouseMove += HWndCtrl_HMouseMove;
+            hWindowControlWPF.HMouseWheel += HWndCtrl_HMouseWheel;
+            hWindowControlWPF.SizeChanged += HWndCtrl_SizeChanged;
 
-            initFont(viewPort.HalconWindow);
+            initFont(hWindowControlWPF.HalconWindow);
         }
 
+        /// <summary>
+        ///   //初始化字体
+        /// </summary>
+        /// <param name="window"></param>
         private void initFont(HTuple window)
         {
             try
             {
-                //初始化字体
                 hv_Font.Dispose();
                 HOperatorSet.QueryFont(window, out hv_Font);
                 hv_OS.Dispose();
@@ -146,14 +119,21 @@ namespace BingLibrary.Vision
             rC.setViewController(this);
         }
 
-        private void ViewPort_HMouseDown(object sender, HMouseEventArgsWPF e)
+        private int activeROIidx = -1;
+
+        private void HWndCtrl_HMouseDown(object sender, HMouseEventArgsWPF e)
         {
             //右键或者正在绘画，则不做处理
-            if (e.Button == System.Windows.Input.MouseButton.Right || isDrawing)
+            if (isDrawing)
                 return;
 
+            if (e.Button == System.Windows.Input.MouseButton.Right)
+            {
+                if (activeROIidx < 0)
+                    return;
+            }
+
             mousePressed = true;
-            int activeROIidx = -1;
 
             startX = e.Column;
             startY = e.Row;
@@ -162,27 +142,13 @@ namespace BingLibrary.Vision
             {
                 int mouse_X0, mouse_Y0;//用来记录按下鼠标时的坐标位置
                 int tempNum = 0;
-                this.viewPort.HalconWindow.GetMposition(out mouse_X0, out mouse_Y0, out tempNum);
+                this.hWindowControlWPF.HalconWindow.GetMposition(out mouse_X0, out mouse_Y0, out tempNum);
                 //判断是否在对应的ROI区域内
                 activeROIidx = roiManager.mouseDownAction(mouse_Y0, mouse_X0);
             }
-            //else
-            //{
-            //    switch (viewMode)
-            //    {
-            //        //移动
-            //        case  ModeCtrl.View_move:
-            //            startX = e.Column;
-            //            startY = e.Row;
-            //            break;
-            //        //这里除了移动，什么也不做
-            //        default:
-            //            break;
-            //    }
-            //}
         }
 
-        private void ViewPort_HMouseUp(object sender, HMouseEventArgsWPF e)
+        private void HWndCtrl_HMouseUp(object sender, HMouseEventArgsWPF e)
         {
             mousePressed = false;
 
@@ -190,9 +156,12 @@ namespace BingLibrary.Vision
                 if (e.Button == System.Windows.Input.MouseButton.Left)
                     if (isDrawing)
                         HalconMicroSoft.FinishDraw();
+            //拖动清零
+            startX = 0;
+            startY = 0;
         }
 
-        private void ViewPort_HMouseWheel(object sender, HMouseEventArgsWPF e)
+        private void HWndCtrl_HMouseWheel(object sender, HMouseEventArgsWPF e)
         {
             if (e.Delta > 0)
                 zoomImage(e.Column, e.Row, 0.9);
@@ -200,7 +169,7 @@ namespace BingLibrary.Vision
                 zoomImage(e.Column, e.Row, 1 / 0.9);
         }
 
-        private void ViewPort_HMouseMove(object sender, HMouseEventArgsWPF e)
+        private void HWndCtrl_HMouseMove(object sender, HMouseEventArgsWPF e)
         {
             if (isOpenImage)
                 return;
@@ -237,8 +206,11 @@ namespace BingLibrary.Vision
                 }
             }
             //否则移动图像
-            else if (viewMode == ModeCtrl.View_move)
+            else if (modelCtrl == ModeCtrl.View_move)
             {
+                //防止打开图像时拖动
+                if (startX == 0 && startY == 0)
+                    return;
                 motionX = e.Column - startX;
                 motionY = e.Row - startY;
 
@@ -252,10 +224,10 @@ namespace BingLibrary.Vision
         }
 
         //窗口大小变化是图像适应窗口
-        private async void ViewPort_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
+        private async void HWndCtrl_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
         {
             await Task.Delay(1);
-            FitImage();
+            fitWindow();
             repaint();
         }
 
@@ -281,12 +253,12 @@ namespace BingLibrary.Vision
             ImgRow2 = imageHeight = r2;
             ImgCol2 = imageWidth = c2;
 
-            System.Windows.Rect rect = viewPort.ImagePart;
+            System.Windows.Rect rect = hWindowControlWPF.ImagePart;
             rect.X = (int)ImgCol1;
             rect.Y = (int)ImgRow1;
             rect.Height = (int)imageHeight;
             rect.Width = (int)imageWidth;
-            viewPort.ImagePart = rect;
+            hWindowControlWPF.ImagePart = rect;
         }
 
         /// <summary>
@@ -316,12 +288,12 @@ namespace BingLibrary.Vision
             lenC = (int)Math.Round(lengthC);
             lenR = (int)Math.Round(lengthR);
 
-            System.Windows.Rect rect = viewPort.ImagePart;
+            System.Windows.Rect rect = hWindowControlWPF.ImagePart;
             rect.X = (int)Math.Round(ImgCol1);
             rect.Y = (int)Math.Round(ImgRow1);
             rect.Width = (lenC > 0) ? lenC : 1;
             rect.Height = (lenR > 0) ? lenR : 1;
-            viewPort.ImagePart = rect;
+            hWindowControlWPF.ImagePart = rect;
 
             zoomWndFactor *= scale;
             repaint();
@@ -348,7 +320,7 @@ namespace BingLibrary.Vision
             midPointX = ImgCol1;
             midPointY = ImgRow1;
 
-            zoomWndFactor = (double)imageWidth / viewPort.ActualWidth;
+            zoomWndFactor = (double)imageWidth / hWindowControlWPF.ActualWidth;
             zoomImage(midPointX, midPointY, scaleFactor);
         }
 
@@ -365,10 +337,10 @@ namespace BingLibrary.Vision
             ImgCol1 += -motionX;
             ImgCol2 += -motionX;
 
-            System.Windows.Rect rect = viewPort.ImagePart;
+            System.Windows.Rect rect = hWindowControlWPF.ImagePart;
             rect.X = (int)Math.Round(ImgCol1);
             rect.Y = (int)Math.Round(ImgRow1);
-            viewPort.ImagePart = rect;
+            hWindowControlWPF.ImagePart = rect;
 
             repaint();
         }
@@ -378,7 +350,7 @@ namespace BingLibrary.Vision
         /// </summary>
         public void repaint()
         {
-            repaint(viewPort.HalconWindow);
+            repaint(hWindowControlWPF.HalconWindow);
         }
 
         public void repaint(HalconDotNet.HWindow window)
@@ -386,7 +358,7 @@ namespace BingLibrary.Vision
             try
             {
                 int h = imageHeight;
-                if (window.IsInitialized() == false || viewPort.HalconID.ToInt64() == -1 || viewPort.ImagePart.Width <= 1 || viewPort.ImagePart.Height <= 1)
+                if (window.IsInitialized() == false || hWindowControlWPF.HalconID.ToInt64() == -1 || hWindowControlWPF.ImagePart.Width <= 1 || hWindowControlWPF.ImagePart.Height <= 1)
                     return;
 
                 HSystem.SetSystem("flush_graphic", "false");
@@ -464,18 +436,15 @@ namespace BingLibrary.Vision
         public HImage image = new HImage();
         public bool isOpenImage = false;
 
-        public async void addImageVar(HImage image)
+        public void addImageVar(HImage image)
         {
             isOpenImage = true;
             this.image?.Dispose();
             this.image = image;
-            repaint();
-            FitImage();
-            await Task.Delay(100);
             isOpenImage = false;
         }
 
-        public void FitImage()
+        public void fitWindow()
         {
             try
             {
@@ -489,7 +458,7 @@ namespace BingLibrary.Vision
                     if ((h != imageHeight) || (w != imageWidth))
                     {
                         int _beginRow, _begin_Col, _endRow, _endCol;
-                        double ratio_win = (double)viewPort.ActualWidth / (double)viewPort.ActualHeight;
+                        double ratio_win = (double)hWindowControlWPF.ActualWidth / (double)hWindowControlWPF.ActualHeight;
                         double ratio_img = (double)w / (double)h;
                         imageHeight = h;
                         imageWidth = w;
@@ -499,7 +468,7 @@ namespace BingLibrary.Vision
                             _endRow = h - 1;
                             _begin_Col = (int)(-w * (ratio_win / ratio_img - 1d) / 2d);
                             _endCol = (int)(w + w * (ratio_win / ratio_img - 1d) / 2d);
-                            zoomWndFactor = (double)h / viewPort.ActualHeight;
+                            zoomWndFactor = (double)h / hWindowControlWPF.ActualHeight;
                         }
                         else
                         {
@@ -507,9 +476,9 @@ namespace BingLibrary.Vision
                             _endCol = w - 1;
                             _beginRow = (int)(-h * (ratio_img / ratio_win - 1d) / 2d);
                             _endRow = (int)(h + h * (ratio_img / ratio_win - 1d) / 2d);
-                            zoomWndFactor = (double)w / viewPort.ActualWidth;
+                            zoomWndFactor = (double)w / hWindowControlWPF.ActualWidth;
                         }
-                        setImagePart(_beginRow, _begin_Col, (int)viewPort.ActualHeight, (int)viewPort.ActualWidth);
+                        setImagePart(_beginRow, _begin_Col, (int)hWindowControlWPF.ActualHeight, (int)hWindowControlWPF.ActualWidth);
                         zoomImage(zoomWndFactor);
                     }
                 }

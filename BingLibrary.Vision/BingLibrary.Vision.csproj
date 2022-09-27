@@ -222,6 +222,8 @@
     <Compile Include="Common\HalconColors.cs" />
     <Compile Include="Common\HalconDrawing.cs" />
     <Compile Include="Common\HalCoordinateSystem.cs" />
+    <Compile Include="Common\MessageBase.cs" />
+    <Compile Include="Common\ModelCtrl.cs" />
     <Compile Include="Ctrl\HWndCtrl.cs" />
     <Compile Include="Ctrl\ROI.cs" />
     <Compile Include="Ctrl\ROICircle.cs" />

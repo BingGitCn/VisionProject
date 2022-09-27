@@ -10,8 +10,8 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:VisionProject.Views"
-    xmlns:prism="http://prismlibrary.com/"
     xmlns:oxy="http://oxyplot.org/wpf"
+    xmlns:prism="http://prismlibrary.com/"
     Title="{Binding Title}"
     Width="960"
     Height="600"
@@ -389,7 +389,11 @@
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
                                             </ComboBox>
-                                            <TextBox Margin="5" Style="{StaticResource TextBoxExtend}" Width="100" Text="{Binding ProgramName}"></TextBox>
+                                            <TextBox
+                                                Width="100"
+                                                Margin="5"
+                                                Style="{StaticResource TextBoxExtend}"
+                                                Text="{Binding ProgramName}" />
                                             <Button
                                                 Width="100"
                                                 Margin="5"
@@ -752,18 +756,16 @@
                         </Grid>
 
                         <Grid Grid.Row="2">
-                            <ComboBox IsReadOnly="True" x:Name="plotDays" DropDownClosed="plotDays_DropDownClosed">
-                                <ComboBoxItem Content="最近七天" IsSelected="True"></ComboBoxItem>
-                                <ComboBoxItem Content="最近半月" ></ComboBoxItem>
-                                <ComboBoxItem Content="最近一月" ></ComboBoxItem>
-                            </ComboBox>
+
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton VerticalContentAlignment="Center" FontSize="16" x:Name="r1" GroupName="sp" Margin="3" Content="一周" IsChecked="True" Checked="RadioButton_Checked"></RadioButton>
+                                <RadioButton VerticalContentAlignment="Center" FontSize="16" x:Name="r2" GroupName="sp" Margin="3" Content="半月" Checked="RadioButton_Checked"></RadioButton>
+                                <RadioButton VerticalContentAlignment="Center" FontSize="16" x:Name="r3" GroupName="sp" Margin="3" Content="一月" Checked="RadioButton_Checked"></RadioButton>
+                            </StackPanel>
                         </Grid>
                         <Grid Grid.Row="3">
-                            
-                            <oxy:PlotView  x:Name="plot" >
-                            
-                            </oxy:PlotView>
-                            
+
+                            <oxy:PlotView x:Name="plot" />
                         </Grid>
                     </Grid>
                 </hc:TabItem>

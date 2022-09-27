@@ -74,38 +74,6 @@ namespace BingLibrary.Vision
         }
 
         /// <summary>
-        /// 读取一张图像
-        /// </summary>
-        /// <param name="imagePath"></param>
-        /// <returns></returns>
-        public bool ReadImage(string imagePath)
-        {
-            try
-            {
-                CurrentImage?.Dispose();
-                CurrentImage.ReadImage(imagePath);
-                return true;
-            }
-            catch { return false; }
-        }
-
-        /// <summary>
-        /// 保存图像
-        /// </summary>
-        /// <param name="imageType"></param>
-        /// <param name="imagePath"></param>
-        /// <returns></returns>
-        public bool SaveImage(string imageType, string imagePath)
-        {
-            try
-            {
-                CurrentImage.WriteImage(imageType, 0, imagePath);
-                return true;
-            }
-            catch { return false; }
-        }
-
-        /// <summary>
         /// 将图像显示到窗口
         /// </summary>
         /// <param name="hObject"></param>
@@ -205,7 +173,7 @@ namespace BingLibrary.Vision
         {
             try
             {
-                AddImageToWindow(CurrentImage);
+                RCtrl.ROIList.Clear();
             }
             catch { }
         }
@@ -218,6 +186,18 @@ namespace BingLibrary.Vision
             try
             {
                 HCtrl.repaint();
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// 刷新界面显示
+        /// </summary>
+        public void FitWindow()
+        {
+            try
+            {
+                HCtrl.fitWindow();
             }
             catch { }
         }
