@@ -696,9 +696,9 @@
                     <Grid Background="{StaticResource BackgroundBrush}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto" />
-                            <RowDefinition />
+                            <RowDefinition Height="6*" />
                             <RowDefinition Height="auto" />
-                            <RowDefinition />
+                            <RowDefinition Height="4*" />
                         </Grid.RowDefinitions>
 
                         <Grid Grid.Row="0">
@@ -721,7 +721,7 @@
                         </Grid>
 
                         <Grid Grid.Row="1">
-                            <DataGrid
+                            <DataGrid Style="{StaticResource   DataGridBaseStyle}"
                                 Margin="5"
                                 hc:DataGridAttach.ShowRowNumber="True"
                                 AutoGenerateColumns="False"

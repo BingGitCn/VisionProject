@@ -14,18 +14,25 @@ namespace VisionProject.ViewModels
 
         private void initAll()
         {
+            //获取数据统计
             initStatistic();
+            //获取系统配置
             getSystemConfig();
+            //获取剩余内存
             initFreeSpace();
+            //软件名字
             Variables.Title = SystemConfig.Title;
             Title = Variables.Title;
 
             //测试
             //IsLogin = true;
 
+            //初始化项目
             initProjects();
+            //初始化PLC
             initPLC();
-            initEngine();
+            //初始化引擎，可选
+            //initEngine();
 
             run();
         }
@@ -113,7 +120,7 @@ namespace VisionProject.ViewModels
                 {
                     //选择程序。这里默认0，第一个
                     var program = Variables.CurrentProject.Programs.ElementAt(0).Value;
-                    //选择对应产品的所有检测子程序
+                    //选择对应产品的所有检测子程序。这里可以在打开项目的时候获取一次，无需每次执行获取。
                     int index = 1;//产品位置索引，这里通过索引来选择，也可以通过其它的，如ToolNames名称等。
                     var currentProduct = (from step in program
                                           where step.ProductIndex == index
@@ -133,6 +140,11 @@ namespace VisionProject.ViewModels
                             //Do Something
                         }
                     }
+
+                    //结果OK时使用
+                    setOK();
+                    //结果NG时使用
+                    setNG();
                 }
             }
         }
