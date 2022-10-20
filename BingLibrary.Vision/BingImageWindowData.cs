@@ -7,7 +7,8 @@ namespace BingLibrary.Vision
     {
         public HWindow hWindow { set; get; }
         public HWndCtrl HCtrl { set; get; }
-        public ROIController RCtrl { set; get; }
+
+        //  public ROIController RCtrl { set; get; }
         public HImage CurrentImage { set; get; } = new HImage();
 
         /// <summary>
@@ -96,7 +97,7 @@ namespace BingLibrary.Vision
         {
             try
             {
-                RCtrl.AddROI(new ROIRegion(hRegion) { ROIColor = roiColor });
+                HCtrl.roiManager.AddROI(new ROIRegion(hRegion) { ROIColor = roiColor });
             }
             catch { }
         }
@@ -109,7 +110,7 @@ namespace BingLibrary.Vision
         /// <returns></returns>
         public ObservableCollection<ROI> GetROIList(HRegion hRegion, HalconColors roiColor = HalconColors.红色)
         {
-            return RCtrl.ROIList;
+            return HCtrl.roiManager.ROIList;
         }
 
         /// <summary>
@@ -121,8 +122,8 @@ namespace BingLibrary.Vision
         {
             try
             {
-                RCtrl.setActiveROIIdx(index);
-                if (RCtrl.ROIList.Count > 0)
+                HCtrl.roiManager.setActiveROIIdx(index);
+                if (HCtrl.roiManager.ROIList.Count > 0)
                     Repaint();
             }
             catch { }
@@ -135,7 +136,7 @@ namespace BingLibrary.Vision
         /// <returns></returns>
         public ROI GetActive(int index)
         {
-            return RCtrl.getActiveROI();
+            return HCtrl.roiManager.getActiveROI();
         }
 
         /// <summary>
@@ -173,7 +174,7 @@ namespace BingLibrary.Vision
         {
             try
             {
-                RCtrl.ROIList.Clear();
+                HCtrl.roiManager.ROIList.Clear();
             }
             catch { }
         }

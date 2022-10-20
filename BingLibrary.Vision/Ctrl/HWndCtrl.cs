@@ -78,6 +78,7 @@ namespace BingLibrary.Vision
             hWindowControlWPF.SizeChanged += HWndCtrl_SizeChanged;
 
             initFont(hWindowControlWPF.HalconWindow);
+            roiManager = new ROIController();
         }
 
         /// <summary>
@@ -112,13 +113,6 @@ namespace BingLibrary.Vision
             catch { }
         }
 
-        //使用ROIController
-        public void useROIController(ROIController rC)
-        {
-            roiManager = rC;
-            rC.setViewController(this);
-        }
-
         private int activeROIidx = -1;
 
         private void HWndCtrl_HMouseDown(object sender, HMouseEventArgsWPF e)
@@ -145,6 +139,7 @@ namespace BingLibrary.Vision
                 this.hWindowControlWPF.HalconWindow.GetMposition(out mouse_X0, out mouse_Y0, out tempNum);
                 //判断是否在对应的ROI区域内
                 activeROIidx = roiManager.mouseDownAction(mouse_Y0, mouse_X0);
+                repaint();
             }
         }
 
@@ -200,7 +195,7 @@ namespace BingLibrary.Vision
                 if (((int)motionX != 0) || ((int)motionY != 0))
                 {
                     roiManager.mouseMoveAction(e.Column, e.Row, motionX, motionY);
-
+                    repaint();
                     startX = e.Column;
                     startY = e.Row;
                 }
@@ -353,7 +348,7 @@ namespace BingLibrary.Vision
             repaint(hWindowControlWPF.HalconWindow);
         }
 
-        public void repaint(HalconDotNet.HWindow window)
+        private void repaint(HalconDotNet.HWindow window)
         {
             try
             {
@@ -444,6 +439,9 @@ namespace BingLibrary.Vision
             isOpenImage = false;
         }
 
+        /// <summary>
+        /// 适应窗口
+        /// </summary>
         public void fitWindow()
         {
             try

@@ -66,9 +66,8 @@ namespace BingLibrary.Vision
             catch { config = new Config(); }
             //HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color", WindowBackgroud.ToString());
             HOperatorSet.ClearWindow(iwin.HalconWindow);
-            windowData.RCtrl = new ROIController();
+
             windowData.HCtrl = new HWndCtrl(iwin);
-            windowData.HCtrl.useROIController(windowData.RCtrl);
             iwin.HMouseUp += (sender0, e0) => { if (e0.Button == MouseButton.Right && windowData.HCtrl.isDrawing == false) CM.IsOpen = true; };
             windowData.InitHWindow(iwin.HalconWindow);
 
@@ -331,7 +330,7 @@ namespace BingLibrary.Vision
                 ROIRegion rr0 = new ROIRegion(windowData.hWindow.DrawRegion());
                 rr0.draw(iwin.HalconWindow);
                 rr0.ROIName = getRoiName();
-                windowData.RCtrl.ROIList.Add(rr0);
+                windowData.HCtrl.roiManager.ROIList.Add(rr0);
             }
             else if (cb.SelectedIndex == 1)
             {
@@ -341,7 +340,7 @@ namespace BingLibrary.Vision
                 rl1.createROILine(r1, c1, r2, c2);
                 rl1.draw(iwin.HalconWindow);
                 rl1.ROIName = getRoiName();
-                windowData.RCtrl.ROIList.Add(rl1);
+                windowData.HCtrl.roiManager.ROIList.Add(rl1);
             }
             else if (cb.SelectedIndex == 2)
             {
@@ -351,7 +350,7 @@ namespace BingLibrary.Vision
                 rc2.createROICircle(c1, r1, r);
                 rc2.draw(iwin.HalconWindow);
                 rc2.ROIName = getRoiName();
-                windowData.RCtrl.ROIList.Add(rc2);
+                windowData.HCtrl.roiManager.ROIList.Add(rc2);
             }
             else if (cb.SelectedIndex == 3)
             {
@@ -361,7 +360,7 @@ namespace BingLibrary.Vision
                 rr3.createROIRect1(r1, c1, r2, c2);
                 rr3.draw(iwin.HalconWindow);
                 rr3.ROIName = getRoiName();
-                windowData.RCtrl.ROIList.Add(rr3);
+                windowData.HCtrl.roiManager.ROIList.Add(rr3);
             }
             else if (cb.SelectedIndex == 4)
             {
@@ -371,7 +370,7 @@ namespace BingLibrary.Vision
                 rr4.createROIRect2(r1, c1, -p, l1, l2);
                 rr4.draw(iwin.HalconWindow);
                 rr4.ROIName = getRoiName();
-                windowData.RCtrl.ROIList.Add(rr4);
+                windowData.HCtrl.roiManager.ROIList.Add(rr4);
             }
 
             windowData.DrawMode(false);
@@ -384,9 +383,9 @@ namespace BingLibrary.Vision
             int k = 0;
             for (int j = 0; j < 1024; j++)
             {
-                for (int i = 0; i < windowData.RCtrl.ROIList.Count; i++)
+                for (int i = 0; i < windowData.HCtrl.roiManager.ROIList.Count; i++)
                 {
-                    if (windowData.RCtrl.ROIList[i].ROIName == k.ToString())
+                    if (windowData.HCtrl.roiManager.ROIList[i].ROIName == k.ToString())
                     { k++; break; }
                 }
             }
@@ -403,7 +402,7 @@ namespace BingLibrary.Vision
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            windowData.RCtrl.RemoveActiveRoi();
+            windowData.HCtrl.roiManager.RemoveActiveRoi();
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
@@ -416,7 +415,7 @@ namespace BingLibrary.Vision
 
             roi.draw(iwin.HalconWindow);
             roi.ROIName = getRoiName();
-            windowData.RCtrl.ROIList.Add(roi);
+            windowData.HCtrl.roiManager.ROIList.Add(roi);
 
             windowData.DrawMode(false);
             (sender as Button).IsEnabled = true;

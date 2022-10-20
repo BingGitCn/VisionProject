@@ -20,6 +20,9 @@ using System.Linq;
 
 namespace BingLibrary.Vision.Engine
 {
+    /// <summary>
+    /// 推荐使用 VisionEngine2
+    /// </summary>
     public class VisionEngine
     {
         /// <summary>

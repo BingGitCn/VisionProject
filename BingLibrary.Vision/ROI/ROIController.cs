@@ -17,7 +17,6 @@ namespace BingLibrary.Vision
 
     public class ROIController
     {
-        public HWndCtrl viewController;
         public ObservableCollection<ROI> ROIList;
 
         private HalconColors activeCol = HalconColors.绿色五成;//"green,cyan";
@@ -34,15 +33,6 @@ namespace BingLibrary.Vision
             ROIList = new ObservableCollection<ROI>();
             ActiveROIidx = -1;
             currX = currY = -1;
-        }
-
-        /// <summary>
-        /// 设置view
-        /// </summary>
-        /// <param name="view"></param>
-        public void setViewController(HWndCtrl view)
-        {
-            viewController = view;
         }
 
         private double currX, currY;
@@ -99,7 +89,6 @@ namespace BingLibrary.Vision
         {
             ROIList.Add(r);
             ActiveROIidx = -1;
-            viewController.repaint();
         }
 
         /// <summary>
@@ -112,7 +101,6 @@ namespace BingLibrary.Vision
             {
                 ROIList.RemoveAt(idx);
                 ActiveROIidx = -1;
-                viewController.repaint();
                 GC.Collect();//垃圾回收
             }
             catch { }
@@ -129,7 +117,6 @@ namespace BingLibrary.Vision
                 {
                     ROIList.RemoveAt(ActiveROIidx);
                     ActiveROIidx = -1;
-                    viewController.repaint();
                 }
             }
             catch { }
@@ -140,7 +127,6 @@ namespace BingLibrary.Vision
             ROIList.Clear();
             ActiveROIidx = -1;
             roi = null;
-            viewController.repaint();
             GC.Collect();
         }
 
@@ -216,7 +202,6 @@ namespace BingLibrary.Vision
                 }
             }
 
-            viewController.repaint();
             return idxROI;
         }
 
@@ -240,7 +225,6 @@ namespace BingLibrary.Vision
                 ROIList.Add(roi);
                 roi = null;
                 ActiveROIidx = ROIList.Count - 1;
-                viewController.repaint();
             }
             else if (ROIList.Count > 0)     // ... or an existing one is manipulated
             {
@@ -277,8 +261,6 @@ namespace BingLibrary.Vision
                 {
                     ActiveROIidx = idxROI;
                 }
-
-                viewController.repaint();
             }
             return ActiveROIidx;
         }
@@ -305,7 +287,6 @@ namespace BingLibrary.Vision
                     ROIList[ActiveROIidx].moveByHandle(newX, newY);
                 }
 
-                viewController.repaint();
                 currX = newX;
                 currY = newY;
             }
