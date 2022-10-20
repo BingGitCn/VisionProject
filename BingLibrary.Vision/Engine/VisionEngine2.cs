@@ -76,7 +76,6 @@ namespace BingLibrary.Vision.Engine
         /// </summary>
         public void Reload()
         {
-
             foreach (var p in procedureNames)
             {
                 if (devProcedureCalls.Keys.Contains(p))
@@ -87,7 +86,6 @@ namespace BingLibrary.Vision.Engine
                     devProcedureCalls.Add(p, new HDevProcedureCall(new HDevProcedure(p)));
 
                 devEngine.UnloadAllProcedures();
-               
             }
         }
 
@@ -214,185 +212,76 @@ namespace BingLibrary.Vision.Engine
             catch { return false; }
         }
 
-        //#region
+        #region
 
-        ///// <summary>
-        ///// 设置图像参数
-        ///// </summary>
-        ///// <param name="procedureName"></param>
-        ///// <param name="imageName"></param>
-        ///// <param name="image"></param>
-        ///// <returns></returns>
-        //public bool SetParamImage(string procedureName, string imageName, HImage image)
-        //{
-        //    try
-        //    {
-        //        if (devProcedureCalls.Keys.Contains(procedureName))
-        //        {
-        //            devProcedureCalls[procedureName].SetInputIconicParamObject(imageName, image);
-        //        }
-        //        return true;
-        //    }
-        //    catch { return false; }
-        //}
+        /// <summary>
+        /// 创建一个新的字典
+        /// </summary>
+        /// <returns></returns>
+        public HTuple GetNewEmptyHDict()
+        {
+            HTuple hDict;
+            HOperatorSet.CreateDict(out hDict);
+            return hDict;
+        }
 
-        ///// <summary>
-        ///// 设置Tuple参数
-        ///// </summary>
-        ///// <param name="procedureName"></param>
-        ///// <param name="param"></param>
-        ///// <returns></returns>
-        //public bool SetParamTuple(string procedureName, string tupleName, HTuple tuple)
-        //{
-        //    try
-        //    {
-        //        if (devProcedureCalls.Keys.Contains(procedureName))
-        //        {
-        //            devProcedureCalls[procedureName].SetInputCtrlParamTuple(tupleName, tuple);
-        //        }
-        //        return true;
-        //    }
-        //    catch { return false; }
-        //}
+        /// <summary>
+        /// 设置字典参数
+        /// </summary>
+        /// <param name="hDict"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool SetHDictObject(ref HTuple hDict, string key, HObject value)
+        {
+            try
+            {
+                HOperatorSet.SetDictObject(value, hDict, key);
+                return true;
+            }
+            catch { return false; }
+        }
 
-        ///// <summary>
-        ///// 设置Region参数
-        ///// </summary>
-        ///// <param name="procedureName"></param>
-        ///// <param name="region"></param>
-        ///// <returns></returns>
-        //public bool SetParamRegion(string procedureName, string regionName, HRegion region)
-        //{
-        //    try
-        //    {
-        //        if (devProcedureCalls.Keys.Contains(procedureName))
-        //            devProcedureCalls[procedureName].SetInputIconicParamObject(regionName, region);
-        //        return true;
-        //    }
-        //    catch { return false; }
-        //}
+        /// <summary>
+        /// 设置字典参数
+        /// </summary>
+        /// <param name="hDict"></param>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public bool SetHDictTuple(ref HTuple hDict, string key, HTuple value)
+        {
+            try
+            {
+                HOperatorSet.SetDictTuple(hDict, key, value);
+                return true;
+            }
+            catch { return false; }
+        }
 
-        ///// <summary>
-        ///// 获取Tuple结果
-        ///// </summary>
-        ///// <param name="procedureName"></param>
-        ///// <returns></returns>
-        //public HTuple GetResultTuple(string procedureName, string tupleName)
-        //{
-        //    HTuple tuple = new HTuple();
-        //    try
-        //    {
-        //        if (devProcedureCalls.Keys.Contains(procedureName))
-        //            tuple = devProcedureCalls[procedureName].GetOutputCtrlParamTuple(tupleName);
-        //        return tuple;
-        //    }
-        //    catch { return tuple; }
-        //}
+        public HObject GetHDictObject(HTuple hDict, string key)
+        {
+            HObject hObject = new HObject();
+            try
+            {
+                HOperatorSet.GetDictObject(out hObject, hDict, key);
+            }
+            catch { }
+            return hObject;
+        }
 
-        ///// <summary>
-        ///// 获取Image结果
-        ///// </summary>
-        ///// <param name="procedureName"></param>
-        ///// <param name="imageName"></param>
-        ///// <returns></returns>
-        //public HImage GetResultImage(string procedureName, string imageName)
-        //{
-        //    HImage image = new HImage();
-        //    try
-        //    {
-        //        if (devProcedureCalls.Keys.Contains(procedureName))
-        //            image = devProcedureCalls[procedureName].GetOutputIconicParamImage(imageName);
-        //        return image;
-        //    }
-        //    catch { return image; }
-        //}
+        public HTuple GetHDictTuple(HTuple hDict, string key)
+        {
+            HTuple hTuple = new HTuple();
+            try
+            {
+                HOperatorSet.GetDictTuple(hDict, key, out hTuple);
+            }
+            catch { }
+            return hTuple;
+        }
 
-        ///// <summary>
-        ///// 获取Region结果
-        ///// </summary>
-        ///// <param name="procedureName"></param>
-        ///// <param name="regionName"></param>
-        ///// <returns></returns>
-        //public HRegion GetResultRegion(string procedureName, string regionName)
-        //{
-        //    HRegion region = new HRegion();
-        //    try
-        //    {
-        //        if (devProcedureCalls.Keys.Contains(procedureName))
-        //            region = devProcedureCalls[procedureName].GetOutputIconicParamRegion(regionName);
-        //        return region;
-        //    }
-        //    catch { return region; }
-        //}
-
-        ///// <summary>
-        ///// 创建一个新的字典
-        ///// </summary>
-        ///// <returns></returns>
-        //public HTuple GetNewEmptyHDict()
-        //{
-        //    HTuple hDict;
-        //    HOperatorSet.CreateDict(out hDict);
-        //    return hDict;
-        //}
-
-        ///// <summary>
-        ///// 设置字典参数
-        ///// </summary>
-        ///// <param name="hDict"></param>
-        ///// <param name="key"></param>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public bool SetHDictObject(ref HTuple hDict, string key, HObject value)
-        //{
-        //    try
-        //    {
-        //        HOperatorSet.SetDictObject(value, hDict, key);
-        //        return true;
-        //    }
-        //    catch { return false; }
-        //}
-
-        ///// <summary>
-        ///// 设置字典参数
-        ///// </summary>
-        ///// <param name="hDict"></param>
-        ///// <param name="key"></param>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public bool SetHDictTuple(ref HTuple hDict, string key, HTuple value)
-        //{
-        //    try
-        //    {
-        //        HOperatorSet.SetDictTuple(hDict, key, value);
-        //        return true;
-        //    }
-        //    catch { return false; }
-        //}
-
-        //public HObject GetHDictObject(HTuple hDict, string key)
-        //{
-        //    HObject hObject = new HObject();
-        //    try
-        //    {
-        //        HOperatorSet.GetDictObject(out hObject, hDict, key);
-        //    }
-        //    catch { }
-        //    return hObject;
-        //}
-
-        //public HTuple GetHDictTuple(HTuple hDict, string key)
-        //{
-        //    HTuple hTuple = new HTuple();
-        //    try
-        //    {
-        //        HOperatorSet.GetDictTuple(hDict, key, out hTuple);
-        //    }
-        //    catch { }
-        //    return hTuple;
-        //}
-
-        //#endregion
+        #endregion
     }
 
     public class ProcedureInfo

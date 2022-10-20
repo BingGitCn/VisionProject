@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GlobalUnits.cs" />
+    <Compile Include="HalBarcode.cs" />
     <Compile Include="HalCamera.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
