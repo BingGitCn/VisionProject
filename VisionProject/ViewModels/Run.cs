@@ -32,7 +32,7 @@ namespace VisionProject.ViewModels
             //初始化PLC
             initPLC();
             //初始化引擎，可选
-            //initEngine();
+            initEngine();
 
             run();
         }
@@ -42,6 +42,7 @@ namespace VisionProject.ViewModels
             try
             {
                 Variables.V2Engine.AddProcedure("lvba");
+                Variables.V2Engine.AddProcedure("temp");
                 Variables.V2Engine.Init(System.AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts");
             }
             catch { }

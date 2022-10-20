@@ -48,11 +48,19 @@ namespace VisionProject.ViewModels
             await Task.Delay(300);
             try
             {
+                //获取脚本列表
+                ScriptNames = new ObservableCollection<string>();
+                for (int i = 0; i < Variables.V2Engine.ProcedureNames.Count; i++)
+                    ScriptNames.Add(Variables.V2Engine.ProcedureNames[i]);
+
+                if (Variables.CurrentSubProgram.Parameters.ContainsKey("ScriptIndex1"))
+                    ScriptIndex1 = int.Parse(Variables.CurrentSubProgram.Parameters["ScriptIndex1"].ToString());
+
                 IOVariables1.Clear();
                 IOVariables2.Clear();
                 IOVariables3.Clear();
                 IOVariables4.Clear();
-                var rst = Variables.V2Engine.GetProcedureInfo("lvba");
+                var rst = Variables.V2Engine.GetProcedureInfo(ScriptNames[ScriptIndex1]);
 
                 for (int i = 0; i < rst.InputCtrlParamNames.Count; i++)
                 {
@@ -81,7 +89,27 @@ namespace VisionProject.ViewModels
 
         public bool Update()
         {
+            if (Variables.CurrentSubProgram.Parameters.ContainsKey("ScriptIndex1"))
+                Variables.CurrentSubProgram.Parameters["ScriptIndex1"] = ScriptIndex1;
+            else
+                Variables.CurrentSubProgram.Parameters.Add("ScriptIndex1", ScriptIndex1);
             return true;
+        }
+
+        private int _scriptIndex1;
+
+        public int ScriptIndex1
+        {
+            get { return _scriptIndex1; }
+            set { SetProperty(ref _scriptIndex1, value); }
+        }
+
+        private ObservableCollection<string> _scriptNames = new ObservableCollection<string>();
+
+        public ObservableCollection<string> ScriptNames
+        {
+            get { return _scriptNames; }
+            set { SetProperty(ref _scriptNames, value); }
         }
 
         private ObservableCollection<string> _iOVariables1 = new ObservableCollection<string>();
@@ -159,11 +187,19 @@ namespace VisionProject.ViewModels
             //打开脚本窗口
             ScriptDIalog sd = new ScriptDIalog();
             //读取并显示脚本
-            sd.SetCode(Variables.scriptEdit.ReadProcedure("lvba"));
+            sd.SetCode(Variables.scriptEdit.ReadProcedure(ScriptNames[ScriptIndex1]));
             sd.ShowDialog();
             //保存脚本
             Variables.scriptEdit.SaveProcedure(sd.GetCode());
             sd.Close();
         }
+
+        private DelegateCommand _saveParam;
+
+        public DelegateCommand SaveParam =>
+            _saveParam ?? (_saveParam = new DelegateCommand(() =>
+            {
+                Update();
+            }));
     }
 }

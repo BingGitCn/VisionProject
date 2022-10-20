@@ -35,7 +35,7 @@ namespace BingLibrary.Vision.Engine
         /// </summary>
         private Dictionary<string, HDevProcedureCall> devProcedureCalls = new Dictionary<string, HDevProcedureCall>();
 
-        private List<string> procedureNames = new List<string>();
+        public List<string> ProcedureNames = new List<string>();
 
         /// <summary>
         /// 清除
@@ -43,7 +43,7 @@ namespace BingLibrary.Vision.Engine
         /// <param name="name"></param>
         public void ClearProcedures(string name)
         {
-            procedureNames.Clear();
+            ProcedureNames.Clear();
             devProcedureCalls.Clear();
         }
 
@@ -54,8 +54,8 @@ namespace BingLibrary.Vision.Engine
         /// <returns></returns>
         public bool AddProcedure(string name)
         {
-            if (procedureNames.Contains(name)) return false;
-            else procedureNames.Add(name);
+            if (ProcedureNames.Contains(name)) return false;
+            else ProcedureNames.Add(name);
             return true;
         }
 
@@ -67,7 +67,7 @@ namespace BingLibrary.Vision.Engine
         {
             devEngine = new HDevEngine();
             devEngine.SetProcedurePath(procedurePath);
-            foreach (var p in procedureNames)
+            foreach (var p in ProcedureNames)
                 devProcedureCalls.Add(p, new HDevProcedureCall(new HDevProcedure(p)));
         }
 
@@ -76,7 +76,7 @@ namespace BingLibrary.Vision.Engine
         /// </summary>
         public void Reload()
         {
-            foreach (var p in procedureNames)
+            foreach (var p in ProcedureNames)
             {
                 if (devProcedureCalls.Keys.Contains(p))
                 {
