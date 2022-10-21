@@ -4,7 +4,7 @@
   "Programs": {
     "$id": "2",
     "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.ObjectModel.ObservableCollection`1[[VisionProject.ViewModels.SubProgram, VisionProject]], System]], mscorlib",
-    "aaaa": {
+    "11": {
       "$id": "3",
       "$type": "System.Collections.ObjectModel.ObservableCollection`1[[VisionProject.ViewModels.SubProgram, VisionProject]], System",
       "$values": [
@@ -13,15 +13,11 @@
           "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
           "Parameters": {
             "$id": "5",
-            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib",
-            "SaveMode": 0,
-            "SaveFormat": 0,
-            "SaveCount": null,
-            "SavePath": "C:\\Users\\N294\\Desktop"
+            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
           },
-          "IsUse": false,
-          "ProductIndex": 0,
-          "InspectFunction": "保存图像",
+          "IsUse": true,
+          "ProductIndex": 1,
+          "InspectFunction": "无",
           "Content": null
         },
         {
@@ -29,15 +25,11 @@
           "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
           "Parameters": {
             "$id": "7",
-            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib",
-            "SaveMode": 0,
-            "SaveFormat": 1,
-            "SaveCount": null,
-            "SavePath": "C:\\Users\\N294\\Desktop\\92632102AMB040005"
+            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
           },
           "IsUse": true,
-          "ProductIndex": 1,
-          "InspectFunction": "分离产品",
+          "ProductIndex": 2,
+          "InspectFunction": "无",
           "Content": null
         },
         {
@@ -48,83 +40,13 @@
             "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
           },
           "IsUse": true,
-          "ProductIndex": 0,
+          "ProductIndex": 3,
           "InspectFunction": "测试",
-          "Content": null
-        },
-        {
-          "$id": "10",
-          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
-          "Parameters": {
-            "$id": "11",
-            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
-          },
-          "IsUse": true,
-          "ProductIndex": 0,
-          "InspectFunction": "脚本测试",
-          "Content": null
-        }
-      ]
-    },
-    "bbbb": {
-      "$id": "12",
-      "$type": "System.Collections.ObjectModel.ObservableCollection`1[[VisionProject.ViewModels.SubProgram, VisionProject]], System",
-      "$values": [
-        {
-          "$id": "13",
-          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
-          "Parameters": {
-            "$id": "14",
-            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
-          },
-          "IsUse": true,
-          "ProductIndex": 0,
-          "InspectFunction": "测试",
-          "Content": null
-        },
-        {
-          "$id": "15",
-          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
-          "Parameters": {
-            "$id": "16",
-            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
-          },
-          "IsUse": true,
-          "ProductIndex": 1,
-          "InspectFunction": "测试1",
-          "Content": null
-        },
-        {
-          "$id": "17",
-          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
-          "Parameters": {
-            "$id": "18",
-            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
-          },
-          "IsUse": true,
-          "ProductIndex": 0,
-          "InspectFunction": "脚本测试",
-          "Content": null
-        },
-        {
-          "$id": "19",
-          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
-          "Parameters": {
-            "$id": "20",
-            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib",
-            "SaveMode": 0,
-            "SaveFormat": 0,
-            "SaveCount": null,
-            "SavePath": "C:\\Users\\N294\\Desktop\\音乐下载"
-          },
-          "IsUse": true,
-          "ProductIndex": 0,
-          "InspectFunction": "保存图像",
           "Content": null
         }
       ]
     }
   },
-  "CreateDate": "2022-04-08 18:21:42",
-  "LastDate": "2022-04-08 18:57:58"
+  "CreateDate": "2022-10-21 14:27:12",
+  "LastDate": "2022-10-21 14:27:43"
 }

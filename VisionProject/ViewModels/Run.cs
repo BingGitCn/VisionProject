@@ -42,7 +42,7 @@ namespace VisionProject.ViewModels
             try
             {
                 Variables.V2Engine.AddProcedure("lvba");
-                Variables.V2Engine.AddProcedure("temp");
+                Variables.V2Engine.AddProcedure("lvba2");
                 Variables.V2Engine.Init(System.AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts");
             }
             catch { }
