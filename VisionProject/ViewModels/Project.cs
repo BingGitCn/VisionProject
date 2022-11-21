@@ -343,16 +343,42 @@ namespace VisionProject.ViewModels
                         {
                             if (Variables.ShowConfirm("确认添加新程序？") == true)
                             {
-                                if (ProgramName != "")
+                                if (ProgramName != "" && ProgramName.Replace(" ", "") != "")
                                 {
                                     if (!Programs.Keys.ToList().Contains(ProgramName))
                                     {
-                                        ProgramsName.Add(ProgramName);
-                                        Programs.Add(ProgramName, new ObservableCollection<SubProgram>());
-                                        Variables.ProgramName = ProgramsName[ProgramsIndex];
-                                        Log.Info("增加了程序");
-                                        ProgramName = "";
+                                        if (ProgramsName.Count > 0)
+                                        {
+                                            var ns = ProgramsName[ProgramsIndex];
+                                            if (Variables.ShowConfirm("是否复制【" + ns + "】程序？") == true)
+                                            {
+                                            }
+                                            else
+                                            {
+                                                ProgramsName.Add(ProgramName);
+                                                Programs.Add(ProgramName, new ObservableCollection<SubProgram>());
+                                                Variables.ProgramName = ProgramsName[ProgramsIndex];
+                                                Log.Info("增加了程序");
+                                                ProgramName = "";
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ProgramsName.Add(ProgramName);
+                                            Programs.Add(ProgramName, new ObservableCollection<SubProgram>());
+                                            Variables.ProgramName = ProgramsName[ProgramsIndex];
+                                            Log.Info("增加了程序");
+                                            ProgramName = "";
+                                        }
                                     }
+                                    else
+                                    {
+                                        Variables.ShowMessage("名称不能重复！");
+                                    }
+                                }
+                                else
+                                {
+                                    Variables.ShowMessage("名称不能为空！");
                                 }
                             }
                         }
@@ -414,6 +440,14 @@ namespace VisionProject.ViewModels
                         break;
 
                     case "del":
+
+                        //try
+                        //{
+                        //    Program1.Insert(Program1Index, Program1[Program1Index]);
+                        //}
+                        //catch { }
+                        //break;
+
                         try
                         {
                             if (Variables.ShowConfirm("确认删除当前子程序？") == true)
