@@ -350,8 +350,29 @@ namespace VisionProject.ViewModels
                                         if (ProgramsName.Count > 0)
                                         {
                                             var ns = ProgramsName[ProgramsIndex];
-                                            if (Variables.ShowConfirm("是否复制【" + ns + "】程序？") == true)
+                                            if (Variables.ShowConfirm("是否复制【" + ns + "】程序到新程序【" + ProgramName + "】？") == true)
                                             {
+                                                var newProgram = new ObservableCollection<SubProgram>();
+                                                for (int i = 0; i < Programs[ProgramsName[ProgramsIndex]].Count; i++)
+                                                {
+                                                    //这里需要深复制
+                                                    var subProgram = new SubProgram()
+                                                    {
+                                                        Content = Programs[ProgramsName[ProgramsIndex]][i].Content,
+                                                        Index = Programs[ProgramsName[ProgramsIndex]][i].Index,
+                                                        InspectFunction = Programs[ProgramsName[ProgramsIndex]][i].InspectFunction,
+                                                        IsUse = Programs[ProgramsName[ProgramsIndex]][i].IsUse,
+                                                        ProductIndex = Programs[ProgramsName[ProgramsIndex]][i].ProductIndex,
+                                                        ProductIndexs = Programs[ProgramsName[ProgramsIndex]][i].ProductIndexs,
+                                                        ToolNames = Programs[ProgramsName[ProgramsIndex]][i].ToolNames,
+                                                        Parameters = new Dictionary<string, object>()
+                                                    };
+                                                    foreach (var r in Programs[ProgramsName[ProgramsIndex]][i].Parameters)
+                                                        subProgram.Parameters.Add(r.Key, r.Value);
+                                                    newProgram.Add(subProgram);
+                                                }
+                                                Programs.Add(ProgramName, newProgram);
+                                                ProgramsName.Add(ProgramName);
                                             }
                                             else
                                             {

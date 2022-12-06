@@ -1,6 +1,7 @@
 ﻿using BingLibrary.Logs;
 using Prism.Commands;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
@@ -41,8 +42,15 @@ namespace VisionProject.ViewModels
         {
             try
             {
-                Variables.V2Engine.AddProcedure("lvba");
-                Variables.V2Engine.AddProcedure("lvba2");
+                //这里自动获取目录下的脚本，添加至引擎
+                var folder = new DirectoryInfo(System.AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts");
+                var procedureFiles = folder.GetFiles("*.hdvp");
+                foreach (var procedureFile in procedureFiles)
+                    Variables.V2Engine.AddProcedure(procedureFile.Name.Replace(".hdvp", ""));
+                //也可自己添加
+                //Variables.V2Engine.AddProcedure("lvba");
+                //Variables.V2Engine.AddProcedure("lvba2");
+                //先添加脚本，再初始化，
                 Variables.V2Engine.Init(System.AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts");
             }
             catch { }

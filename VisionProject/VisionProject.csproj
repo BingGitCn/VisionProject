@@ -188,7 +188,7 @@
       <Version>1.9.9-pre</Version>
     </PackageReference>
     <PackageReference Include="EPPlus">
-      <Version>6.0.4</Version>
+      <Version>6.0.5</Version>
     </PackageReference>
     <PackageReference Include="gong-wpf-dragdrop">
       <Version>2.4.3</Version>
