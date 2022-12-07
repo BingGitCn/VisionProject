@@ -261,7 +261,7 @@ namespace VisionProject.ViewModels
             try
             {
                 string path = AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts" + EngineIndex + "\\" + ScriptNames[ScriptIndex1] + ".txt";
-                if (!File.Exists(path))
+                if (File.Exists(path))
                 {
                     string[] lines2 = File.ReadAllLines(path, Encoding.UTF8);
                     if (lines2.Length == IOVariables1.Count)
@@ -290,7 +290,7 @@ namespace VisionProject.ViewModels
             {
                 IOVariables1Names = "输入参数设定";
                 string path = AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts" + EngineIndex + "\\" + ScriptNames[ScriptIndex1] + ".txt";
-                if (!File.Exists(path))
+                if (File.Exists(path))
                 {
                     string[] lines2 = File.ReadAllLines(path, Encoding.UTF8);
                     if (lines2.Length == IOVariables1.Count)

@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="20.11.1.0">
+<procedure name="LineCheck">
+<interface>
+<io>
+<par name="Image" base_type="iconic" dimension="0"/>
+</io>
+<ic>
+<par name="Color" base_type="ctrl" dimension="0"/>
+<par name="Count" base_type="ctrl" dimension="0"/>
+<par name="RecThreshold" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="IsOK" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<c>* 1. 根据不同颜色特征提取相应线材区域</c>
+<c>* 2. 在线材区域检测是否漏铜</c>
+<c>* 3. 要注意不同线材能否相互区分</c>
+<c>* 4.  注意count_obj (SelectedRegions1, Number)这个算子中并不可靠，即便SelectedRegions1是空，但是数量可能是1</c>
+<c>*     因此可以计算SelectedRegions1的面积，想见red的检测方式</c>
+<c></c>
+<c></c>
+<l>dev_update_on ()</l>
+<c></c>
+<l>IsOK:=1</l>
+<l>decompose3 (Image, ImageR, ImageG, ImageB)</l>
+<l>trans_from_rgb (ImageR, ImageG, ImageB, ImageResult1, ImageResult2, ImageResult3, 'hsv')</l>
+<l>trans_from_rgb (ImageR, ImageG, ImageB, ImageResult4, ImageResult5, ImageResult6, 'cielab')</l>
+<l>get_image_size (Image, Width, Height)</l>
+<l>if(Color='black')</l>
+<l>    dev_display (Image)</l>
+<l>    dev_display (ImageResult1)</l>
+<c>    </c>
+<l>    threshold (ImageResult1, Region10, [0,220], [30,255])</l>
+<l>    union1 (Region10, RegionUnion6)</l>
+<l>    difference (ImageResult1, RegionUnion6, RegionDifference)</l>
+<l>    opening_rectangle1 (RegionDifference, RegionOpening8, 120, 3)</l>
+<l>    union1 (RegionOpening8, RegionUnion7)</l>
+<l>    shape_trans (RegionUnion7, RegionTrans3, 'convex')</l>
+<l>    erosion_circle (RegionTrans3, RegionErosion4, 11.5)</l>
+<c>    </c>
+<c>    *这里计算整体，单个线材高度约140左右，这里计算多个线材，合并整体计算</c>
+<l>    select_shape (RegionErosion4, SelectedRegions1, 'height', 'and', 140*(Count-1), Count*170)</l>
+<c>    *检测是否黑线</c>
+<l>    dev_display (ImageR)</l>
+<l>    reduce_domain (ImageR, SelectedRegions1, ImageReduced5)</l>
+<l>    threshold (ImageReduced5, Region11, 0, 40)</l>
+<l>    dev_display (ImageG)</l>
+<l>    reduce_domain (ImageG, SelectedRegions1, ImageReduced6)</l>
+<l>    threshold (ImageReduced6, Region12, 0, 40)</l>
+<l>    dev_display (ImageB)</l>
+<l>    reduce_domain (ImageB, SelectedRegions1, ImageReduced7)</l>
+<l>    threshold (ImageReduced7, Region13, 0, 40)</l>
+<l>    intersection (Region11, Region12, RegionIntersection)</l>
+<l>    intersection (RegionIntersection, Region13, RegionIntersection)</l>
+<c>    </c>
+<l>    opening_circle (RegionIntersection, RegionOpening9, 3.5)</l>
+<l>    shape_trans (RegionOpening9, RegionTrans4, 'rectangle2')</l>
+<l>    select_shape (RegionTrans4, SelectedRegions2, 'height', 'and', 140*(Count-1), Count*170)</l>
+<c>    </c>
+<c>    </c>
+<c>    </c>
+<l>    area_center (SelectedRegions2, Area, Row, Column)</l>
+<l>    if (Area&gt;0)</l>
+<c>        </c>
+<l>        IsOK:=1</l>
+<l>        erosion_rectangle1 (SelectedRegions2, RegionErosion5, 13, 13)</l>
+<l>        reduce_domain (ImageResult3, RegionErosion5, ImageReduced8)</l>
+<l>        threshold (ImageReduced8, Region14, 240, 255)</l>
+<l>        area_center (Region14, Area4, Row4, Column4)</l>
+<l>        if (Area4&gt;100)</l>
+<l>            IsOK:=0</l>
+<l>        endif</l>
+<c>        </c>
+<l>    else</l>
+<l>        IsOK:=0</l>
+<l>    endif</l>
+<c>    </c>
+<c>    </c>
+<c>    </c>
+<l>elseif (Color='brown')</l>
+<l>    dev_display (ImageR)</l>
+<l>    threshold (ImageR, Region1, 90, 255)</l>
+<l>    dev_display (ImageG)</l>
+<l>    threshold (ImageG, Region2, 90, 255)</l>
+<l>    intersection (Region1, Region2, RegionIntersection2)</l>
+<l>    dev_display (ImageB)</l>
+<l>    threshold (ImageB, Region, 138, 255)</l>
+<l>    difference (RegionIntersection2, Region, RegionDifference3)</l>
+<l>    opening_rectangle1 (RegionDifference3, RegionOpening3, 120, 5)</l>
+<l>    shape_trans (RegionOpening3, RegionTrans5, 'convex')</l>
+<l>    dilation_circle (RegionTrans5, RegionDilation1, 5.5)</l>
+<l>    reduce_domain (ImageResult1, RegionDilation1, ImageReduced)</l>
+<l>    threshold (ImageReduced, Region3, 10, 25)</l>
+<l>    shape_trans (Region3, RegionTrans6, 'convex')</l>
+<l>    select_shape (RegionTrans6, SelectedRegions2, 'height', 'and', 130*(Count-1), Count*170)</l>
+<c>    *计算数量不可靠 </c>
+<l>    area_center (SelectedRegions2, Area, Row, Column)</l>
+<l>    if (Area&gt;0)</l>
+<l>        IsOK:=1</l>
+<l>        reduce_domain (ImageResult3, SelectedRegions2, ImageReduced8)</l>
+<l>        threshold (ImageReduced8, Region14, 240, 255)</l>
+<l>        area_center (Region14, Area4, Row4, Column4)</l>
+<l>        if (Area4&gt;200)</l>
+<l>            IsOK:=0</l>
+<l>        endif</l>
+<c>        </c>
+<l>    else</l>
+<l>        IsOK:=0</l>
+<l>    endif</l>
+<c>    </c>
+<c>    </c>
+<c>    </c>
+<l>elseif (Color='white')</l>
+<l>    dev_display (ImageB)</l>
+<l>    threshold (ImageB, IgnoreRegion,0, 80)</l>
+<c>    </c>
+<c>    *直接提取白色区域</c>
+<l>    difference (ImageB, IgnoreRegion, RegionDifference1)</l>
+<l>    opening_rectangle1 (RegionDifference1, RegionOpening7, 120, 3)</l>
+<l>    closing_circle (RegionOpening7, RegionClosing6, 13.5)</l>
+<l>    fill_up (RegionClosing6, RegionFillUp)</l>
+<l>    connection (RegionFillUp, ConnectedRegions3)</l>
+<c>    *当检测数量为1时,线的高度选择时，有个最小高度，这里设成50，根据实际情况更改</c>
+<l>    select_shape (ConnectedRegions3, SelectedRegions2, 'height', 'and', 130*(Count-1)+50, Count*170)</l>
+<l>    erosion_circle (SelectedRegions2, RegionErosion3, 5.5)</l>
+<c>    </c>
+<c>    </c>
+<c>    </c>
+<c>    * 提取亮的部分，说明漏铜</c>
+<c>    * 这里对比查看漏铜的ImageResult1，通常纯黑与纯白相邻，</c>
+<c>    * 提取白色</c>
+<l>    reduce_domain (ImageResult1, RegionErosion3, ImageReduced4)</l>
+<l>    threshold (ImageReduced4, RegionA, 220, 255)</l>
+<c>    * 提取黑色</c>
+<l>    dilation_circle (RegionA, RegionDilation2, 3.5)</l>
+<l>    threshold (ImageReduced4, RegionB, 0, 30)</l>
+<l>    dilation_circle (RegionB, RegionDilation3, 3.5)</l>
+<c>    *若白色和黑色有交叉，大概率破皮漏铜</c>
+<l>    intersection (RegionDilation2, RegionDilation3, RegionIntersection4)</l>
+<c>    </c>
+<c>    </c>
+<l>    area_center (RegionIntersection4, Area3, Row3, Column3)</l>
+<c>    </c>
+<l>    if(Area3&gt;500)</l>
+<l>        Number:=0</l>
+<l>        IsOK:=0</l>
+<l>    else</l>
+<l>        area_center (SelectedRegions2, Area, Row, Column)</l>
+<l>        if (Area=0)</l>
+<c>            </c>
+<l>            IsOK:=0</l>
+<l>        endif</l>
+<l>    endif</l>
+<c>    </c>
+<c>    </c>
+<l>elseif (Color='blue')</l>
+<l>    dev_display (ImageB)</l>
+<l>    threshold (ImageB, Region4,100, 255)</l>
+<l>    dev_display (ImageResult1)</l>
+<l>    threshold (ImageResult1, Region2, 130, 200) </l>
+<l>    intersection (Region2, Region4, RegionIntersection3)</l>
+<l>    opening_rectangle1 (RegionIntersection3, RegionOpening5, 120, 5)</l>
+<l>    shape_trans (RegionOpening5, RegionTrans5, 'convex')</l>
+<c>    </c>
+<l>    select_shape (RegionTrans5, SelectedRegions2, 'height', 'and', 130*(Count-1), Count*170)</l>
+<c>    *计算数量不可靠 </c>
+<l>    area_center (SelectedRegions2, Area, Row, Column)</l>
+<l>    if (Area&gt;0)</l>
+<l>        IsOK:=1</l>
+<l>        reduce_domain (ImageResult3, SelectedRegions2, ImageReduced8)</l>
+<l>        threshold (ImageReduced8, Region14, 240, 255)</l>
+<l>        area_center (Region14, Area4, Row4, Column4)</l>
+<l>        if (Area4&gt;350)</l>
+<l>            IsOK:=0</l>
+<l>        endif</l>
+<c>        </c>
+<l>    else</l>
+<l>        IsOK:=0</l>
+<l>    endif</l>
+<c>    </c>
+<c>    </c>
+<c>    </c>
+<c>    </c>
+<c>    </c>
+<l>elseif (Color='cyan')</l>
+<l>    dev_display (ImageResult6)</l>
+<l>    dev_display (ImageB)</l>
+<l>    threshold (ImageB, IgnoreRegion,80, 255)</l>
+<l>    dev_display (ImageG)</l>
+<l>    threshold (ImageG, IgnoreRegion2,90, 255)</l>
+<l>    intersection (IgnoreRegion, IgnoreRegion2, RegionIntersection1)</l>
+<l>    opening_rectangle1 (RegionIntersection1, RegionOpening1, 120, 5)</l>
+<l>    shape_trans (RegionOpening1, RegionTrans1, 'convex')</l>
+<c>    </c>
+<l>    select_shape (RegionTrans1, SelectedRegions2, 'height', 'and', 130*(Count-1), Count*170)</l>
+<c>    </c>
+<c>    </c>
+<l>    area_center (SelectedRegions2, Area, Row, Column)</l>
+<l>    if (Area&gt;0)</l>
+<l>        IsOK:=1</l>
+<l>        erosion_rectangle1 (SelectedRegions2, RegionErosion5, 13, 13)</l>
+<l>        reduce_domain (ImageResult3, RegionErosion5, ImageReduced8)</l>
+<l>        threshold (ImageReduced8, Region14, 240, 255)</l>
+<l>        area_center (Region14, Area4, Row4, Column4)</l>
+<l>        if (Area4&gt;200)</l>
+<l>            IsOK:=0</l>
+<l>        endif</l>
+<c>        </c>
+<l>    else</l>
+<l>        IsOK:=0</l>
+<l>    endif</l>
+<c>    </c>
+<c>    </c>
+<c>    </c>
+<l>elseif (Color='red')</l>
+<l>    if(true)</l>
+<l>        dev_display (ImageR)</l>
+<l>        trans_from_rgb (ImageR, ImageG, ImageB, ImageResult11, ImageResult21, ImageResult31, 'hsv')</l>
+<l>        dev_display (ImageResult11)</l>
+<l>        threshold (ImageResult11, Region1,230, 255)</l>
+<l>        dev_display (ImageG)</l>
+<l>        threshold (ImageG, Region2, 60, 255)  </l>
+<l>        difference (Region1, Region2, RegionDifference2)</l>
+<l>        opening_rectangle1 (RegionDifference2, RegionOpening, 60, 5)</l>
+<c>        *gaidong</c>
+<l>        connection (RegionOpening, RegionOpening4)</l>
+<l>        select_shape (RegionOpening4, RegionOpening4, 'width', 'and', 0.4*Width, 9999999)</l>
+<l>        union1 (RegionOpening4, RegionUnion)</l>
+<l>        shape_trans (RegionUnion, RegionTrans, 'convex')</l>
+<c>        *这里计算整体，单个线材高度约140左右，这里计算多个线材，合并整体计算</c>
+<l>        select_shape (RegionTrans, SelectedRegions1, 'height', 'and', 160*(Count-1), Count*180)</l>
+<l>        erosion_circle (SelectedRegions1, RegionErosion1, 15)</l>
+<l>    endif</l>
+<c>    </c>
+<c>    </c>
+<l>    if(false)</l>
+<l>        threshold (ImageR, IgnoreRegion,135, 250)</l>
+<l>        dev_display (ImageG)</l>
+<l>        threshold (ImageG, Region1, 60, 255)  </l>
+<l>        difference (IgnoreRegion, Region1, RegionDifference2)</l>
+<l>        opening_circle (RegionDifference2, RegionOpening4, 4.5)</l>
+<c>        *gaidong</c>
+<l>        connection (RegionOpening4, RegionOpening4)</l>
+<l>        select_shape (RegionOpening4, RegionOpening4, 'width', 'and', 0.4*Width, 9999999)</l>
+<l>        union1 (RegionOpening4, RegionUnion)</l>
+<l>        shape_trans (RegionUnion, RegionTrans, 'convex')</l>
+<c>        *这里计算整体，单个线材高度约140左右，这里计算多个线材，合并整体计算</c>
+<l>        select_shape (RegionTrans, SelectedRegions1, 'height', 'and', 160*(Count-1), Count*180)</l>
+<l>        erosion_circle (SelectedRegions1, RegionErosion1, 15)</l>
+<l>    endif</l>
+<c>    </c>
+<c>    </c>
+<c>    *判断红线面积</c>
+<l>    area_center (RegionErosion1, Area2, Row2, Column2)</l>
+<l>    if(Area2&gt;0)</l>
+<c>        *这里将红色区域提取出来，在红线上找其它颜色的缺陷</c>
+<l>        reduce_domain (ImageResult3, RegionErosion1, ImageReduced2)</l>
+<c>        </c>
+<l>        threshold (ImageReduced2, Region6, 240, 255)</l>
+<l>        opening_circle (Region6, RegionOpening2, 1.5)</l>
+<l>        dilation_circle (RegionOpening2, RegionDilation, 13.5)</l>
+<l>        erosion_circle (RegionDilation, RegionErosion, 13.5)</l>
+<l>        area_center (RegionOpening2, Area1, Row1, Column1)</l>
+<c>        </c>
+<l>        if(Area1&gt;200)</l>
+<l>            IsOK:=0</l>
+<l>        else</l>
+<l>            area_center (SelectedRegions1, Area, Row, Column)</l>
+<l>            if (Area=0)</l>
+<c>                </c>
+<l>                IsOK:=0</l>
+<l>            endif</l>
+<l>        endif</l>
+<c>        </c>
+<l>    else</l>
+<l>        IsOK:=0</l>
+<l>    endif</l>
+<c>    </c>
+<c>    </c>
+<c>    </c>
+<l>else</l>
+<l>    IsOK:=0</l>
+<l>endif</l>
+<l>return ()</l>
+</body>
+<docu id="LineCheck">
+<short lang="zh_CN">线序检测</short>
+<parameters>
+<parameter id="Color">
+<default_type>string</default_type>
+<default_value>'red'</default_value>
+<sem_type>string</sem_type>
+<type_list>
+<item>string</item>
+</type_list>
+<value_list>
+<item>'red'</item>
+<item>'white'</item>
+<item>'black'</item>
+<item>'blue'</item>
+<item>'green'</item>
+<item>'brown'</item>
+<item>'cyan'</item>
+</value_list>
+</parameter>
+<parameter id="Count">
+<default_type>integer</default_type>
+<default_value>1</default_value>
+<sem_type>number</sem_type>
+<type_list>
+<item>integer</item>
+</type_list>
+</parameter>
+<parameter id="Image">
+<sem_type>image</sem_type>
+</parameter>
+<parameter id="IsOK">
+<default_type>integer</default_type>
+<sem_type>number</sem_type>
+<type_list>
+<item>integer</item>
+</type_list>
+<value_list>
+<item>0</item>
+<item>1</item>
+</value_list>
+</parameter>
+<parameter id="RecThreshold">
+<default_type>real</default_type>
+<default_value>0.7</default_value>
+<sem_type>real</sem_type>
+<type_list>
+<item>real</item>
+</type_list>
+</parameter>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>

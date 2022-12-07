@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="20.11.1.0">
+<procedure name="HanCheck">
+<interface>
+<io>
+<par name="Image" base_type="iconic" dimension="0"/>
+<par name="region2" base_type="iconic" dimension="0"/>
+</io>
+<oo>
+<par name="TotalResultRegion" base_type="iconic" dimension="0"/>
+</oo>
+<ic>
+<par name="ThresholdR" base_type="ctrl" dimension="0"/>
+<par name="ThresholdG" base_type="ctrl" dimension="0"/>
+<par name="ThresholdB" base_type="ctrl" dimension="0"/>
+<par name="Regionclose" base_type="ctrl" dimension="0"/>
+<par name="RegionArea" base_type="ctrl" dimension="0"/>
+<par name="RegionLength" base_type="ctrl" dimension="0"/>
+<par name="LianXi" base_type="ctrl" dimension="0"/>
+<par name="Up" base_type="ctrl" dimension="0"/>
+<par name="Down" base_type="ctrl" dimension="0"/>
+<par name="WaiXie" base_type="ctrl" dimension="0"/>
+<par name="ChaoChu" base_type="ctrl" dimension="0"/>
+<par name="Left" base_type="ctrl" dimension="0"/>
+</ic>
+<oc>
+<par name="TotalResult2" base_type="ctrl" dimension="0"/>
+<par name="TotalResult3" base_type="ctrl" dimension="0"/>
+<par name="TotalResult4" base_type="ctrl" dimension="0"/>
+</oc>
+</interface>
+<body>
+<l>decompose3 (Image, ImageR1, ImageG1, ImageB1)</l>
+<l>reduce_domain (ImageR1, region2, ImageReducedR2)</l>
+<l>reduce_domain (ImageG1, region2, ImageReducedG2)</l>
+<l>reduce_domain (ImageB1, region2, ImageReducedB2)</l>
+<l>dev_display (ImageReducedR2)</l>
+<l>threshold (ImageReducedR2, RegionR, ThresholdR, 255)</l>
+<l>dev_display (ImageReducedG2)</l>
+<l>threshold (ImageReducedG2, RegionG, ThresholdG, 255)</l>
+<l>dev_display (ImageReducedB2)</l>
+<l>threshold (ImageReducedB2, RegionB, ThresholdB, 255)</l>
+<l>dilation_circle (RegionG, RegionDilation, 5.5)</l>
+<l>closing_circle (RegionDilation, RegionClosing3, 60)</l>
+<c>*计算两个区域的交集</c>
+<l>intersection (RegionClosing3, RegionB, RealRegionB)</l>
+<c></c>
+<c>* 进一步拟合区域</c>
+<l>concat_obj (RegionR, RegionG, RegionRG)</l>
+<l>concat_obj (RegionRG, RealRegionB, RegionRGB)</l>
+<l>union1 (RegionRGB, RegionRGB)</l>
+<c></c>
+<l>dilation_circle (RegionRGB, RegionDilation1, 4.5)</l>
+<l>closing_circle (RegionDilation1, RegionClosing, Regionclose)</l>
+<l>connection (RegionClosing, ConnectedRegions)</l>
+<c></c>
+<c>* 选择对应面积和高度，即在此面积及高度内的区域认为正常</c>
+<l>select_shape (ConnectedRegions, SelectedRegions, ['area','width'], 'and', [RegionArea,RegionLength], [999999,850])</l>
+<l>count_obj (SelectedRegions, Number)</l>
+<l>closing_circle (SelectedRegions, RegionClosing1, 30.5)</l>
+<c></c>
+<c>* 检测结果标志位</c>
+<l>TotalResult2:=1</l>
+<l>TotalResult3:=1</l>
+<l>TotalResult4:=1</l>
+<l>gen_empty_region (TotalResultRegion)</l>
+<c></c>
+<l>if(LianXi) </l>
+<l>    if(Number==1)</l>
+<l>       region_features (RegionClosing1, 'row1', R1Value)</l>
+<l>       region_features (RegionClosing1, 'row2', R2Value)</l>
+<l>       region_features (RegionClosing1, 'column1',C1Value) </l>
+<l>       if(R1Value&lt;Up or R2Value&gt;Down)</l>
+<l>           TotalResult2:=0   </l>
+<l>           concat_obj (TotalResultRegion, RegionClosing1, TotalResultRegion) </l>
+<l>       endif </l>
+<l>    else</l>
+<l>       TotalResult2:=0   </l>
+<l>       concat_obj (TotalResultRegion, region2, TotalResultRegion)  </l>
+<l>    endif</l>
+<c>          </c>
+<l>endif</l>
+<l>if(WaiXie)  </l>
+<l>    if(Number==1)</l>
+<l>        region_features (RegionClosing1, 'row1', R1Value)</l>
+<l>       region_features (RegionClosing1, 'row2', R2Value)</l>
+<l>       region_features (RegionClosing1, 'column1',C1Value) </l>
+<l>       if(R1Value&lt;Up or R2Value&gt;Down)</l>
+<l>           TotalResult3:=0        </l>
+<l>           concat_obj (TotalResultRegion, RegionClosing1, TotalResultRegion) </l>
+<l>       endif </l>
+<l>    else</l>
+<l>       TotalResult3:=0   </l>
+<l>       concat_obj (TotalResultRegion, region2, TotalResultRegion)   </l>
+<l>    endif</l>
+<c>             </c>
+<l>endif</l>
+<l>if(ChaoChu) </l>
+<l>    if(Number==1)</l>
+<l>       region_features (RegionClosing1, 'row1', R1Value)</l>
+<l>       region_features (RegionClosing1, 'row2', R2Value)</l>
+<l>       region_features (RegionClosing1, 'column1',C1Value) </l>
+<l>       if(C1Value&lt;Left)</l>
+<l>           TotalResult4:=0    </l>
+<l>           concat_obj (TotalResultRegion, RegionClosing1, TotalResultRegion) </l>
+<l>       endif </l>
+<l>    else</l>
+<l>       TotalResult4:=0   </l>
+<l>       concat_obj (TotalResultRegion, region2, TotalResultRegion)  </l>
+<l>    endif</l>
+<c>                 </c>
+<l>endif</l>
+<l>return ()</l>
+</body>
+<docu id="HanCheck">
+<parameters>
+<parameter id="ChaoChu"/>
+<parameter id="Down"/>
+<parameter id="Image"/>
+<parameter id="Left"/>
+<parameter id="LianXi"/>
+<parameter id="RegionArea"/>
+<parameter id="RegionLength"/>
+<parameter id="Regionclose"/>
+<parameter id="ThresholdB"/>
+<parameter id="ThresholdG"/>
+<parameter id="ThresholdR"/>
+<parameter id="TotalResult2"/>
+<parameter id="TotalResult3"/>
+<parameter id="TotalResult4"/>
+<parameter id="TotalResultRegion"/>
+<parameter id="Up"/>
+<parameter id="WaiXie"/>
+<parameter id="region2"/>
+</parameters>
+</docu>
+</procedure>
+</hdevelop>
