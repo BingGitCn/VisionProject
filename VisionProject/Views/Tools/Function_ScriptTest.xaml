@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:bingVision="clr-namespace:BingLibrary.Vision;assembly=BingLibrary.Vision"
     xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:prism="http://prismlibrary.com/"
     Width="960"
     Height="690"
@@ -21,12 +22,32 @@
             <StackPanel Orientation="Vertical">
                 <hc:ComboBox
                     Margin="5"
+                    hc:InfoElement.Title="引擎选择"
+                    hc:InfoElement.TitlePlacement="Left"
+                    hc:InfoElement.TitleWidth="100"
+                    ItemsSource="{Binding EngineNames}"
+                    SelectedIndex="{Binding EngineIndex}"
+                    Style="{StaticResource ComboBoxExtend}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DropDownClosed">
+                            <i:InvokeCommandAction Command="{Binding SelectedEngine}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </hc:ComboBox>
+                <hc:ComboBox
+                    Margin="5"
                     hc:InfoElement.Title="脚本选择"
                     hc:InfoElement.TitlePlacement="Left"
                     hc:InfoElement.TitleWidth="100"
                     ItemsSource="{Binding ScriptNames}"
                     SelectedIndex="{Binding ScriptIndex1}"
-                    Style="{StaticResource ComboBoxExtend}" />
+                    Style="{StaticResource ComboBoxExtend}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DropDownClosed">
+                            <i:InvokeCommandAction Command="{Binding SelectedScript}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </hc:ComboBox>
                 <hc:ComboBox
                     Margin="5"
                     hc:InfoElement.Title="输入控制参数"
@@ -34,7 +55,20 @@
                     hc:InfoElement.TitleWidth="100"
                     ItemsSource="{Binding IOVariables1}"
                     SelectedIndex="{Binding IOIndex1}"
-                    Style="{StaticResource ComboBoxExtend}" />
+                    Style="{StaticResource ComboBoxExtend}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DropDownClosed">
+                            <i:InvokeCommandAction Command="{Binding SelectedIOVariables1}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </hc:ComboBox>
+                <hc:TextBox
+                    Margin="5"
+                    hc:InfoElement.Title="控制参数设定"
+                    hc:InfoElement.TitlePlacement="Left"
+                    hc:InfoElement.TitleWidth="100"
+                    Style="{StaticResource TextBoxExtend}"
+                    Text="{Binding IOValue1}" />
                 <hc:ComboBox
                     Margin="5"
                     hc:InfoElement.Title="输入图形参数"
@@ -64,12 +98,14 @@
                     <Button
                         Width="100"
                         Margin="5"
-                        Content="编辑脚本" Command="{Binding EditScript}"
+                        Command="{Binding EditScript}"
+                        Content="编辑脚本"
                         Style="{StaticResource ButtonPrimary}" />
                     <Button
                         Width="100"
                         Margin="5"
-                        Content="保存参数" Command="{Binding SaveParam}"
+                        Command="{Binding SaveParam}"
+                        Content="保存参数"
                         Style="{StaticResource ButtonPrimary}" />
                 </StackPanel>
             </StackPanel>

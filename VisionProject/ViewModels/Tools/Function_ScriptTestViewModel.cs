@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
+using System.Collections.Generic;
 
 namespace VisionProject.ViewModels
 {
@@ -38,6 +39,88 @@ namespace VisionProject.ViewModels
 
         #endregion 窗口相关
 
+        private ObservableCollection<string> _engineNames;
+
+        public ObservableCollection<string> EngineNames
+        {
+            get { return _engineNames; }
+            set { SetProperty(ref _engineNames, value); }
+        }
+
+        private int _engineIndex;
+
+        /// <summary>
+        /// 引擎索引
+        /// </summary>
+        public int EngineIndex
+        {
+            get { return _engineIndex; }
+            set { SetProperty(ref _engineIndex, value); }
+        }
+
+        private DelegateCommand _selectedEngine;
+
+        public DelegateCommand SelectedEngine =>
+            _selectedEngine ?? (_selectedEngine = new DelegateCommand(ExecuteSelectedEngine));
+
+        /// <summary>
+        /// 引擎选择后加载过程
+        /// </summary>
+        private void ExecuteSelectedEngine()
+        {
+            //获取脚本列表
+            ScriptNames = new ObservableCollection<string>();
+            for (int i = 0; i < Variables.V2Engines[EngineIndex].ProcedureNames.Count; i++)
+                ScriptNames.Add(Variables.V2Engines[EngineIndex].ProcedureNames[i]);
+
+            IOVariables1.Clear();
+            IOVariables2.Clear();
+            IOVariables3.Clear();
+            IOVariables4.Clear();
+            IOValue1 = "";
+            //这里判断，如果当前引擎下未挂在过程则返回。
+            if (ScriptNames.Count == 0) return;
+            if (Variables.CurrentSubProgram.Parameters.ContainsKey("ScriptIndex1"))
+                ScriptIndex1 = int.Parse(Variables.CurrentSubProgram.Parameters["ScriptIndex1"].ToString());
+            else
+                ScriptIndex1 = 0;
+
+            var rst = Variables.V2Engines[EngineIndex].GetProcedureInfo(ScriptNames[ScriptIndex1]);
+
+            for (int i = 0; i < rst.InputCtrlParamNames.Count; i++)
+            {
+                IOVariables1.Add(rst.InputCtrlParamNames[i]);
+            }
+            for (int i = 0; i < rst.InputIconicParamNames.Count; i++)
+            {
+                IOVariables2.Add(rst.InputIconicParamNames[i]);
+            }
+            for (int i = 0; i < rst.OutputCtrlParamNames.Count; i++)
+            {
+                IOVariables3.Add(rst.OutputCtrlParamNames[i]);
+            }
+            for (int i = 0; i < rst.OutputIconicParamNames.Count; i++)
+            {
+                IOVariables4.Add(rst.OutputIconicParamNames[i]);
+            }
+            IOIndex1 = 0;
+            IOIndex2 = 0;
+            IOIndex3 = 0;
+            IOIndex4 = 0;
+            //获取输入变量值
+            int c0 = IOVariables1.Count - 1;
+            while (c0 > -1)
+            {
+                if (Variables.CurrentSubProgram.Parameters.ContainsKey(EngineIndex + "." + ScriptIndex1 + "." + c0 + "." + IOVariables1[c0]))
+                    IOValue1 = Variables.CurrentSubProgram.Parameters[EngineIndex + "." + ScriptIndex1 + "." + c0 + "." + IOVariables1[c0]].ToString();
+                c0--;
+            }
+
+            //脚本册立不清除，因为共用。清除多余的key，仅保留当前设置。
+            // Variables.CurrentSubProgram.Parameters.Clear();
+            Update();
+        }
+
         public Function_ScriptTestViewModel()
         {
             _ = Init();
@@ -48,19 +131,35 @@ namespace VisionProject.ViewModels
             await Task.Delay(300);
             try
             {
+                EngineNames = new ObservableCollection<string>();
+                for (int i = 0; i < Variables.V2Engines.Count; i++)
+                    EngineNames.Add("执行引擎" + i);
+
+                if (Variables.CurrentSubProgram.Parameters.ContainsKey("EngineIndex"))
+                    EngineIndex = int.Parse(Variables.CurrentSubProgram.Parameters["EngineIndex"].ToString());
+                else
+                    EngineIndex = 0;
+
                 //获取脚本列表
                 ScriptNames = new ObservableCollection<string>();
-                for (int i = 0; i < Variables.V2Engine.ProcedureNames.Count; i++)
-                    ScriptNames.Add(Variables.V2Engine.ProcedureNames[i]);
-
-                if (Variables.CurrentSubProgram.Parameters.ContainsKey("ScriptIndex1"))
-                    ScriptIndex1 = int.Parse(Variables.CurrentSubProgram.Parameters["ScriptIndex1"].ToString());
+                for (int i = 0; i < Variables.V2Engines[EngineIndex].ProcedureNames.Count; i++)
+                    ScriptNames.Add(Variables.V2Engines[EngineIndex].ProcedureNames[i]);
 
                 IOVariables1.Clear();
                 IOVariables2.Clear();
                 IOVariables3.Clear();
                 IOVariables4.Clear();
-                var rst = Variables.V2Engine.GetProcedureInfo(ScriptNames[ScriptIndex1]);
+                IOValue1 = "";
+                //这里判断，如果当前引擎下未挂在过程则返回。
+                if (ScriptNames.Count == 0) return false;
+
+                //选择挂在的过程
+                if (Variables.CurrentSubProgram.Parameters.ContainsKey("ScriptIndex1"))
+                    ScriptIndex1 = int.Parse(Variables.CurrentSubProgram.Parameters["ScriptIndex1"].ToString());
+                else
+                    ScriptIndex1 = 0;
+
+                var rst = Variables.V2Engines[EngineIndex].GetProcedureInfo(ScriptNames[ScriptIndex1]);
 
                 for (int i = 0; i < rst.InputCtrlParamNames.Count; i++)
                 {
@@ -78,21 +177,102 @@ namespace VisionProject.ViewModels
                 {
                     IOVariables4.Add(rst.OutputIconicParamNames[i]);
                 }
+                IOIndex1 = 0;
+                IOIndex2 = 0;
+                IOIndex3 = 0;
+                IOIndex4 = 0;
+                //获取输入变量值
 
-                //清除多余的key，仅保留当前设置。
-                Variables.CurrentSubProgram.Parameters.Clear();
-                Update();
+                int c0 = IOVariables1.Count - 1;
+                while (c0 > -1)
+                {
+                    if (Variables.CurrentSubProgram.Parameters.ContainsKey(EngineIndex + "." + ScriptIndex1 + "." + c0 + "." + IOVariables1[c0]))
+                        IOValue1 = Variables.CurrentSubProgram.Parameters[EngineIndex + "." + ScriptIndex1 + "." + c0 + "." + IOVariables1[c0]].ToString();
+                    c0--;
+                }
+
+                //脚本册立不清除，因为共用。清除多余的key，仅保留当前设置。
+                // Variables.CurrentSubProgram.Parameters.Clear();
+                //Update();
                 return true;
             }
             catch { return false; }
         }
 
+        private DelegateCommand _selectedScript;
+
+        public DelegateCommand SelectedScript =>
+            _selectedScript ?? (_selectedScript = new DelegateCommand(ExecuteSelectedScript));
+
+        private void ExecuteSelectedScript()
+        {
+            IOVariables1.Clear();
+            IOVariables2.Clear();
+            IOVariables3.Clear();
+            IOVariables4.Clear();
+            IOValue1 = "";
+            if (ScriptIndex1 < 0) return;
+
+            var rst = Variables.V2Engines[EngineIndex].GetProcedureInfo(ScriptNames[ScriptIndex1]);
+
+            for (int i = 0; i < rst.InputCtrlParamNames.Count; i++)
+            {
+                IOVariables1.Add(rst.InputCtrlParamNames[i]);
+            }
+            for (int i = 0; i < rst.InputIconicParamNames.Count; i++)
+            {
+                IOVariables2.Add(rst.InputIconicParamNames[i]);
+            }
+            for (int i = 0; i < rst.OutputCtrlParamNames.Count; i++)
+            {
+                IOVariables3.Add(rst.OutputCtrlParamNames[i]);
+            }
+            for (int i = 0; i < rst.OutputIconicParamNames.Count; i++)
+            {
+                IOVariables4.Add(rst.OutputIconicParamNames[i]);
+            }
+            IOIndex1 = 0;
+            IOIndex2 = 0;
+            IOIndex3 = 0;
+            IOIndex4 = 0;
+            //获取输入变量值
+            if (Variables.CurrentSubProgram.Parameters.ContainsKey(EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1]))
+                IOValue1 = Variables.CurrentSubProgram.Parameters[EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1]].ToString();
+        }
+
+        private DelegateCommand _selectedIOVariables1;
+
+        public DelegateCommand SelectedIOVariables1 =>
+            _selectedIOVariables1 ?? (_selectedIOVariables1 = new DelegateCommand(ExecuteSelectedIOVariables1));
+
+        //选择输入变量前先保存当前值
+        private void ExecuteSelectedIOVariables1()
+        {
+            if (IOIndex1 < 0) return;
+            //获取输入变量值
+            if (Variables.CurrentSubProgram.Parameters.ContainsKey(EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1]))
+                IOValue1 = Variables.CurrentSubProgram.Parameters[EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1]].ToString();
+            else
+                IOValue1 = "";
+        }
+
         public bool Update()
         {
+            if (Variables.CurrentSubProgram.Parameters.ContainsKey("EngineIndex"))
+                Variables.CurrentSubProgram.Parameters["EngineIndex"] = EngineIndex;
+            else
+                Variables.CurrentSubProgram.Parameters.Add("EngineIndex", EngineIndex);
+
             if (Variables.CurrentSubProgram.Parameters.ContainsKey("ScriptIndex1"))
                 Variables.CurrentSubProgram.Parameters["ScriptIndex1"] = ScriptIndex1;
             else
                 Variables.CurrentSubProgram.Parameters.Add("ScriptIndex1", ScriptIndex1);
+
+            if (Variables.CurrentSubProgram.Parameters.ContainsKey(EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1]))
+                Variables.CurrentSubProgram.Parameters[EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1]] = IOValue1;
+            else
+                Variables.CurrentSubProgram.Parameters.Add(EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1], IOValue1);
+
             return true;
         }
 
@@ -126,6 +306,14 @@ namespace VisionProject.ViewModels
         {
             get { return _iOIndex1; }
             set { SetProperty(ref _iOIndex1, value); }
+        }
+
+        private string _iOValue1;
+
+        public string IOValue1
+        {
+            get { return _iOValue1; }
+            set { SetProperty(ref _iOValue1, value); }
         }
 
         private ObservableCollection<string> _iOVariables2 = new ObservableCollection<string>();

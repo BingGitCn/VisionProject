@@ -22,8 +22,12 @@ namespace VisionProject.GlobalVars
 
         public static ScriptEdit scriptEdit = new ScriptEdit();
 
-        //V2 引擎
-        public static VisionEngine2 V2Engine = new VisionEngine2();
+        //V2 引擎，这里使用数组，方便多相机或多线程使用
+        public static List<VisionEngine2> V2Engines = new List<VisionEngine2>()
+        {
+            new VisionEngine2(),
+            new VisionEngine2()
+        };
 
         //PLC
         //不要在多个异步方法中同时调用一个！可以再申明一个。

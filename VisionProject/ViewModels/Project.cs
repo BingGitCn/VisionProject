@@ -41,7 +41,7 @@ namespace VisionProject.ViewModels
         }
 
         /// <summary>
-        /// 初始化项目
+        /// 初始化项目,主界面显示所有项目
         /// </summary>
         private void initProjects()
         {
@@ -373,6 +373,7 @@ namespace VisionProject.ViewModels
                                                 }
                                                 Programs.Add(ProgramName, newProgram);
                                                 ProgramsName.Add(ProgramName);
+                                                ProgramName = "";
                                             }
                                             else
                                             {

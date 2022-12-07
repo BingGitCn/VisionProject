@@ -43,15 +43,18 @@ namespace VisionProject.ViewModels
             try
             {
                 //这里自动获取目录下的脚本，添加至引擎
-                var folder = new DirectoryInfo(System.AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts");
-                var procedureFiles = folder.GetFiles("*.hdvp");
-                foreach (var procedureFile in procedureFiles)
-                    Variables.V2Engine.AddProcedure(procedureFile.Name.Replace(".hdvp", ""));
-                //也可自己添加
-                //Variables.V2Engine.AddProcedure("lvba");
-                //Variables.V2Engine.AddProcedure("lvba2");
-                //先添加脚本，再初始化，
-                Variables.V2Engine.Init(System.AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts");
+                for (int i = 0; i < Variables.V2Engines.Count; i++)
+                {
+                    var folder = new DirectoryInfo(System.AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts" + i);
+                    var procedureFiles = folder.GetFiles("*.hdvp");
+                    foreach (var procedureFile in procedureFiles)
+                        Variables.V2Engines[i].AddProcedure(procedureFile.Name.Replace(".hdvp", ""));
+                    //也可自己添加
+                    //Variables.V2Engine.AddProcedure("lvba");
+                    //Variables.V2Engine.AddProcedure("lvba2");
+                    //先添加脚本，再初始化，
+                    Variables.V2Engines[i].Init(System.AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts" + i);
+                }
             }
             catch { }
         }
@@ -127,6 +130,10 @@ namespace VisionProject.ViewModels
 
                 if (false)
                 {
+                    //这里需要判断下程序数量
+                    if (Variables.CurrentProject.Programs.Count == 0)
+                        continue;
+
                     //选择程序。这里默认0，第一个
                     var program = Variables.CurrentProject.Programs.ElementAt(0).Value;
                     //选择对应产品的所有检测子程序。这里可以在打开项目的时候获取一次，无需每次执行获取。
