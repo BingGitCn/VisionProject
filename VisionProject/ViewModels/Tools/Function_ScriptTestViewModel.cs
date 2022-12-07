@@ -7,6 +7,8 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace VisionProject.ViewModels
 {
@@ -191,12 +193,29 @@ namespace VisionProject.ViewModels
                     c0--;
                 }
 
+                try
+                {
+                    IOVariables1Names = "输入参数设定";
+                    string[] lines2 = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts" + EngineIndex + "\\" + ScriptNames[ScriptIndex1] + ".txt", Encoding.UTF8);
+                    if (lines2.Length == IOVariables1.Count)
+                        IOVariables1Names = lines2[IOIndex1];
+                }
+                catch { }
+
                 //脚本册立不清除，因为共用。清除多余的key，仅保留当前设置。
                 // Variables.CurrentSubProgram.Parameters.Clear();
                 //Update();
                 return true;
             }
             catch { return false; }
+        }
+
+        private string _iOVariables1Names;
+
+        public string IOVariables1Names
+        {
+            get { return _iOVariables1Names; }
+            set { SetProperty(ref _iOVariables1Names, value); }
         }
 
         private DelegateCommand _selectedScript;
@@ -238,6 +257,18 @@ namespace VisionProject.ViewModels
             //获取输入变量值
             if (Variables.CurrentSubProgram.Parameters.ContainsKey(EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1]))
                 IOValue1 = Variables.CurrentSubProgram.Parameters[EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1]].ToString();
+
+            try
+            {
+                string path = AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts" + EngineIndex + "\\" + ScriptNames[ScriptIndex1] + ".txt";
+                if (!File.Exists(path))
+                {
+                    string[] lines2 = File.ReadAllLines(path, Encoding.UTF8);
+                    if (lines2.Length == IOVariables1.Count)
+                        IOVariables1Names = lines2[IOIndex1];
+                }
+            }
+            catch { }
         }
 
         private DelegateCommand _selectedIOVariables1;
@@ -254,6 +285,19 @@ namespace VisionProject.ViewModels
                 IOValue1 = Variables.CurrentSubProgram.Parameters[EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1]].ToString();
             else
                 IOValue1 = "";
+
+            try
+            {
+                IOVariables1Names = "输入参数设定";
+                string path = AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts" + EngineIndex + "\\" + ScriptNames[ScriptIndex1] + ".txt";
+                if (!File.Exists(path))
+                {
+                    string[] lines2 = File.ReadAllLines(path, Encoding.UTF8);
+                    if (lines2.Length == IOVariables1.Count)
+                        IOVariables1Names = lines2[IOIndex1];
+                }
+            }
+            catch { }
         }
 
         public bool Update()
@@ -371,15 +415,19 @@ namespace VisionProject.ViewModels
 
         private void ExecuteEditScript()
         {
-            Variables.scriptEdit.SetProcedurePath(AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts");
-            //打开脚本窗口
-            ScriptDIalog sd = new ScriptDIalog();
-            //读取并显示脚本
-            sd.SetCode(Variables.scriptEdit.ReadProcedure(ScriptNames[ScriptIndex1]));
-            sd.ShowDialog();
-            //保存脚本
-            Variables.scriptEdit.SaveProcedure(sd.GetCode());
-            sd.Close();
+            try
+            {
+                Variables.scriptEdit.SetProcedurePath(AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts" + EngineIndex);
+                //打开脚本窗口
+                ScriptDIalog sd = new ScriptDIalog();
+                //读取并显示脚本
+                sd.SetCode(Variables.scriptEdit.ReadProcedure(ScriptNames[ScriptIndex1]));
+                sd.ShowDialog();
+                //保存脚本
+                Variables.scriptEdit.SaveProcedure(sd.GetCode());
+                sd.Close();
+            }
+            catch { }
         }
 
         private DelegateCommand _saveParam;

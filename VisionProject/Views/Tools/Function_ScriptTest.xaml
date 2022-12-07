@@ -64,7 +64,7 @@
                 </hc:ComboBox>
                 <hc:TextBox
                     Margin="5"
-                    hc:InfoElement.Title="控制参数设定"
+                    hc:InfoElement.Title="{Binding IOVariables1Names}"
                     hc:InfoElement.TitlePlacement="Left"
                     hc:InfoElement.TitleWidth="100"
                     Style="{StaticResource TextBoxExtend}"
