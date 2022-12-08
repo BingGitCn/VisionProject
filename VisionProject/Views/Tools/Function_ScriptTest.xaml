@@ -67,6 +67,7 @@
                     hc:InfoElement.Title="{Binding IOVariables1Names}"
                     hc:InfoElement.TitlePlacement="Left"
                     hc:InfoElement.TitleWidth="100"
+                    Foreground="#4579fc"
                     Style="{StaticResource TextBoxExtend}"
                     Text="{Binding IOValue1}" />
                 <hc:ComboBox
@@ -107,6 +108,15 @@
                         Command="{Binding SaveParam}"
                         Content="保存参数"
                         Style="{StaticResource ButtonPrimary}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button
+                        Width="100"
+                        Margin="5"
+                        Command="{Binding RunScript}"
+                        Content="运行测试"
+                        Style="{StaticResource ButtonPrimary}" />
+                    <TextBlock VerticalAlignment="Center" Text="{Binding RunScriptResult}" />
                 </StackPanel>
             </StackPanel>
         </Grid>

@@ -221,6 +221,9 @@ namespace VisionProject.ViewModels
 
         private string _iOVariables1Names;
 
+        /// <summary>
+        /// txt读取变量解释
+        /// </summary>
         public string IOVariables1Names
         {
             get { return _iOVariables1Names; }
@@ -451,5 +454,40 @@ namespace VisionProject.ViewModels
             {
                 Update();
             }));
+
+        private string _runScriptResult;
+
+        public string RunScriptResult
+        {
+            get { return _runScriptResult; }
+            set { SetProperty(ref _runScriptResult, value); }
+        }
+
+        private DelegateCommand _runScript;
+
+        public DelegateCommand RunScript =>
+            _runScript ?? (_runScript = new DelegateCommand(ExecuteRunScript));
+
+        private void ExecuteRunScript()
+        {
+            try
+            {
+                //更改脚本后，重新加载脚本，无需重启软件
+                Variables.V2Engines[EngineIndex].Reload();
+                for (int i = 0; i < IOVariables1.Count; i++)
+                {
+                    //这里数据类型都一样，按实际情况传入数据
+                    Variables.V2Engines[EngineIndex].SetParam(
+                        ScriptNames[ScriptIndex1],
+                        IOVariables1[i],
+                       new HalconDotNet.HTuple(double.Parse(Variables.CurrentSubProgram.Parameters.BingGetOrAdd(EngineIndex + "." + ScriptIndex1 + "." + i + "." + IOVariables1[i], "0").ToString())
+                        ));
+                }
+                bool rst = Variables.V2Engines[EngineIndex].InspectProcedure(ScriptNames[ScriptIndex1]);
+                //获取结果
+                RunScriptResult = Variables.V2Engines[EngineIndex].GetParam<HalconDotNet.HTuple>(ScriptNames[ScriptIndex1], "Result").ToString();
+            }
+            catch { }
+        }
     }
 }
