@@ -17,6 +17,7 @@
     Height="600"
     prism:ViewModelLocator.AutoWireViewModel="True"
     Closing="Window_Closing"
+    FontFamily="pack://application:,,,/VisionProject;component/fonts/#iconfont,pack://application:,,,/VisionProject;component/fonts/#仓耳今楷03 W04"
     WindowStartupLocation="CenterScreen"
     WindowState="Maximized">
     <Window.Resources>
@@ -110,7 +111,6 @@
                 Style="{StaticResource TabControlBaseStyle}">
                 <hc:TabItem
                     Width="150"
-                    FontFamily="../#iconfont"
                     FontSize="21"
                     Header="{Binding Home, Source={StaticResource BingLocation}, Mode=OneWay}"
                     HeaderStringFormat="{}&#xe708; {0}"
@@ -283,7 +283,6 @@
                 </hc:TabItem>
                 <hc:TabItem
                     Width="150"
-                    FontFamily="../#iconfont"
                     FontSize="21"
                     Header="{Binding Project, Source={StaticResource BingLocation}, Mode=OneWay}"
                     HeaderStringFormat="{}&#xe71f; {0}"
@@ -307,7 +306,6 @@
                                             Margin="5"
                                             Command="{Binding ProjectOperate}"
                                             CommandParameter="open"
-                                            FontFamily="../#iconfont"
                                             Style="{StaticResource ButtonPrimary}">
                                             <TextBlock FontSize="18" Text="&#xe671; "><Run FontSize="12" Text="{Binding ButtonOpen, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                         </Button>
@@ -316,24 +314,24 @@
                                             Margin="5"
                                             Command="{Binding ProjectOperate}"
                                             CommandParameter="save"
-                                            FontFamily="../#iconfont"
                                             Style="{StaticResource ButtonPrimary}">
                                             <TextBlock FontSize="16" Text="&#xe67c; "><Run FontSize="12" Text="{Binding ButtonSave, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                         </Button>
+                                        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                                            <TextBlock
+                                                Width="80"
+                                                Margin="5"
+                                                FontSize="14"
+                                                Foreground="DarkGray"
+                                                Text="{Binding ProjectPath, Source={StaticResource BingLocation}, Mode=OneWay}" />
+                                            <TextBlock
+                                                Margin="5"
+                                                FontSize="14"
+                                                Foreground="DarkGray"
+                                                Text="{Binding ProjectPath}" />
+                                        </StackPanel>
                                     </StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock
-                                            Width="80"
-                                            Margin="5"
-                                            FontSize="14"
-                                            Foreground="DarkGray"
-                                            Text="{Binding ProjectPath, Source={StaticResource BingLocation}, Mode=OneWay}" />
-                                        <TextBlock
-                                            Margin="5"
-                                            FontSize="14"
-                                            Foreground="DarkGray"
-                                            Text="{Binding ProjectPath}" />
-                                    </StackPanel>
+
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock
                                             Width="80"
@@ -367,31 +365,53 @@
                         <Grid Grid.Row="1">
 
                             <GroupBox
-                                Margin="5"
+                                Margin="5,-5,5,5"
                                 FontSize="14"
                                 Header="{Binding ProgramEdit, Source={StaticResource BingLocation}, Mode=OneWay}"
                                 Style="{StaticResource GroupBoxOriginal}">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
+                                        <RowDefinition Height="auto" />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
                                     <Grid Grid.Row="0" Background="#f9f9f9">
                                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                             <ComboBox
-                                                Width="100"
+                                                Width="290"
                                                 Margin="5"
+                                                hc:InfoElement.Title="程序选择："
+                                                hc:InfoElement.TitlePlacement="Left"
+                                                hc:InfoElement.TitleWidth="110"
                                                 ItemsSource="{Binding ProgramsName}"
-                                                SelectedIndex="{Binding ProgramsIndex, Mode=TwoWay}">
+                                                SelectedIndex="{Binding ProgramsIndex, Mode=TwoWay}"
+                                                Style="{StaticResource ComboBoxExtend}">
                                                 <i:Interaction.Triggers>
                                                     <i:EventTrigger EventName="DropDownClosed">
                                                         <i:InvokeCommandAction Command="{Binding SelectProgram}" />
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
                                             </ComboBox>
-                                            <TextBox
+                                            <Button
                                                 Width="100"
                                                 Margin="5"
+                                                Command="{Binding ProgramsOperate}"
+                                                CommandParameter="del"
+                                                Style="{StaticResource ButtonDanger}">
+                                                <TextBlock FontSize="16" Text="&#xe677; "><Run FontSize="12" Text="{Binding ButtonDelete, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid Grid.Row="1" Background="#f9f9f9">
+                                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+
+                                            <TextBox
+                                                Width="290"
+                                                Margin="5"
+                                                hc:InfoElement.Placeholder="请输入添加的程序名"
+                                                hc:InfoElement.Title="增减程序："
+                                                hc:InfoElement.TitlePlacement="Left"
+                                                hc:InfoElement.TitleWidth="110"
                                                 Style="{StaticResource TextBoxExtend}"
                                                 Text="{Binding ProgramName}" />
                                             <Button
@@ -399,23 +419,13 @@
                                                 Margin="5"
                                                 Command="{Binding ProgramsOperate}"
                                                 CommandParameter="add"
-                                                FontFamily="../#iconfont"
                                                 Style="{StaticResource ButtonSuccess}">
                                                 <TextBlock FontSize="16" Text="&#xe664; "><Run FontSize="12" Text="{Binding ButtonAdd, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
-                                            </Button>
-                                            <Button
-                                                Width="100"
-                                                Margin="5"
-                                                Command="{Binding ProgramsOperate}"
-                                                CommandParameter="del"
-                                                FontFamily="../#iconfont"
-                                                Style="{StaticResource ButtonDanger}">
-                                                <TextBlock FontSize="16" Text="&#xe677; "><Run FontSize="12" Text="{Binding ButtonDelete, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                             </Button>
                                         </StackPanel>
                                     </Grid>
 
-                                    <Grid Grid.Row="1">
+                                    <Grid Grid.Row="2">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="auto" />
                                             <RowDefinition />
@@ -428,7 +438,6 @@
                                                         Margin="5"
                                                         Command="{Binding Programs1Operate}"
                                                         CommandParameter="add"
-                                                        FontFamily="../#iconfont"
                                                         Style="{StaticResource ButtonDashedSuccess}">
                                                         <TextBlock FontSize="16" Text="&#xe664; "><Run FontSize="12" Text="{Binding ButtonAdd, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                                     </Button>
@@ -437,7 +446,6 @@
                                                         Margin="5"
                                                         Command="{Binding Programs1Operate}"
                                                         CommandParameter="del"
-                                                        FontFamily="../#iconfont"
                                                         Style="{StaticResource ButtonDashedDanger}">
                                                         <TextBlock FontSize="16" Text="&#xe677; "><Run FontSize="12" Text="{Binding ButtonDelete, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                                     </Button>
@@ -455,10 +463,13 @@
                                                 dd:DragDrop.UseDefaultDragAdorner="{Binding ElementName=IsAllowDrag1, Path=IsChecked}"
                                                 hc:DataGridAttach.ShowRowNumber="True"
                                                 AutoGenerateColumns="False"
+                                                Background="{StaticResource RegionBrush}"
                                                 HeadersVisibility="All"
                                                 ItemsSource="{Binding Program1}"
                                                 SelectedIndex="{Binding Program1Index}"
-                                                SelectedItem="{Binding SelectedProgram1}">
+                                                SelectedItem="{Binding SelectedProgram1}"
+                                                SelectionMode="Single"
+                                                SelectionUnit="FullRow">
                                                 <DataGrid.Columns>
 
                                                     <DataGridTemplateColumn Header="产品序列">
@@ -522,7 +533,6 @@
                 </hc:TabItem>
                 <hc:TabItem
                     Width="150"
-                    FontFamily="../#iconfont"
                     FontSize="21"
                     Header="{Binding Setting, Source={StaticResource BingLocation}, Mode=OneWay}"
                     HeaderStringFormat="{}&#xe71b; {0}"
@@ -540,13 +550,13 @@
                                     Margin="5"
                                     Command="{Binding SaveSystemConfig}"
                                     Content="{Binding ButtonSave, Source={StaticResource BingLocation}, Mode=OneWay}"
-                                    Style="{StaticResource ButtonInfo}" />
+                                    Style="{StaticResource ButtonPrimary}" />
                                 <Button
                                     Width="120"
                                     Margin="5"
                                     Command="{Binding UpdatePassword}"
                                     Content="{Binding ButtonUpdatePassword, Source={StaticResource BingLocation}, Mode=OneWay}"
-                                    Style="{StaticResource ButtonInfo}" />
+                                    Style="{StaticResource ButtonPrimary}" />
 
                                 <TextBlock
                                     Margin="5"
@@ -689,7 +699,6 @@
                 </hc:TabItem>
                 <hc:TabItem
                     Width="150"
-                    FontFamily="../#iconfont"
                     FontSize="21"
                     Header="{Binding Statistic, Source={StaticResource BingLocation}, Mode=OneWay}"
                     HeaderStringFormat="{}&#xe71c; {0}">
@@ -709,19 +718,19 @@
                                     Command="{Binding StatisticOperate}"
                                     CommandParameter="refresh"
                                     Content="{Binding ButtonRefresh, Source={StaticResource BingLocation}, Mode=OneWay}"
-                                    Style="{StaticResource ButtonInfo}" />
+                                    Style="{StaticResource ButtonPrimary}" />
                                 <Button
                                     Width="100"
                                     Margin="5"
                                     Command="{Binding StatisticOperate}"
                                     CommandParameter="export"
                                     Content="{Binding ButtonExport, Source={StaticResource BingLocation}, Mode=OneWay}"
-                                    Style="{StaticResource ButtonInfo}" />
+                                    Style="{StaticResource ButtonPrimary}" />
                             </StackPanel>
                         </Grid>
 
                         <Grid Grid.Row="1">
-                            <DataGrid Style="{StaticResource   DataGridBaseStyle}"
+                            <DataGrid
                                 Margin="5"
                                 hc:DataGridAttach.ShowRowNumber="True"
                                 AutoGenerateColumns="False"
@@ -729,7 +738,8 @@
                                 HeadersVisibility="All"
                                 IsReadOnly="True"
                                 ItemsSource="{Binding AllStatisticData}"
-                                RowHeaderWidth="60">
+                                RowHeaderWidth="60"
+                                Style="{StaticResource DataGridBaseStyle}">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn
                                         Binding="{Binding CurrentDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -758,9 +768,31 @@
                         <Grid Grid.Row="2">
 
                             <StackPanel Orientation="Horizontal">
-                                <RadioButton VerticalContentAlignment="Center" FontSize="16" x:Name="r1" GroupName="sp" Margin="3" Content="一周" IsChecked="True" Checked="RadioButton_Checked"></RadioButton>
-                                <RadioButton VerticalContentAlignment="Center" FontSize="16" x:Name="r2" GroupName="sp" Margin="3" Content="半月" Checked="RadioButton_Checked"></RadioButton>
-                                <RadioButton VerticalContentAlignment="Center" FontSize="16" x:Name="r3" GroupName="sp" Margin="3" Content="一月" Checked="RadioButton_Checked"></RadioButton>
+                                <RadioButton
+                                    x:Name="r1"
+                                    Margin="3"
+                                    VerticalContentAlignment="Center"
+                                    Checked="RadioButton_Checked"
+                                    Content="一周"
+                                    FontSize="16"
+                                    GroupName="sp"
+                                    IsChecked="True" />
+                                <RadioButton
+                                    x:Name="r2"
+                                    Margin="3"
+                                    VerticalContentAlignment="Center"
+                                    Checked="RadioButton_Checked"
+                                    Content="半月"
+                                    FontSize="16"
+                                    GroupName="sp" />
+                                <RadioButton
+                                    x:Name="r3"
+                                    Margin="3"
+                                    VerticalContentAlignment="Center"
+                                    Checked="RadioButton_Checked"
+                                    Content="一月"
+                                    FontSize="16"
+                                    GroupName="sp" />
                             </StackPanel>
                         </Grid>
                         <Grid Grid.Row="3">
@@ -771,7 +803,6 @@
                 </hc:TabItem>
                 <hc:TabItem
                     Width="150"
-                    FontFamily="../#iconfont"
                     FontSize="21"
                     Header="{Binding Log, Source={StaticResource BingLocation}, Mode=OneWay}"
                     HeaderStringFormat="{}&#xe719; {0}">
@@ -781,7 +812,6 @@
                 </hc:TabItem>
                 <hc:TabItem
                     Width="150"
-                    FontFamily="../#iconfont"
                     FontSize="21"
                     Header="&#xe71e; 关  于"
                     Visibility="Collapsed">
@@ -793,7 +823,6 @@
                 </hc:TabItem>
                 <hc:TabItem
                     Width="150"
-                    FontFamily="../#iconfont"
                     FontSize="21"
                     Header="&#xe70e; 帮  助"
                     Visibility="Collapsed">

@@ -1,0 +1,105 @@
+{
+  "$id": "1",
+  "$type": "VisionProject.ViewModels.Project, VisionProject",
+  "Programs": {
+    "$id": "2",
+    "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.ObjectModel.ObservableCollection`1[[VisionProject.ViewModels.SubProgram, VisionProject]], System]], mscorlib",
+    "aaa": {
+      "$id": "3",
+      "$type": "System.Collections.ObjectModel.ObservableCollection`1[[VisionProject.ViewModels.SubProgram, VisionProject]], System",
+      "$values": [
+        {
+          "$id": "4",
+          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+          "Parameters": {
+            "$id": "5",
+            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
+          },
+          "IsUse": true,
+          "ProductIndex": 0,
+          "InspectFunction": "测试",
+          "Content": null
+        },
+        {
+          "$id": "6",
+          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+          "Parameters": {
+            "$id": "7",
+            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib",
+            "EngineIndex": 0,
+            "ScriptIndex1": 1,
+            "0.0.1.P2": "3",
+            "0.0.0.P1": "5",
+            "0.2.0.P1": "",
+            "0.1.0.P1": "5",
+            "0.1.1.P2": "3"
+          },
+          "IsUse": true,
+          "ProductIndex": 1,
+          "InspectFunction": "脚本测试",
+          "Content": null
+        },
+        {
+          "$id": "8",
+          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+          "Parameters": {
+            "$id": "9",
+            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib",
+            "SaveMode": 0,
+            "SaveFormat": 1,
+            "SaveCount": null,
+            "SavePath": null
+          },
+          "IsUse": true,
+          "ProductIndex": 2,
+          "InspectFunction": "保存图像",
+          "Content": null
+        }
+      ]
+    },
+    "bbb": {
+      "$id": "10",
+      "$type": "System.Collections.ObjectModel.ObservableCollection`1[[VisionProject.ViewModels.SubProgram, VisionProject]], System",
+      "$values": [
+        {
+          "$id": "11",
+          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+          "Parameters": {
+            "$id": "12",
+            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
+          },
+          "IsUse": true,
+          "ProductIndex": 0,
+          "InspectFunction": "测试",
+          "Content": null
+        },
+        {
+          "$id": "13",
+          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+          "Parameters": {
+            "$id": "14",
+            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
+          },
+          "IsUse": true,
+          "ProductIndex": 0,
+          "InspectFunction": "脚本测试",
+          "Content": null
+        },
+        {
+          "$id": "15",
+          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+          "Parameters": {
+            "$id": "16",
+            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
+          },
+          "IsUse": true,
+          "ProductIndex": 0,
+          "InspectFunction": "保存图像",
+          "Content": null
+        }
+      ]
+    }
+  },
+  "CreateDate": "2022-12-08 10:49:37",
+  "LastDate": "2022-12-08 10:49:37"
+}

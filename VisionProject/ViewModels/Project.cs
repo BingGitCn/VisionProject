@@ -186,10 +186,7 @@ namespace VisionProject.ViewModels
                             HOperatorSet.SetSystem(new HTuple("clip_region"), new HTuple("false"));
                             System.Windows.Forms.OpenFileDialog dig_openFileDialog = new System.Windows.Forms.OpenFileDialog();
                             dig_openFileDialog.Title = "请选择项目文件路径";
-                            if (SystemConfig.IsRestoreDirectory)
-                                dig_openFileDialog.RestoreDirectory = true;
-                            else
-                                dig_openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                            dig_openFileDialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "Projects";
 
                             dig_openFileDialog.Filter = "项目文件(*.lprj)|*.lprj";
                             if (dig_openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -224,10 +221,8 @@ namespace VisionProject.ViewModels
                         {
                             System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
                             saveFileDialog.Title = ("请选择项目文件路径");
-                            if (SystemConfig.IsRestoreDirectory)
-                                saveFileDialog.RestoreDirectory = true;
-                            else
-                                saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+
+                            saveFileDialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "Projects";
 
                             saveFileDialog.Filter = "项目文件(*.lprj)|*.lprj";
                             if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -447,7 +442,7 @@ namespace VisionProject.ViewModels
             {
                 if (ProgramsName.Count == 0)
                 {
-                    Variables.ShowMessage("当前无程序");
+                    Variables.ShowMessage("请选择或创建一个程序！");
                     return;
                 }
 

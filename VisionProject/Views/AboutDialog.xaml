@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:prism="http://prismlibrary.com/"
     Width="480"
-    Height="280"
+    Height="280"  FontFamily="pack://application:,,,/VisionProject;component/fonts/#iconfont,pack://application:,,,/VisionProject;component/fonts/#仓耳今楷03 W04"
+
     prism:ViewModelLocator.AutoWireViewModel="True">
     <Grid Background="{StaticResource BackgroundBrush}">
         <StackPanel

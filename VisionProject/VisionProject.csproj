@@ -174,7 +174,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Resource Include="iconfont.ttf" />
+    <Resource Include="fonts\iconfont.ttf" />
+    <Resource Include="fonts\仓耳今楷03-W04.ttf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
