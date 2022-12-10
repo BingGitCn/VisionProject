@@ -21,6 +21,7 @@ namespace VisionProject
 
             //关于窗口
             containerRegistry.RegisterDialog<AboutDialog, AboutDialogViewModel>(GlobalVars.DialogNames.ShowAboutWindow);
+
             //脚本测试窗口
             containerRegistry.RegisterDialog<Function_ScriptTest, Function_ScriptTestViewModel>(GlobalVars.DialogNames.ToolNams["脚本测试"]);
             //测试窗口
@@ -28,6 +29,8 @@ namespace VisionProject
             //保存图像窗口
             containerRegistry.RegisterDialog<Function_SaveImage, Function_SaveImageViewModel>(GlobalVars.DialogNames.ToolNams["保存图像"]);
 
+            //相机操作窗口
+            containerRegistry.RegisterDialog<Function_Camera, Function_CameraViewModel>(GlobalVars.DialogNames.ToolNams["相机操作"]);
         }
     }
 }

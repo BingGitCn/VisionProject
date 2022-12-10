@@ -419,7 +419,7 @@
                                                 Margin="5"
                                                 Command="{Binding ProgramsOperate}"
                                                 CommandParameter="add"
-                                                Style="{StaticResource ButtonSuccess}">
+                                                Style="{StaticResource ButtonPrimary}">
                                                 <TextBlock FontSize="16" Text="&#xe664; "><Run FontSize="12" Text="{Binding ButtonAdd, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                             </Button>
                                         </StackPanel>
@@ -438,7 +438,7 @@
                                                         Margin="5"
                                                         Command="{Binding Programs1Operate}"
                                                         CommandParameter="add"
-                                                        Style="{StaticResource ButtonDashedSuccess}">
+                                                        Style="{StaticResource ButtonDashedPrimary}">
                                                         <TextBlock FontSize="16" Text="&#xe664; "><Run FontSize="12" Text="{Binding ButtonAdd, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                                     </Button>
                                                     <Button

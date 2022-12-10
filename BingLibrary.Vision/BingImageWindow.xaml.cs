@@ -61,7 +61,10 @@ namespace BingLibrary.Vision
         {
             try
             {
-                config = Serialize.ReadJson<Config>(System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
+                if (this.Name != "aimg")
+                    config = Serialize.ReadJson<Config>(System.AppDomain.CurrentDomain.BaseDirectory + this.Name + ".Config");
+                else
+                    config = new Config();
             }
             catch { config = new Config(); }
             //HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color", WindowBackgroud.ToString());

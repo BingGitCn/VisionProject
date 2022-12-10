@@ -95,11 +95,15 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ViewModels\dragdrop.cs" />
+    <Compile Include="ViewModels\Tools\Function_CameraViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_ScriptTestViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_SaveImageViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_TestViewModel.cs" />
     <Compile Include="ViewModels\NumberPadViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_ViewModel_Interface.cs" />
+    <Compile Include="Views\Tools\Function_Camera.xaml.cs">
+      <DependentUpon>Function_Camera.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Tools\Function_SaveImage.xaml.cs">
       <DependentUpon>Function_SaveImage.xaml</DependentUpon>
     </Compile>
@@ -113,6 +117,10 @@
       <DependentUpon>NumberPad.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\AboutDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Tools\Function_Camera.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -29,6 +29,13 @@ namespace VisionProject.GlobalVars
             new VisionEngine2()
         };
 
+        //相机，这里使用数组，方便多相机或多线程使用
+        public static List<HCamera> Cameras = new List<HCamera>()
+        {
+            new HCamera("[0] Integrated Webcam"),
+            new HCamera("cam2")
+        };
+
         //PLC
         //不要在多个异步方法中同时调用一个！可以再申明一个。
         public static ModbusNet HCPLC = new ModbusNet();

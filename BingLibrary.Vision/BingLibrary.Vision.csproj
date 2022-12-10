@@ -225,6 +225,7 @@
     <Compile Include="Common\MessageBase.cs" />
     <Compile Include="Common\ModelCtrl.cs" />
     <Compile Include="Ctrl\HWndCtrl.cs" />
+    <Compile Include="HCamera.cs" />
     <Compile Include="ROI\ROI.cs" />
     <Compile Include="ROI\ROICircle.cs" />
     <Compile Include="ROI\ROICircularArc.cs" />
