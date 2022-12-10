@@ -307,7 +307,7 @@
                                             Command="{Binding ProjectOperate}"
                                             CommandParameter="open"
                                             Style="{StaticResource ButtonPrimary}">
-                                            <TextBlock FontSize="18" Text="&#xe671; "><Run FontSize="12" Text="{Binding ButtonOpen, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
+                                            <TextBlock VerticalAlignment="Center" FontSize="14" Text="&#xe671; "><Run  FontSize="13" Text="{Binding ButtonOpen, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                         </Button>
                                         <Button
                                             Width="100"
@@ -315,7 +315,7 @@
                                             Command="{Binding ProjectOperate}"
                                             CommandParameter="save"
                                             Style="{StaticResource ButtonPrimary}">
-                                            <TextBlock FontSize="16" Text="&#xe67c; "><Run FontSize="12" Text="{Binding ButtonSave, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
+                                            <TextBlock VerticalAlignment="Center" FontSize="14" Text="&#xe67c; "><Run FontSize="13" Text="{Binding ButtonSave, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                         </Button>
                                         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                             <TextBlock
@@ -332,7 +332,7 @@
                                         </StackPanel>
                                     </StackPanel>
 
-                                    <StackPanel Orientation="Horizontal">
+                                    <!--<StackPanel Orientation="Horizontal">
                                         <TextBlock
                                             Width="80"
                                             Margin="5"
@@ -357,7 +357,7 @@
                                             FontSize="14"
                                             Foreground="DarkGray"
                                             Text="{Binding LastDate}" />
-                                    </StackPanel>
+                                    </StackPanel>-->
                                 </StackPanel>
                             </GroupBox>
                         </Grid>
@@ -398,7 +398,7 @@
                                                 Command="{Binding ProgramsOperate}"
                                                 CommandParameter="del"
                                                 Style="{StaticResource ButtonDanger}">
-                                                <TextBlock FontSize="16" Text="&#xe677; "><Run FontSize="12" Text="{Binding ButtonDelete, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
+                                                <TextBlock  VerticalAlignment="Center" FontSize="14" Text="&#xe677; "><Run FontSize="12" Text="{Binding ButtonDelete, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                             </Button>
                                         </StackPanel>
                                     </Grid>
@@ -420,7 +420,7 @@
                                                 Command="{Binding ProgramsOperate}"
                                                 CommandParameter="add"
                                                 Style="{StaticResource ButtonPrimary}">
-                                                <TextBlock FontSize="16" Text="&#xe664; "><Run FontSize="12" Text="{Binding ButtonAdd, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
+                                                <TextBlock  VerticalAlignment="Center" FontSize="14" Text="&#xe664; "><Run FontSize="12" Text="{Binding ButtonAdd, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                             </Button>
                                         </StackPanel>
                                     </Grid>
@@ -439,7 +439,7 @@
                                                         Command="{Binding Programs1Operate}"
                                                         CommandParameter="add"
                                                         Style="{StaticResource ButtonDashedPrimary}">
-                                                        <TextBlock FontSize="16" Text="&#xe664; "><Run FontSize="12" Text="{Binding ButtonAdd, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
+                                                        <TextBlock VerticalAlignment="Center" FontSize="14" Text="&#xe664; "><Run FontSize="12" Text="{Binding ButtonAdd, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                                     </Button>
                                                     <Button
                                                         Width="100"
@@ -447,7 +447,7 @@
                                                         Command="{Binding Programs1Operate}"
                                                         CommandParameter="del"
                                                         Style="{StaticResource ButtonDashedDanger}">
-                                                        <TextBlock FontSize="16" Text="&#xe677; "><Run FontSize="12" Text="{Binding ButtonDelete, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
+                                                        <TextBlock VerticalAlignment="Center" FontSize="14" Text="&#xe677; "><Run FontSize="12" Text="{Binding ButtonDelete, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                                     </Button>
 
                                                     <CheckBox x:Name="IsAllowDrag1" Content="{Binding Dragging, Source={StaticResource BingLocation}, Mode=OneWay}" />
