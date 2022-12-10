@@ -169,7 +169,7 @@
                                 <Border
                                     Height="60"
                                     Margin="5"
-                                    Style="{StaticResource BorderTipInfo}">
+                                    Style="{StaticResource BorderTipPrimary}">
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         FontSize="24"
