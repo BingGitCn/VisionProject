@@ -11,10 +11,18 @@
       </oc>
     </interface>
     <body>
-      <l>Result:= P1+P2+10</l>
+      <l>Result:= P1+P2</l>
       <c>
       </c>
       <l>return ()</l>
+      <c>
+      </c>
+      <c>
+      </c>
+      <c>
+      </c>
+      <c>
+      </c>
       <c>
       </c>
       <c>

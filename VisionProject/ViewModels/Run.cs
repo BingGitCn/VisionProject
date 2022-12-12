@@ -59,11 +59,28 @@ namespace VisionProject.ViewModels
             catch { }
         }
 
+        public class Point
+        {
+            public double X { set; get; } = 0;
+            public double Y { set; get; } = 0;
+        }
+
+        public class Da
+        {
+            public int ID { set; get; } = 10;
+            public string Value { set; get; } = "Leader";
+
+            //public List<Point> Points { set; get; } = new List<Point>() {
+            //new Point(){ X=10.0,Y=20.0},
+            //};
+        }
+
         private async void initFreeSpace()
         {
             while (true)
             {
                 await Task.Delay(5000);
+
                 try
                 {
                     FreeSpace = (SystemConfig.HardDrive == 0 ? "C:\\"
