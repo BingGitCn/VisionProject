@@ -22,14 +22,14 @@ namespace VisionProject.GlobalVars
 
         public static ScriptEdit scriptEdit = new ScriptEdit();
 
-        //V2 引擎，这里使用数组，方便多相机或多线程使用
+        //添加 V2 引擎，这里使用数组，方便多相机或多线程使用
         public static List<VisionEngine2> V2Engines = new List<VisionEngine2>()
         {
             new VisionEngine2(),
             new VisionEngine2()
         };
 
-        //相机，这里使用数组，方便多相机或多线程使用
+        //添加相机名字，这里使用数组，方便多相机或多线程使用
         public static List<HCamera> Cameras = new List<HCamera>()
         {
             new HCamera("[0] Integrated Webcam"),
