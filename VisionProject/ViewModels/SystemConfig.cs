@@ -39,7 +39,7 @@ namespace VisionProject.ViewModels
                     SystemConfig = new SystemConfigData();
                 Log.Info("系统设置加载成功。");
             }
-            catch { Log.Error("系统设置保存失败。"); }
+            catch { Log.Error("系统设置加载失败。"); }
         }
 
         private DelegateCommand _updatePassword;

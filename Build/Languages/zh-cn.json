@@ -11,6 +11,7 @@
   "ShowRunStatus": "设备状态",
   "ShowRunStatistic": "运行数据",
   "ButtonClearRunStatistic": "清除数据",
+  "ButtonSaveMesData": "保存MES",
   "SelectProject": "料号切换",
   "Login": "用户登录",
   "ShowTips1": "请选择料号",

@@ -95,6 +95,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ViewModels\dragdrop.cs" />
+    <Compile Include="ViewModels\MesConfig.cs" />
     <Compile Include="ViewModels\Tools\Function_CameraViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_ScriptTestViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_SaveImageViewModel.cs" />

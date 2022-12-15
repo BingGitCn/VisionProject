@@ -19,6 +19,8 @@ namespace VisionProject.ViewModels
             initStatistic();
             //获取系统配置
             getSystemConfig();
+            //获取mes配置
+            getMESConfig();
             //获取剩余内存
             initFreeSpace();
             //软件名字

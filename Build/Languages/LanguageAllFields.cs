@@ -61,6 +61,11 @@ namespace BingLibrary.Location
             get => Get();
             set => Set(value);
         }
+        public string ButtonSaveMesData
+        {
+            get => Get();
+            set => Set(value);
+        }
         public string SelectProject
         {
             get => Get();
