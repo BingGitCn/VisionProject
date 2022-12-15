@@ -14,7 +14,7 @@
     xmlns:prism="http://prismlibrary.com/"
     Title="{Binding Title}"
     Width="960"
-    Height="600"
+    Height="690"
     prism:ViewModelLocator.AutoWireViewModel="True"
     Closing="Window_Closing"
     FontFamily="pack://application:,,,/VisionProject;component/fonts/#iconfont,pack://application:,,,/VisionProject;component/fonts/#仓耳今楷03 W04"
@@ -140,19 +140,45 @@
                         <Grid Grid.Column="1">
                             <StackPanel Orientation="Vertical">
 
-                                <StackPanel Orientation="Horizontal">
+                                <!--<StackPanel Orientation="Horizontal">
                                     <TextBlock
                                         Margin="5"
                                         FontSize="24"
                                         Text="{Binding ShowCurrentProjectName, Source={StaticResource BingLocation}, Mode=OneWay}" />
                                     <TextBlock Style="{StaticResource TextBlockTitleBold}" Text="{Binding ProjectName}" />
-                                </StackPanel>
+                                </StackPanel>-->
 
                                 <!--<TextBlock
                                     Margin="5,15,5,5"
                                     FontSize="12"
                                     FontWeight="Bold"
                                     Text="{Binding ShowRunResult, Source={StaticResource BingLocation}, Mode=OneWay}" />-->
+
+                                <StackPanel Orientation="Horizontal">
+
+                                    <hc:ComboBox
+                                        Width="410"
+                                        Margin="5"
+                                        hc:InfoElement.Placeholder="{Binding ShowTips1, Source={StaticResource BingLocation}, Mode=OneWay}"
+                                        hc:InfoElement.Title="{Binding SelectProject, Source={StaticResource BingLocation}, Mode=OneWay}"
+                                        hc:InfoElement.TitlePlacement="Left"
+                                        hc:InfoElement.TitleWidth="80"
+                                        DisplayMemberPath="Name"
+                                        FontSize="18" FontWeight="Bold"
+                                        ItemsSource="{Binding Path=ProjectNames}"
+                                        SelectedIndex="{Binding ProjectIndex}"
+                                        SelectedItem="{Binding SelectProjectName}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="DropDownClosed">
+                                                <i:InvokeCommandAction Command="{Binding OpenProject}" CommandParameter="close" />
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="DropDownOpened">
+                                                <i:InvokeCommandAction Command="{Binding OpenProject}" CommandParameter="open" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </hc:ComboBox>
+                                </StackPanel>
+
                                 <Border
                                     Height="50"
                                     Margin="5"
@@ -182,7 +208,7 @@
                                     FontWeight="Bold"
                                     Text="{Binding ShowRunStatistic, Source={StaticResource BingLocation}, Mode=OneWay}" />-->
                                 <DataGrid
-                                    Margin="5"
+                                    Margin="5 0 5 5"
                                     AutoGenerateColumns="False"
                                     FontSize="16"
                                     HeadersVisibility="All"
@@ -225,7 +251,7 @@
                                 <StackPanel DataContext="{Binding MESData}" HorizontalAlignment="Left" Orientation="Vertical">
                                     <hc:TextBox
                                         Width="410"
-                                        Margin="5"
+                                        Margin="5 5 5 0"
                                         hc:InfoElement.Title="操作员"
                                         hc:InfoElement.TitlePlacement="Left"
                                         hc:InfoElement.TitleWidth="80"
@@ -243,7 +269,7 @@
                                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                     <Button
                                             Width="100"
-                                            Margin="5"
+                                            Margin="5 5 5 0"
                                             Command="{Binding SaveMesData}"
                                             Content="{Binding ButtonSaveMesData, Source={StaticResource BingLocation}, Mode=OneWay}"
                                             Style="{StaticResource ButtonPrimary}" />
@@ -252,30 +278,6 @@
 
                             <StackPanel VerticalAlignment="Bottom" Orientation="Vertical">
 
-                                <StackPanel Orientation="Horizontal">
-
-                                    <hc:ComboBox
-                                        Width="410"
-                                        Margin="5"
-                                        hc:InfoElement.Placeholder="{Binding ShowTips1, Source={StaticResource BingLocation}, Mode=OneWay}"
-                                        hc:InfoElement.Title="{Binding SelectProject, Source={StaticResource BingLocation}, Mode=OneWay}"
-                                        hc:InfoElement.TitlePlacement="Left"
-                                        hc:InfoElement.TitleWidth="80"
-                                        DisplayMemberPath="Name"
-                                        FontSize="14"
-                                        ItemsSource="{Binding Path=ProjectNames}"
-                                        SelectedIndex="{Binding ProjectIndex}"
-                                        SelectedItem="{Binding SelectProjectName}">
-                                        <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="DropDownClosed">
-                                                <i:InvokeCommandAction Command="{Binding OpenProject}" CommandParameter="close" />
-                                            </i:EventTrigger>
-                                            <i:EventTrigger EventName="DropDownOpened">
-                                                <i:InvokeCommandAction Command="{Binding OpenProject}" CommandParameter="open" />
-                                            </i:EventTrigger>
-                                        </i:Interaction.Triggers>
-                                    </hc:ComboBox>
-                                </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <hc:ComboBox
                                         x:Name="user"

@@ -13,18 +13,6 @@
           "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
           "Parameters": {
             "$id": "5",
-            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
-          },
-          "IsUse": true,
-          "ProductIndex": 0,
-          "InspectFunction": "测试",
-          "Content": null
-        },
-        {
-          "$id": "6",
-          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
-          "Parameters": {
-            "$id": "7",
             "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib",
             "EngineIndex": 0,
             "ScriptIndex1": 1,
@@ -40,10 +28,10 @@
           "Content": null
         },
         {
-          "$id": "8",
+          "$id": "6",
           "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
           "Parameters": {
-            "$id": "9",
+            "$id": "7",
             "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib",
             "SaveMode": 0,
             "SaveFormat": 1,
@@ -53,6 +41,18 @@
           "IsUse": true,
           "ProductIndex": 2,
           "InspectFunction": "保存图像",
+          "Content": null
+        },
+        {
+          "$id": "8",
+          "$type": "VisionProject.ViewModels.SubProgram, VisionProject",
+          "Parameters": {
+            "$id": "9",
+            "$type": "System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Object, mscorlib]], mscorlib"
+          },
+          "IsUse": true,
+          "ProductIndex": 0,
+          "InspectFunction": "测试",
           "Content": null
         }
       ]
@@ -101,5 +101,5 @@
     }
   },
   "CreateDate": "2022-12-08 10:49:37",
-  "LastDate": "2022-12-08 10:49:37"
+  "LastDate": "2022-12-15 15:49:45"
 }

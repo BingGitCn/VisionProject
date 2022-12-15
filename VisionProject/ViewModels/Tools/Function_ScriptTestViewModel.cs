@@ -17,7 +17,7 @@ namespace VisionProject.ViewModels
     {
         #region 窗口相关
 
-        private string _title = "脚本测试。";
+        private string _title = "脚本工具";
 
         public string Title
         {
