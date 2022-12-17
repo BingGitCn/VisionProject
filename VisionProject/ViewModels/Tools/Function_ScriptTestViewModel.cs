@@ -84,7 +84,7 @@ namespace VisionProject.ViewModels
             //这里判断，如果当前引擎下未挂在过程则返回。
             if (ScriptNames.Count == 0) return;
 
-            ScriptIndex1 = int.Parse(Variables.CurrentSubProgram.Parameters.BingGetOrAdd("ScriptIndex1", 0).ToString());
+            ScriptIndex1 = Variables.CurrentSubProgram.Parameters.BingGetOrAdd("ScriptIndex1", 0).ToString().BingToInt();
 
             //if (Variables.CurrentSubProgram.Parameters.ContainsKey("ScriptIndex1"))
             //    ScriptIndex1 = int.Parse(Variables.CurrentSubProgram.Parameters["ScriptIndex1"].ToString());
@@ -135,14 +135,14 @@ namespace VisionProject.ViewModels
 
         public async Task<bool> Init()
         {
-            await Task.Delay(300);
+            await 300;
             try
             {
                 EngineNames = new ObservableCollection<string>();
                 for (int i = 0; i < Variables.V2Engines.Count; i++)
                     EngineNames.Add("执行引擎" + i);
 
-                EngineIndex = int.Parse(Variables.CurrentSubProgram.Parameters.BingGetOrAdd("EngineIndex", 0).ToString());
+                EngineIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd("EngineIndex", 0).ToString().BingToInt();
                 //if (Variables.CurrentSubProgram.Parameters.ContainsKey("EngineIndex"))
                 //    EngineIndex = int.Parse(Variables.CurrentSubProgram.Parameters["EngineIndex"].ToString());
                 //else
@@ -162,7 +162,7 @@ namespace VisionProject.ViewModels
                 if (ScriptNames.Count == 0) return false;
 
                 //选择挂在的过程
-                ScriptIndex1 = int.Parse(Variables.CurrentSubProgram.Parameters.BingGetOrAdd("ScriptIndex1", 0).ToString());
+                ScriptIndex1 = Variables.CurrentSubProgram.Parameters.BingGetOrAdd("ScriptIndex1", 0).ToString().BingToInt();
 
                 //if (Variables.CurrentSubProgram.Parameters.ContainsKey("ScriptIndex1"))
                 //    ScriptIndex1 = int.Parse(Variables.CurrentSubProgram.Parameters["ScriptIndex1"].ToString());
@@ -480,7 +480,7 @@ namespace VisionProject.ViewModels
                     Variables.V2Engines[EngineIndex].SetParam(
                         ScriptNames[ScriptIndex1],
                         IOVariables1[i],
-                       new HalconDotNet.HTuple(double.Parse(Variables.CurrentSubProgram.Parameters.BingGetOrAdd(EngineIndex + "." + ScriptIndex1 + "." + i + "." + IOVariables1[i], "0").ToString())
+                       new HalconDotNet.HTuple(Variables.CurrentSubProgram.Parameters.BingGetOrAdd(EngineIndex + "." + ScriptIndex1 + "." + i + "." + IOVariables1[i], "0").ToString().BingToDouble()
                         ));
                 }
                 bool rst = Variables.V2Engines[EngineIndex].InspectProcedure(ScriptNames[ScriptIndex1]);

@@ -11,6 +11,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using VisionProject.GlobalVars;
+using BingLibrary.Extension;
 using OxyPlot;
 using OxyPlot.Series;
 using Log = BingLibrary.Logs.LogOpreate;
@@ -135,7 +136,7 @@ namespace VisionProject.ViewModels
         //初始化统计数据
         private async void initStatistic()
         {
-            await Task.Delay(100);
+            await 100;
 
             try
             {

@@ -1,5 +1,6 @@
 ﻿using HalconDotNet;
 using Prism.Mvvm;
+using BingLibrary.Extension;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ namespace VisionProject.ViewModels
             _ = Init();
         }
 
-        private HImage currentImage = new HImage();
+        //private HImage currentImage = new HImage();
 
         private List<string> _inputParams = new List<string>();
 
@@ -55,7 +56,7 @@ namespace VisionProject.ViewModels
 
         public async Task<bool> Init()
         {
-            await Task.Delay(300);
+            await 300;
             try
             {
                 if (Variables.CurrentSubProgram.Parameters.ContainsKey("Param1"))

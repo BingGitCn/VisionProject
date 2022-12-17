@@ -164,7 +164,8 @@
                                         hc:InfoElement.TitlePlacement="Left"
                                         hc:InfoElement.TitleWidth="80"
                                         DisplayMemberPath="Name"
-                                        FontSize="18" FontWeight="Bold"
+                                        FontSize="18"
+                                        FontWeight="Bold"
                                         ItemsSource="{Binding Path=ProjectNames}"
                                         SelectedIndex="{Binding ProjectIndex}"
                                         SelectedItem="{Binding SelectProjectName}">
@@ -208,7 +209,7 @@
                                     FontWeight="Bold"
                                     Text="{Binding ShowRunStatistic, Source={StaticResource BingLocation}, Mode=OneWay}" />-->
                                 <DataGrid
-                                    Margin="5 0 5 5"
+                                    Margin="5,0,5,5"
                                     AutoGenerateColumns="False"
                                     FontSize="16"
                                     HeadersVisibility="All"
@@ -248,10 +249,13 @@
                                         Content="{Binding ButtonClearRunStatistic, Source={StaticResource BingLocation}, Mode=OneWay}"
                                         Style="{StaticResource ButtonDanger}" />
                                 </StackPanel>
-                                <StackPanel DataContext="{Binding MESData}" HorizontalAlignment="Left" Orientation="Vertical">
+                                <StackPanel
+                                    HorizontalAlignment="Left"
+                                    DataContext="{Binding MESData}"
+                                    Orientation="Vertical">
                                     <hc:TextBox
                                         Width="410"
-                                        Margin="5 5 5 0"
+                                        Margin="5,5,5,0"
                                         hc:InfoElement.Title="操作员"
                                         hc:InfoElement.TitlePlacement="Left"
                                         hc:InfoElement.TitleWidth="80"
@@ -268,11 +272,11 @@
                                 </StackPanel>
                                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                     <Button
-                                            Width="100"
-                                            Margin="5 5 5 0"
-                                            Command="{Binding SaveMesData}"
-                                            Content="{Binding ButtonSaveMesData, Source={StaticResource BingLocation}, Mode=OneWay}"
-                                            Style="{StaticResource ButtonPrimary}" />
+                                        Width="100"
+                                        Margin="5,5,5,0"
+                                        Command="{Binding SaveMesData}"
+                                        Content="{Binding ButtonSaveMesData, Source={StaticResource BingLocation}, Mode=OneWay}"
+                                        Style="{StaticResource ButtonPrimary}" />
                                 </StackPanel>
                             </StackPanel>
 
@@ -530,7 +534,7 @@
                                                         </DataGridTemplateColumn.CellTemplate>
                                                     </DataGridTemplateColumn>
 
-                                                    <DataGridTemplateColumn Header="检测内容">
+                                                    <DataGridTemplateColumn Header="工具选择">
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <hc:ComboBox

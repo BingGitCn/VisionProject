@@ -2,6 +2,7 @@
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
+using BingLibrary.Extension;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -47,13 +48,13 @@ namespace VisionProject.ViewModels
 
         public async Task<bool> Init()
         {
-            await Task.Delay(300);
+            await 300;
             try
             {
                 if (Variables.CurrentSubProgram.Parameters.ContainsKey("SaveMode"))
-                    SaveMode = int.Parse(Variables.CurrentSubProgram.Parameters["SaveMode"].ToString());
+                    SaveMode = Variables.CurrentSubProgram.Parameters["SaveMode"].ToString().BingToInt();
                 if (Variables.CurrentSubProgram.Parameters.ContainsKey("SaveFormat"))
-                    SaveFormat = int.Parse(Variables.CurrentSubProgram.Parameters["SaveFormat"].ToString());
+                    SaveFormat = Variables.CurrentSubProgram.Parameters["SaveFormat"].ToString().BingToInt();
 
                 if (Variables.CurrentSubProgram.Parameters.ContainsKey("SaveCount"))
                     SaveCount = (string)Variables.CurrentSubProgram.Parameters["SaveCount"];

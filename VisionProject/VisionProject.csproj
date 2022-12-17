@@ -195,7 +195,7 @@
       <Version>6.1.3.50</Version>
     </PackageReference>
     <PackageReference Include="BingLibraryLite">
-      <Version>2.0.3-pre</Version>
+      <Version>2.0.4-pre</Version>
     </PackageReference>
     <PackageReference Include="EPPlus">
       <Version>6.0.5</Version>

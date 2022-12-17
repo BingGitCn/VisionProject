@@ -88,8 +88,8 @@ namespace VisionProject.ViewModels
         private void ExecuteSelectedCamera()
         {
             // CameraIndex = int.Parse(Variables.CurrentSubProgram.Parameters.BingGetOrAdd("CameraIndex", 0).ToString());
-            CameraTypeIndex = int.Parse(Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".CameraTypeIndex", 0).ToString());
-            ExpouseTime = double.Parse(Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".ExpouseTime", 200).ToString());
+            CameraTypeIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".CameraTypeIndex", 0).ToString().BingToInt();
+            ExpouseTime = Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".ExpouseTime", 200).ToString().BingToDouble();
 
             if (Variables.Cameras[CameraIndex].IsOpened)
                 NotOpened = false;
@@ -143,7 +143,7 @@ namespace VisionProject.ViewModels
                         MoreContent = "连续拍摄";
                         beginGrab = false;
                     }
-                    await Task.Delay(1000);
+                    await 1000;
                     Variables.Cameras[CameraIndex].CloseCamera();
                 }
                 NotOpened = true;
@@ -208,7 +208,7 @@ namespace VisionProject.ViewModels
                         Variables.ImageWindowDataForFunction.Repaint();
                     });
 
-                    await Task.Delay(10);
+                    await 10;
                 }
                 catch { }
             }
@@ -216,7 +216,7 @@ namespace VisionProject.ViewModels
 
         public async Task<bool> Init()
         {
-            await Task.Delay(300);
+            await 300;
             try
             {
                 //获取相机列表
@@ -224,9 +224,9 @@ namespace VisionProject.ViewModels
                 for (int i = 0; i < Variables.Cameras.Count; i++)
                     CameraNames.Add(Variables.Cameras[i].CameraName);
 
-                CameraIndex = int.Parse(Variables.CurrentSubProgram.Parameters.BingGetOrAdd("CameraIndex", 0).ToString());
-                CameraTypeIndex = int.Parse(Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".CameraTypeIndex", 0).ToString());
-                ExpouseTime = double.Parse(Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".ExpouseTime", 200).ToString());
+                CameraIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd("CameraIndex", 0).ToString().BingToInt();
+                CameraTypeIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".CameraTypeIndex", 0).ToString().BingToInt();
+                ExpouseTime = Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".ExpouseTime", 200).ToString().BingToDouble();
 
                 Update();
                 if (Variables.Cameras[CameraIndex].IsOpened)

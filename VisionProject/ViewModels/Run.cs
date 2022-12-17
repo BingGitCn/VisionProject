@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
+using BingLibrary.Extension;
 using Log = BingLibrary.Logs.LogOpreate;
 
 namespace VisionProject.ViewModels
@@ -81,7 +82,7 @@ namespace VisionProject.ViewModels
         {
             while (true)
             {
-                await Task.Delay(5000);
+                await 5000;
 
                 try
                 {
@@ -116,7 +117,7 @@ namespace VisionProject.ViewModels
         {
             //初始化PLC
 
-            await Task.Delay(1000);
+            await 1000;
             for (int i = 0; i < 10; i++)
             {
                 if (Variables.HCPLC.IsConnected)
@@ -127,7 +128,7 @@ namespace VisionProject.ViewModels
                     Variables.HCPLC.Init("127.0.0.1", 502, 01);
                 });
 
-                await Task.Delay(1000);
+                await 1000;
             }
 
             Log.Info(Variables.HCPLC.IsConnected ? "PLC连接成功" : "PLC连接失败");
@@ -145,8 +146,7 @@ namespace VisionProject.ViewModels
             List<string> ToolNames = DialogNames.ToolNams.Keys.ToList();
             while (true)
             {
-                await Task.Delay(100);
-
+                await 100;
                 if (false)
                 {
                     //这里需要判断下程序数量
