@@ -1,6 +1,6 @@
-﻿namespace BingLibrary.Location
+namespace BingLibrary.Location
 {
-    public class LanguageAllFields : LanguageNotify
+    public partial class LanguageAllFields : LanguageNotify
     {
         public string Home
         {
@@ -260,7 +260,19 @@
             set => Set(value);
         }
 
+        public string RememberLoad
+        {
+            get => Get();
+            set => Set(value);
+        }
+
         public string ShowTextWarn2
+        {
+            get => Get();
+            set => Set(value);
+        }
+
+        public string ShowTextWarn3
         {
             get => Get();
             set => Set(value);
@@ -279,12 +291,6 @@
         }
 
         public string Language
-        {
-            get => Get();
-            set => Set(value);
-        }
-
-        public string MachineID
         {
             get => Get();
             set => Set(value);

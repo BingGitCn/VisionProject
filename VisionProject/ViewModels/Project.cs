@@ -43,7 +43,7 @@ namespace VisionProject.ViewModels
         /// <summary>
         /// 初始化项目,主界面显示所有项目
         /// </summary>
-        private void initProjects()
+        private async void initProjects()
         {
             if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "Projects"))
                 Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "Projects");
@@ -54,6 +54,36 @@ namespace VisionProject.ViewModels
                 if (fileInfo.Extension == ".lprj")
                     ProjectNames.Add(new ProjectInfo() { Name = fileInfo.Name.Replace(".lprj", ""), Path = files[i] });
             }
+
+            await System.Threading.Tasks.Task.Delay(5000);
+            if (SystemConfig.IsLoadProject)
+                if (SystemConfig.ProjectIndex != -1)
+                {
+                    try
+                    {
+                        HOperatorSet.SetSystem(new HTuple("clip_region"), new HTuple("false"));
+                        ProjectIndex = SystemConfig.ProjectIndex;
+                        Variables.CurrentProject = Serialize.ReadJsonV2<Project>(SelectProjectName.Path);
+                        Programs = Variables.CurrentProject.Programs;
+                        Program1.Clear();
+                        if (Programs.Keys.ToList().Count > 0)
+                            for (int i = 0; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
+                                Program1.Add(Programs[Programs.Keys.ToList()[0]][i]);
+                        ProgramsIndex = 0;
+                        ProjectName = SelectProjectName.Name;
+                        CreateDate = Variables.CurrentProject.CreateDate;
+                        LastDate = Variables.CurrentProject.LastDate;
+                        ProjectPath = SelectProjectName.Path;
+                        Log.Info("打开了项目 " + ProjectName);
+
+                        ProgramsName.Clear();
+                        for (int i = 0; i < Programs.Keys.Count; i++)
+                            ProgramsName.Add(Programs.Keys.ToList()[i]);
+
+                        Variables.ProgramName = ProgramsName[ProgramsIndex];
+                    }
+                    catch { }
+                }
         }
 
         private string _projectName;
@@ -158,6 +188,22 @@ namespace VisionProject.ViewModels
                             ProjectPath = SelectProjectName.Path;
                             Log.Info("打开了项目 " + ProjectName);
 
+                            if (SystemConfig.IsLoadProject == true)
+                                try
+                                {
+                                    SystemConfig.ProjectIndex = ProjectIndex;
+                                    Serialize.WriteJsonV2(SystemConfig, Variables.BaseDirectory + "system.config");
+                                    Log.Info("系统设置保存成功。");
+                                }
+                                catch { Log.Error("系统设置保存失败。"); }
+                            else
+                                try
+                                {
+                                    SystemConfig.ProjectIndex = -1;
+                                    Serialize.WriteJsonV2(SystemConfig, Variables.BaseDirectory + "system.config");
+                                    Log.Info("系统设置保存成功。");
+                                }
+                                catch { Log.Error("系统设置保存失败。"); }
                             ProgramsName.Clear();
                             for (int i = 0; i < Programs.Keys.Count; i++)
                                 ProgramsName.Add(Programs.Keys.ToList()[i]);

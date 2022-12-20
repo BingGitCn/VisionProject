@@ -42,9 +42,10 @@
     "OldPassword": "Old password",
     "NewPassword": "New Password",
     "RememberParh": "Remember the path",
+    "RememberLoad": "Auto Load",
     "ShowTextWarn2": "Remember the saved path of the last project file opened",
+    "ShowTextWarn3": "Automatically load the last open project when opening the software",
     "Drive": "Drive letter selection",
     "AlarmThreshold": "Alarm threshold (GB remaining)",
-    "Language": "Language selection",
-    "MachineID": "Device ID:"
+    "Language": "Language selection"
 }

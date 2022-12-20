@@ -687,7 +687,20 @@
                                         Foreground="DarkGray"
                                         IsChecked="{Binding IsRestoreDirectory, UpdateSourceTrigger=PropertyChanged}" />
                                 </StackPanel>
-
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        Width="70"
+                                        Margin="5"
+                                        VerticalAlignment="Center"
+                                        FontSize="14"
+                                        Text="{Binding RememberLoad, Source={StaticResource BingLocation}, Mode=OneWay}" />
+                                    <CheckBox
+                                        Margin="5"
+                                        Content="{Binding ShowTextWarn3, Source={StaticResource BingLocation}, Mode=OneWay}"
+                                        FontSize="14"
+                                        Foreground="DarkGray"
+                                        IsChecked="{Binding IsLoadProject, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <hc:ComboBox
                                         Width="270"

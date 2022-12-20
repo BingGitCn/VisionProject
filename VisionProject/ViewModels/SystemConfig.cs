@@ -97,5 +97,8 @@ namespace VisionProject.ViewModels
         public string CurrentPassword { set; get; }
         public string NewPassword { set; get; }
         public bool IsRestoreDirectory { set; get; }
+
+        public bool IsLoadProject { set; get; }
+        public int ProjectIndex { set; get; }
     }
 }

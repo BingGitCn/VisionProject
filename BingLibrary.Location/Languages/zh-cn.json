@@ -49,7 +49,9 @@
   "OldPassword": "旧密码",
   "NewPassword": "新密码",
   "RememberParh": "记住路径",
+  "RememberLoad": "自动加载",
   "ShowTextWarn2": "记住上次项目文件打开保存的路径",
+  "ShowTextWarn3": "打开软件时自动加载上次打开的项目",
   "Drive": "盘符选择",
   "AlarmThreshold": "报警阈值（剩余GB）",
   "Language": "语言选择"

@@ -60,6 +60,9 @@ namespace VisionProject.GlobalVars
         //当前编辑的程序名字
         public static string ProgramName = "";
 
+        //当前项目的名字
+        public static string ProjectName = "";
+
         /// <summary>
         /// 获取输入参数
         /// </summary>

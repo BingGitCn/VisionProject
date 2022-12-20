@@ -221,7 +221,17 @@ namespace BingLibrary.Location
             get => Get();
             set => Set(value);
         }
+        public string RememberLoad
+        {
+            get => Get();
+            set => Set(value);
+        }
         public string ShowTextWarn2
+        {
+            get => Get();
+            set => Set(value);
+        }
+        public string ShowTextWarn3
         {
             get => Get();
             set => Set(value);
@@ -237,11 +247,6 @@ namespace BingLibrary.Location
             set => Set(value);
         }
         public string Language
-        {
-            get => Get();
-            set => Set(value);
-        }
-        public string MachineID
         {
             get => Get();
             set => Set(value);
