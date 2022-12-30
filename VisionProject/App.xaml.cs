@@ -1,4 +1,5 @@
 ﻿using Prism.Ioc;
+using Prism.Modularity;
 using System.Windows;
 using VisionProject.ViewModels;
 using VisionProject.Views;
@@ -32,5 +33,12 @@ namespace VisionProject
             //相机操作窗口
             containerRegistry.RegisterDialog<Function_Camera, Function_CameraViewModel>(GlobalVars.DialogNames.ToolNams["相机操作"]);
         }
+
+        //protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+        //{
+        //    // 加载工具模块
+        //    moduleCatalog.AddModule<Tools.Module>();
+        //    base.ConfigureModuleCatalog(moduleCatalog);
+        //}
     }
 }

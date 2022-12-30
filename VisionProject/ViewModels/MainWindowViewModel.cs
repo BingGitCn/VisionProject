@@ -138,59 +138,51 @@ namespace VisionProject.ViewModels
         {
             await 100;
 
-            try
+            await Task.Run(() =>
             {
-                if (!File.Exists(Variables.StatisticDataFilePath))
-                    File.Copy(AppDomain.CurrentDomain.BaseDirectory + "n.xlsx", Variables.StatisticDataFilePath);
-                FileInfo fileInfo = new FileInfo(Variables.StatisticDataFilePath);
-                ExcelPackage package = new ExcelPackage(fileInfo);
-                var w = package.Workbook.Worksheets[0];
-                w.Protection.IsProtected = false;
-                w.DefaultColWidth = 20;
-
-                int rowCount = 1;
                 try
                 {
-                    rowCount = w.Dimension.Rows + 1;
-                }
-                catch { }
-                if (rowCount == 1)
-                {
-                    w.Cells[1, 1, 1, 5].Merge = true;
-                    w.Cells[1, 1].Style.Font.Size = 18;
-                    w.Cells[1, 1].Style.Font.Bold = true;
-                    w.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    w.Cells[1, 1].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
-                    w.Cells[1, 1].Value = "数据统计";
+                    if (!File.Exists(Variables.StatisticDataFilePath))
+                        File.Copy(AppDomain.CurrentDomain.BaseDirectory + "n.xlsx", Variables.StatisticDataFilePath);
 
-                    rowCount = 2;
+                    File.Copy(Variables.StatisticDataFilePath, AppDomain.CurrentDomain.BaseDirectory + "tempStatistic.xlsx", true);
 
-                    w.Cells[rowCount, 1].Value = "时间"; w.Cells[rowCount, 1].Style.Font.Bold = true;
-                    w.Cells[rowCount, 2].Value = "良品"; w.Cells[rowCount, 2].Style.Font.Bold = true;
-                    w.Cells[rowCount, 3].Value = "不良"; w.Cells[rowCount, 3].Style.Font.Bold = true;
-                    w.Cells[rowCount, 4].Value = "总计"; w.Cells[rowCount, 4].Style.Font.Bold = true;
-                    w.Cells[rowCount, 5].Value = "良率"; w.Cells[rowCount, 5].Style.Font.Bold = true;
-                    rowCount = 3;
+                    FileInfo fileInfo = new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "tempStatistic.xlsx");
+                    ExcelPackage package = new ExcelPackage(fileInfo);
+                    var w = package.Workbook.Worksheets[0];
+                    w.Protection.IsProtected = false;
+                    w.DefaultColWidth = 20;
 
-                    w.Cells[rowCount, 1].Value = "当前";
-                    w.Cells[rowCount, 2].Value = 0;
-                    w.Cells[rowCount, 3].Value = 0;
-                    w.Cells[rowCount, 4].Value = 0;
-                    w.Cells[rowCount, 5].Value = "0%";
-
-                    rowCount = 4;
-
-                    w.Cells[rowCount, 1].Value = DateTime.Now.ToString("yyyy/MM/dd");
-                    w.Cells[rowCount, 2].Value = 0;
-                    w.Cells[rowCount, 3].Value = 0;
-                    w.Cells[rowCount, 4].Value = 0;
-                    w.Cells[rowCount, 5].Value = "0%";
-                }
-                else
-                {
-                    if (w.Cells[4, 1].Value.ToString() != DateTime.Now.ToString("yyyy/MM/dd"))
+                    int rowCount = 1;
+                    try
                     {
-                        w.InsertRow(4, 1);
+                        rowCount = w.Dimension.Rows + 1;
+                    }
+                    catch { }
+                    if (rowCount == 1)
+                    {
+                        w.Cells[1, 1, 1, 5].Merge = true;
+                        w.Cells[1, 1].Style.Font.Size = 18;
+                        w.Cells[1, 1].Style.Font.Bold = true;
+                        w.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        w.Cells[1, 1].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                        w.Cells[1, 1].Value = "数据统计";
+
+                        rowCount = 2;
+
+                        w.Cells[rowCount, 1].Value = "时间"; w.Cells[rowCount, 1].Style.Font.Bold = true;
+                        w.Cells[rowCount, 2].Value = "良品"; w.Cells[rowCount, 2].Style.Font.Bold = true;
+                        w.Cells[rowCount, 3].Value = "不良"; w.Cells[rowCount, 3].Style.Font.Bold = true;
+                        w.Cells[rowCount, 4].Value = "总计"; w.Cells[rowCount, 4].Style.Font.Bold = true;
+                        w.Cells[rowCount, 5].Value = "良率"; w.Cells[rowCount, 5].Style.Font.Bold = true;
+                        rowCount = 3;
+
+                        w.Cells[rowCount, 1].Value = "当前";
+                        w.Cells[rowCount, 2].Value = 0;
+                        w.Cells[rowCount, 3].Value = 0;
+                        w.Cells[rowCount, 4].Value = 0;
+                        w.Cells[rowCount, 5].Value = "0%";
+
                         rowCount = 4;
 
                         w.Cells[rowCount, 1].Value = DateTime.Now.ToString("yyyy/MM/dd");
@@ -199,46 +191,74 @@ namespace VisionProject.ViewModels
                         w.Cells[rowCount, 4].Value = 0;
                         w.Cells[rowCount, 5].Value = "0%";
                     }
+                    else
+                    {
+                        if (w.Cells[4, 1].Value.ToString() != DateTime.Now.ToString("yyyy/MM/dd"))
+                        {
+                            w.InsertRow(4, 1);
+                            rowCount = 4;
+
+                            w.Cells[rowCount, 1].Value = DateTime.Now.ToString("yyyy/MM/dd");
+                            w.Cells[rowCount, 2].Value = 0;
+                            w.Cells[rowCount, 3].Value = 0;
+                            w.Cells[rowCount, 4].Value = 0;
+                            w.Cells[rowCount, 5].Value = "0%";
+                        }
+                    }
+
+                    GlobalTools.OnUIThread(() =>
+                    {
+                        HomeStatisticData.Clear();
+                    });
+
+                    for (int i = 3; i <= 4; i++)
+                    {
+                        var sd = new StatisticData();
+                        sd.CurrentDate = w.Cells[i, 1].Value.ToString();
+                        sd.OK = double.Parse(w.Cells[i, 2].Value.ToString());
+                        sd.NG = double.Parse(w.Cells[i, 3].Value.ToString());
+                        sd.All = double.Parse(w.Cells[i, 4].Value.ToString());
+                        sd.Rate = w.Cells[i, 5].Value.ToString();
+
+                        GlobalTools.OnUIThread(() =>
+                        {
+                            HomeStatisticData.Add(sd);
+                        });
+                    }
+                    GlobalTools.OnUIThread(() =>
+                    {
+                        AllStatisticData.Clear();
+                    });
+
+                    try
+                    {
+                        rowCount = w.Dimension.Rows;
+                    }
+                    catch { }
+
+                    for (int i = 3; i <= rowCount; i++)
+                    {
+                        var sd = new StatisticData();
+                        sd.CurrentDate = w.Cells[i, 1].Value.ToString();
+                        sd.OK = double.Parse(w.Cells[i, 2].Value.ToString());
+                        sd.NG = double.Parse(w.Cells[i, 3].Value.ToString());
+                        sd.All = double.Parse(w.Cells[i, 4].Value.ToString());
+                        sd.Rate = w.Cells[i, 5].Value.ToString();
+                        GlobalTools.OnUIThread(() =>
+                        {
+                            AllStatisticData.Add(sd);
+                        });
+                    }
+
+                    //锁住
+                    w.Protection.IsProtected = true;
+                    package.Save();
+                    package.Dispose();
+
+                    Log.Info("数据加载成功。");
                 }
-
-                HomeStatisticData.Clear();
-                for (int i = 3; i <= 4; i++)
-                {
-                    var sd = new StatisticData();
-                    sd.CurrentDate = w.Cells[i, 1].Value.ToString();
-                    sd.OK = double.Parse(w.Cells[i, 2].Value.ToString());
-                    sd.NG = double.Parse(w.Cells[i, 3].Value.ToString());
-                    sd.All = double.Parse(w.Cells[i, 4].Value.ToString());
-                    sd.Rate = w.Cells[i, 5].Value.ToString();
-                    HomeStatisticData.Add(sd);
-                }
-
-                AllStatisticData.Clear();
-                try
-                {
-                    rowCount = w.Dimension.Rows;
-                }
-                catch { }
-
-                for (int i = 3; i <= rowCount; i++)
-                {
-                    var sd = new StatisticData();
-                    sd.CurrentDate = w.Cells[i, 1].Value.ToString();
-                    sd.OK = double.Parse(w.Cells[i, 2].Value.ToString());
-                    sd.NG = double.Parse(w.Cells[i, 3].Value.ToString());
-                    sd.All = double.Parse(w.Cells[i, 4].Value.ToString());
-                    sd.Rate = w.Cells[i, 5].Value.ToString();
-                    AllStatisticData.Add(sd);
-                }
-
-                //锁住
-                w.Protection.IsProtected = true;
-                package.Save();
-                package.Dispose();
-
-                Log.Info("数据加载成功。");
-            }
-            catch { Log.Error("数据加载失败。"); }
+                catch { Log.Error("数据加载失败。"); }
+            });
         }
 
         /// <summary>
