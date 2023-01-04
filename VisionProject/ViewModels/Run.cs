@@ -41,6 +41,25 @@ namespace VisionProject.ViewModels
             run();
         }
 
+        private async void initCameras(Dictionary<string, object> ps)
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    for (int i = 0; i < Variables.Cameras.Count; i++)
+                    {
+                        int CameraTypeIndex = ps.BingGetOrAdd(i + ".CameraTypeIndex", 0).ToString().BingToInt();
+                        double ExpouseTime = ps.BingGetOrAdd(i + ".ExpouseTime", 200).ToString().BingToDouble();
+                        Variables.Cameras[i].CameraType = CameraTypeIndex;
+                        Variables.Cameras[i].ExpouseTime = ExpouseTime;
+                        Variables.Cameras[i].OpenCamera();
+                    }
+                }
+                catch { }
+            });
+        }
+
         private void initEngine()
         {
             try
