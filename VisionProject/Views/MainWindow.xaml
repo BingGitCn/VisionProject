@@ -554,7 +554,7 @@
                                                                     Margin="2"
                                                                     Command="{Binding Path=DataContext.Program1Config, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
                                                                     CommandParameter="{Binding InspectFunction, Mode=OneWay}"
-                                                                    Content="设  置"
+                                                                    Content="设  置" Background="#2c7fba"
                                                                     Style="{StaticResource ButtonPrimary}" />
                                                             </DataTemplate>
                                                         </DataGridTemplateColumn.CellTemplate>

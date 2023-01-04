@@ -14,13 +14,9 @@ namespace VisionProject.GlobalVars
 {
     public static class Variables
     {
-        //全局Dialog服务
-        public static IDialogService CurDialogService;
+        //Step..
 
-        //脚本代码
-        public static string ScriptCode = "";
-
-        public static ScriptEdit scriptEdit = new ScriptEdit();
+        #region 按需修改
 
         //添加 V2 引擎，这里使用数组，方便多相机或多线程使用
         public static List<VisionEngine2> V2Engines = new List<VisionEngine2>()
@@ -39,6 +35,26 @@ namespace VisionProject.GlobalVars
         //PLC
         //不要在多个异步方法中同时调用一个！可以再申明一个。
         public static ModbusNet HCPLC = new ModbusNet();
+
+        //图像窗口，需在mainwindow.cs入口指定对应的windowdata
+        public static BingImageWindowData WindowData1 = new BingImageWindowData();
+
+        public static HImage CurrentImage1 = new HImage();
+
+        //程序编辑弹出窗口对应的windowdata
+        public static BingImageWindowData ImageWindowDataForFunction = new BingImageWindowData();
+
+        public static HImage CurrentImageForFunction = new HImage();
+
+        #endregion 按需修改
+
+        //全局Dialog服务
+        public static IDialogService CurDialogService;
+
+        //脚本代码
+        public static string ScriptCode = "";
+
+        public static ScriptEdit scriptEdit = new ScriptEdit();
 
         //标题
         public static string Title = "";
@@ -92,16 +108,6 @@ namespace VisionProject.GlobalVars
 
             return inputParams;
         }
-
-        //图像窗口，需在mainwindow.cs入口指定对应的windowdata
-        public static BingImageWindowData WindowData1 = new BingImageWindowData();
-
-        public static HImage CurrentImage1 = new HImage();
-
-        //程序编辑弹出窗口对应的windowdata
-        public static BingImageWindowData ImageWindowDataForFunction = new BingImageWindowData();
-
-        public static HImage CurrentImageForFunction = new HImage();
 
         //弹出窗口确认
         public static void ShowMessage(string msg)
