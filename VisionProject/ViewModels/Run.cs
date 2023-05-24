@@ -65,17 +65,12 @@ namespace VisionProject.ViewModels
             try
             {
                 //这里自动获取目录下的脚本，添加至引擎
-                for (int i = 0; i < Variables.V2Engines.Count; i++)
+                for (int i = 0; i < Variables.WorkEngines.Count; i++)
                 {
                     var folder = new DirectoryInfo(System.AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts" + i);
                     var procedureFiles = folder.GetFiles("*.hdvp");
                     foreach (var procedureFile in procedureFiles)
-                        Variables.V2Engines[i].AddProcedure(procedureFile.Name.Replace(".hdvp", ""));
-                    //也可自己添加
-                    //Variables.V2Engine.AddProcedure("lvba");
-                    //Variables.V2Engine.AddProcedure("lvba2");
-                    //先添加脚本，再初始化，
-                    Variables.V2Engines[i].Init(System.AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts" + i);
+                        Variables.WorkEngines[i].AddProcedure(procedureFile.Name.Replace(".hdvp", ""), System.AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts" + i);
                 }
             }
             catch { }

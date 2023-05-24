@@ -62,11 +62,11 @@ namespace VisionProject.ViewModels
                 if (Variables.CurrentSubProgram.Parameters.ContainsKey("Param1"))
                     Param1 = (double)Variables.CurrentSubProgram.Parameters["Param1"];
 
-                Variables.ImageWindowDataForFunction.CurrentImage = Variables.CurrentImageForFunction;
+                Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(Variables.CurrentImageForFunction);
 
                 //显示彩色图像
-                Variables.ImageWindowDataForFunction.ClearHObjects();
-                Variables.ImageWindowDataForFunction.Repaint();
+                Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
 
                 InputParams = Variables.GetInputParams(Variables.ProgramName).Keys.ToList();
 

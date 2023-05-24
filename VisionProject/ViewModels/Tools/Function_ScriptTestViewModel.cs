@@ -73,8 +73,9 @@ namespace VisionProject.ViewModels
         {
             //获取脚本列表
             ScriptNames = new ObservableCollection<string>();
-            for (int i = 0; i < Variables.V2Engines[EngineIndex].ProcedureNames.Count; i++)
-                ScriptNames.Add(Variables.V2Engines[EngineIndex].ProcedureNames[i]);
+            var procedureNames = Variables.WorkEngines[EngineIndex].GetProcedureNames();
+            for (int i = 0; i < procedureNames.Count; i++)
+                ScriptNames.Add(procedureNames[i]);
 
             IOVariables1.Clear();
             IOVariables2.Clear();
@@ -91,7 +92,7 @@ namespace VisionProject.ViewModels
             //else
             //    ScriptIndex1 = 0;
 
-            var rst = Variables.V2Engines[EngineIndex].GetProcedureInfo(ScriptNames[ScriptIndex1]);
+            var rst = Variables.WorkEngines[EngineIndex].GetProcedureInfo(ScriptNames[ScriptIndex1]);
 
             for (int i = 0; i < rst.InputCtrlParamNames.Count; i++)
             {
@@ -139,7 +140,7 @@ namespace VisionProject.ViewModels
             try
             {
                 EngineNames = new ObservableCollection<string>();
-                for (int i = 0; i < Variables.V2Engines.Count; i++)
+                for (int i = 0; i < Variables.WorkEngines.Count; i++)
                     EngineNames.Add("执行引擎" + i);
 
                 EngineIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd("EngineIndex", 0).ToString().BingToInt();
@@ -150,8 +151,9 @@ namespace VisionProject.ViewModels
 
                 //获取脚本列表
                 ScriptNames = new ObservableCollection<string>();
-                for (int i = 0; i < Variables.V2Engines[EngineIndex].ProcedureNames.Count; i++)
-                    ScriptNames.Add(Variables.V2Engines[EngineIndex].ProcedureNames[i]);
+                var procedureNames = Variables.WorkEngines[EngineIndex].GetProcedureNames();
+                for (int i = 0; i < procedureNames.Count; i++)
+                    ScriptNames.Add(procedureNames[i]);
 
                 IOVariables1.Clear();
                 IOVariables2.Clear();
@@ -169,7 +171,7 @@ namespace VisionProject.ViewModels
                 //else
                 //    ScriptIndex1 = 0;
 
-                var rst = Variables.V2Engines[EngineIndex].GetProcedureInfo(ScriptNames[ScriptIndex1]);
+                var rst = Variables.WorkEngines[EngineIndex].GetProcedureInfo(ScriptNames[ScriptIndex1]);
 
                 for (int i = 0; i < rst.InputCtrlParamNames.Count; i++)
                 {
@@ -244,7 +246,7 @@ namespace VisionProject.ViewModels
             IOValue1 = "";
             if (ScriptIndex1 < 0) return;
 
-            var rst = Variables.V2Engines[EngineIndex].GetProcedureInfo(ScriptNames[ScriptIndex1]);
+            var rst = Variables.WorkEngines[EngineIndex].GetProcedureInfo(ScriptNames[ScriptIndex1]);
 
             for (int i = 0; i < rst.InputCtrlParamNames.Count; i++)
             {
@@ -434,6 +436,14 @@ namespace VisionProject.ViewModels
         {
             try
             {
+                //BingLibrary.Vision.ScriptEditPlus scriptEditPlus = new ScriptEditPlus();
+                //scriptEditPlus.SetProcedurePath("D:\\Desktop\\HalconTest");
+
+                //scriptEditPlus.CreateNew("ABC");
+                //scriptEditPlus.UpdateIO("PA1", "123", ScriptEditPlus.BaseType.InputCtrl, ScriptEditPlus.SemType.String);
+                //var rst = scriptEditPlus.GetIO();
+                //scriptEditPlus.Save();
+
                 Variables.scriptEdit.SetProcedurePath(AppDomain.CurrentDomain.BaseDirectory + "Projects\\Scripts" + EngineIndex);
                 //打开脚本窗口
                 ScriptDIalog sd = new ScriptDIalog();
@@ -472,20 +482,18 @@ namespace VisionProject.ViewModels
         {
             try
             {
-                //更改脚本后，重新加载脚本，无需重启软件
-                Variables.V2Engines[EngineIndex].Reload();
                 for (int i = 0; i < IOVariables1.Count; i++)
                 {
                     //这里数据类型都一样，按实际情况传入数据
-                    Variables.V2Engines[EngineIndex].SetParam(
+                    Variables.WorkEngines[EngineIndex].SetParam(
                         ScriptNames[ScriptIndex1],
                         IOVariables1[i],
                        new HalconDotNet.HTuple(Variables.CurrentSubProgram.Parameters.BingGetOrAdd(EngineIndex + "." + ScriptIndex1 + "." + i + "." + IOVariables1[i], "0").ToString().BingToDouble()
                         ));
                 }
-                bool rst = Variables.V2Engines[EngineIndex].InspectProcedure(ScriptNames[ScriptIndex1]);
+                bool rst = Variables.WorkEngines[EngineIndex].InspectProcedure(ScriptNames[ScriptIndex1]);
                 //获取结果
-                RunScriptResult = Variables.V2Engines[EngineIndex].GetParam<HalconDotNet.HTuple>(ScriptNames[ScriptIndex1], "Result").ToString();
+                RunScriptResult = Variables.WorkEngines[EngineIndex].GetParam<HalconDotNet.HTuple>(ScriptNames[ScriptIndex1], "Result").ToString();
             }
             catch { }
         }

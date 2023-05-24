@@ -19,10 +19,10 @@ namespace VisionProject.GlobalVars
         #region 按需修改
 
         //添加 V2 引擎，这里使用数组，方便多相机或多线程使用
-        public static List<VisionEngine2> V2Engines = new List<VisionEngine2>()
+        public static List<WorkerEngine> WorkEngines = new List<WorkerEngine>()
         {
-            new VisionEngine2(),
-            new VisionEngine2()
+            new WorkerEngine(),
+            new WorkerEngine()
         };
 
         //添加相机名字，这里使用数组，方便多相机或多线程使用

@@ -195,7 +195,7 @@
       <Version>6.1.3.50</Version>
     </PackageReference>
     <PackageReference Include="BingLibraryLite">
-      <Version>2.0.4-pre</Version>
+      <Version>2.0.8-pre</Version>
     </PackageReference>
     <PackageReference Include="EPPlus">
       <Version>6.0.5</Version>
@@ -219,7 +219,7 @@
       <Project>{84ec4a6f-7159-42bb-aa0d-01ac2795c3e9}</Project>
       <Name>BingLibrary.Location</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BingLibrary.Vision\BingLibrary.Vision.csproj">
+    <ProjectReference Include="..\BingVision\BingLibrary.Vision.csproj">
       <Project>{281775f6-4a65-40ab-a5ba-d90876c42119}</Project>
       <Name>BingLibrary.Vision</Name>
     </ProjectReference>

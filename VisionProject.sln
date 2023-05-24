@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisionProject", "VisionProj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BingLibrary.Location", "BingLibrary.Location\BingLibrary.Location.csproj", "{84EC4A6F-7159-42BB-AA0D-01AC2795C3E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BingLibrary.Vision", "BingLibrary.Vision\BingLibrary.Vision.csproj", "{281775F6-4A65-40AB-A5BA-D90876C42119}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BingLibrary.Vision", "BingVision\BingLibrary.Vision.csproj", "{281775F6-4A65-40AB-A5BA-D90876C42119}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,24 +5,18 @@
       <ic>
         <par name="P1" base_type="ctrl" dimension="0" />
         <par name="P2" base_type="ctrl" dimension="0" />
+        <par name="P3" base_type="ctrl" dimension="0" />
+        <par name="P4" base_type="ctrl" dimension="0" />
       </ic>
       <oc>
         <par name="Result" base_type="ctrl" dimension="0" />
       </oc>
     </interface>
     <body>
-      <l>Result:=100*( P1+P2 )</l>
+      <l>Result:=20*( P1+P2 )</l>
       <c>
       </c>
       <l>return ()</l>
-      <c>
-      </c>
-      <c>
-      </c>
-      <c>
-      </c>
-      <c>
-      </c>
       <c>
       </c>
       <c>
@@ -52,6 +46,12 @@
           <sem_type>real</sem_type>
         </parameter>
         <parameter id="P2">
+          <sem_type>real</sem_type>
+        </parameter>
+        <parameter id="P3">
+          <sem_type>real</sem_type>
+        </parameter>
+        <parameter id="P4">
           <sem_type>real</sem_type>
         </parameter>
         <parameter id="Result">

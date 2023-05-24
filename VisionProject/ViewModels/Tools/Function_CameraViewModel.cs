@@ -124,9 +124,9 @@ namespace VisionProject.ViewModels
                     Variables.Cameras[CameraIndex].CameraType = CameraTypeIndex;
                     Variables.Cameras[CameraIndex].ExpouseTime = ExpouseTime;
                     Variables.Cameras[CameraIndex].OpenCamera();
-                    Variables.ImageWindowDataForFunction.AddImageToWindow(Variables.Cameras[CameraIndex].GrabOne());
-                    Variables.ImageWindowDataForFunction.FitWindow();
-                    Variables.ImageWindowDataForFunction.Repaint();
+                    Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(Variables.Cameras[CameraIndex].GrabOne());
+                    Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
+                    Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
                 }
 
                 if (Variables.Cameras[CameraIndex].IsOpened)
@@ -172,9 +172,9 @@ namespace VisionProject.ViewModels
                     if (beginGrab == true)
                         return;
                     Variables.Cameras[CameraIndex].SetExpouseTime(ExpouseTime);
-                    Variables.ImageWindowDataForFunction.AddImageToWindow(Variables.Cameras[CameraIndex].GrabOne());
-                    Variables.ImageWindowDataForFunction.FitWindow();
-                    Variables.ImageWindowDataForFunction.Repaint();
+                    Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(Variables.Cameras[CameraIndex].GrabOne());
+                    Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
+                    Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
                 }
                 catch { }
             }
@@ -204,8 +204,8 @@ namespace VisionProject.ViewModels
                 {
                     await Task.Run(() =>
                     {
-                        Variables.ImageWindowDataForFunction.AddImageToWindow(Variables.Cameras[CameraIndex].GrabOne());
-                        Variables.ImageWindowDataForFunction.Repaint();
+                        Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(Variables.Cameras[CameraIndex].GrabOne());
+                        Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
                     });
 
                     await 10;
