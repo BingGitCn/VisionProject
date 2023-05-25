@@ -16,7 +16,7 @@
             <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterScreen" />
         </Style>
     </prism:Dialog.WindowStyle>
-    <Grid>
+    <Grid Background="#eeeeee">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition />
