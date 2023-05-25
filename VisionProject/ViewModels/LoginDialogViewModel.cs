@@ -46,8 +46,6 @@ namespace VisionProject.ViewModels
             {
                 if (LoginPassword == "123456")
                     RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
-                else
-                    RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
             }));
 
         private DelegateCommand _cancel;
