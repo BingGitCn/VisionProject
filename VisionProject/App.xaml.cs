@@ -1,5 +1,7 @@
 ﻿using Prism.Ioc;
 using Prism.Modularity;
+using Prism.Services.Dialogs;
+using System;
 using System.Windows;
 using VisionProject.ViewModels;
 using VisionProject.Views;
@@ -16,12 +18,29 @@ namespace VisionProject
             return Container.Resolve<MainWindow>();
         }
 
+        protected override void OnInitialized()
+        {
+            var dialog = Container.Resolve<IDialogService>();
+            dialog.ShowDialog(GlobalVars.DialogNames.ShowLoginWindow, callback =>
+            {
+                if (callback.Result != ButtonResult.OK)
+                {
+                    Environment.Exit(0);
+                    return;
+                }
+                //给主窗体传值
+                base.OnInitialized();
+            });
+        }
+
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             //Step..
 
             //关于窗口
             containerRegistry.RegisterDialog<AboutDialog, AboutDialogViewModel>(GlobalVars.DialogNames.ShowAboutWindow);
+            //登录窗口
+            containerRegistry.RegisterDialog<LoginDialog, LoginDialogViewModel>(GlobalVars.DialogNames.ShowLoginWindow);
 
             //脚本工具窗口
             containerRegistry.RegisterDialog<Function_ScriptTest, Function_ScriptTestViewModel>(GlobalVars.DialogNames.ToolNams["脚本工具"]);

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using VisionProject.GlobalVars;
 using BingLibrary.Extension;
 using Log = BingLibrary.Logs.LogOpreate;
+using System;
 
 namespace VisionProject.ViewModels
 {
@@ -16,6 +17,7 @@ namespace VisionProject.ViewModels
 
         private void initAll()
         {
+            System.Diagnostics.Debug.WriteLine(34.40M);
             //获取数据统计
             initStatistic();
             //获取系统配置
@@ -40,6 +42,10 @@ namespace VisionProject.ViewModels
 
             run();
         }
+
+
+
+
 
         private async void initCameras(Dictionary<string, object> ps)
         {

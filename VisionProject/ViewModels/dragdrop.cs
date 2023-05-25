@@ -11,6 +11,16 @@ namespace VisionProject.ViewModels
 {
     public partial class MainWindowViewModel : IDropTarget
     {
+        public void DragEnter(IDropInfo dropInfo)
+        {
+          
+        }
+
+        public void DragLeave(IDropInfo dropInfo)
+        {
+          
+        }
+
         void IDropTarget.DragOver(IDropInfo dropInfo)
         {
             SubProgram sourceItem = dropInfo.Data as SubProgram;

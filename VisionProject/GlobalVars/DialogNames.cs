@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace VisionProject.GlobalVars
 {
@@ -7,6 +8,8 @@ namespace VisionProject.GlobalVars
         //Step..
         //app.xaml.cs中相应添加
         public static string ShowAboutWindow = "CA994EAF-4637-4D66-8263-F0862A346662";
+
+        public static string ShowLoginWindow = "E2CC965E-DB54-4565-B347-CDE24E945DD9";
 
         //Step..
         //工具或检测方式的名称，在此添加
