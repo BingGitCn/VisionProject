@@ -82,6 +82,9 @@
     <Reference Include="halcondotnetxl">
       <HintPath>C:\Program Files\MVTec\HALCON-20.11-Steady\bin\dotnet35\halcondotnetxl.dll</HintPath>
     </Reference>
+    <Reference Include="HandyControl, Version=3.4.0.0, Culture=neutral, PublicKeyToken=45be8712787a1e5b, processorArchitecture=MSIL">
+      <HintPath>..\packages\HandyControl.3.4.0\lib\net472\HandyControl.dll</HintPath>
+    </Reference>
     <Reference Include="hdevenginedotnetxl">
       <HintPath>C:\Program Files\MVTec\HALCON-20.11-Steady\bin\dotnet35\hdevenginedotnetxl.dll</HintPath>
     </Reference>

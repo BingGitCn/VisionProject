@@ -94,33 +94,41 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Dialogs\ParameterSet.xaml.cs">
+      <DependentUpon>ParameterSet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalVars\ParamSetVar.cs" />
+    <Compile Include="ViewModels\Tools\Dialog_ParamSetViewModel.cs" />
     <Compile Include="ViewModels\dragdrop.cs" />
+    <Compile Include="ViewModels\Tools\Function_ScriptViewModel.cs" />
     <Compile Include="ViewModels\LoginDialogViewModel.cs" />
     <Compile Include="ViewModels\MesConfig.cs" />
     <Compile Include="ViewModels\Tools\Function_CameraViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_ScriptTestViewModel.cs" />
-    <Compile Include="ViewModels\Tools\Function_SaveImageViewModel.cs" />
-    <Compile Include="ViewModels\Tools\Function_TestViewModel.cs" />
     <Compile Include="ViewModels\NumberPadViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_ViewModel_Interface.cs" />
     <Compile Include="Views\LoginDialog.xaml.cs">
       <DependentUpon>LoginDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Tools\Dialog_ParamSet.xaml.cs">
+      <DependentUpon>Dialog_ParamSet.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Tools\Function_Camera.xaml.cs">
       <DependentUpon>Function_Camera.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Tools\Function_SaveImage.xaml.cs">
-      <DependentUpon>Function_SaveImage.xaml</DependentUpon>
+    <Compile Include="Views\Tools\Function_Script.xaml.cs">
+      <DependentUpon>Function_Script.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Tools\Function_ScriptTest.xaml.cs">
       <DependentUpon>Function_ScriptTest.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Tools\Function_Test.xaml.cs">
-      <DependentUpon>Function_Test.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\NumberPad.xaml.cs">
       <DependentUpon>NumberPad.xaml</DependentUpon>
     </Compile>
+    <Page Include="Dialogs\ParameterSet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\AboutDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -129,19 +137,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Tools\Dialog_ParamSet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Tools\Function_Camera.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Tools\Function_SaveImage.xaml">
+    <Page Include="Views\Tools\Function_Script.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Tools\Function_ScriptTest.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Tools\Function_Test.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -253,6 +261,7 @@
   <ItemGroup>
     <Resource Include="Login.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

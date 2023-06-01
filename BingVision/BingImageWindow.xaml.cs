@@ -30,6 +30,8 @@ namespace BingLibrary.Vision
             openFileDialog.FileName = string.Empty;
             openFileDialog.FilterIndex = 1;
             openFileDialog.RestoreDirectory = true;
+            openFileDialog.DereferenceLinks = false;
+            openFileDialog.AutoUpgradeEnabled = true;
             System.Windows.Forms.DialogResult result = openFileDialog.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.Cancel)
             {

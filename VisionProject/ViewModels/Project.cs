@@ -1,5 +1,4 @@
 ﻿using BingLibrary.FileOpreate;
-using BingLibrary.Logs;
 using HalconDotNet;
 using Newtonsoft.Json;
 using Prism.Commands;
@@ -14,6 +13,8 @@ using Log = BingLibrary.Logs.LogOpreate;
 
 namespace VisionProject.ViewModels
 {
+    /*项目相关*/
+
     public partial class MainWindowViewModel
     {
         #region 项目编辑
@@ -63,6 +64,10 @@ namespace VisionProject.ViewModels
                     {
                         HOperatorSet.SetSystem(new HTuple("clip_region"), new HTuple("false"));
                         ProjectIndex = SystemConfig.ProjectIndex;
+                        if (!File.Exists(SelectProjectName.Path))
+                        {
+                            return;
+                        }
                         Variables.CurrentProject = Serialize.ReadJsonV2<Project>(SelectProjectName.Path);
                         Programs = Variables.CurrentProject.Programs;
                         Program1.Clear();
@@ -541,7 +546,7 @@ namespace VisionProject.ViewModels
                     Variables.CurrentSubProgram = Program1[Program1Index].Clone();
                     Variables.CurrentSubProgram.Index = Program1Index;
                     Variables.CurDialogService.ShowDialog(DialogNames.ToolNams[param]);
-                    Program1[Program1Index] = Variables.CurrentSubProgram.Clone(); ;
+                    Program1[Program1Index] = Variables.CurrentSubProgram.Clone(); 
                 }
                 catch (Exception ex) { }
             }));

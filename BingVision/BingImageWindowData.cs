@@ -38,6 +38,21 @@ namespace BingLibrary.Vision
             WindowCtrl.SetROIController(ROICtrl);
             WindowCtrl.SetMessageController(MessageCtrl);
             WindowCtrl.SetDispObjectController(DispObjectCtrl);
+
         }
+
+
+        //public HWndCtrl HCtrl { set; get; }
+        ///// <summary>
+        ///// 是否进入绘画模式
+        ///// </summary>
+        ///// <param name="isUse"></param>
+        //public void DrawMode(bool isUse)
+        //{
+        //    HCtrl.isDrawing = isUse;
+        //    HCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
+        //    HalconAPI.CancelDraw();
+        //}
+
     }
 }

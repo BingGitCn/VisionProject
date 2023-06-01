@@ -1,4 +1,4 @@
-﻿using BingLibrary.Logs;
+﻿using BingLibrary.Extension;
 using BingLibrary.Tools;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -11,15 +11,18 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using VisionProject.GlobalVars;
-using BingLibrary.Extension;
-using OxyPlot;
-using OxyPlot.Series;
 using Log = BingLibrary.Logs.LogOpreate;
 
 namespace VisionProject.ViewModels
 {
     public partial class MainWindowViewModel : BindableBase
     {
+        public MainWindowViewModel(IDialogService dialogService)
+        {
+            Variables.CurDialogService = dialogService;
+            initAll();
+        }
+
         //设备运行状态，可用于展示PLC的运行，待机，故障等。
         private string _machineStatus = "待机中";
 
@@ -35,12 +38,6 @@ namespace VisionProject.ViewModels
         {
             get { return _title; }
             set { SetProperty(ref _title, value); }
-        }
-
-        public MainWindowViewModel(IDialogService dialogService)
-        {
-            Variables.CurDialogService = dialogService;
-            initAll();
         }
 
         #region 底部状态显示ConnectStatus
@@ -62,6 +59,42 @@ namespace VisionProject.ViewModels
         }
 
         #endregion 底部状态显示ConnectStatus
+
+        #region 底部Status
+
+        private string _freeSpace;
+
+        public string FreeSpace
+        {
+            get { return _freeSpace; }
+            set { SetProperty(ref _freeSpace, value); }
+        }
+
+        private string version = Application.ResourceAssembly.GetName().Version.ToString();
+
+        public string Version
+        {
+            get { return version; }
+            set { SetProperty(ref version, value); }
+        }
+
+        private string supplier = "Leader";
+
+        public string Supplier
+        {
+            get { return supplier; }
+            set { SetProperty(ref supplier, value); }
+        }
+
+        private DelegateCommand _showAboutDialog;
+
+        public DelegateCommand ShowAboutDialog =>
+            _showAboutDialog ?? (_showAboutDialog = new DelegateCommand(() =>
+            {
+                Variables.CurDialogService.ShowDialog(GlobalVars.DialogNames.ShowAboutWindow);
+            }));
+
+        #endregion 底部Status
 
         #region 数据统计
 
@@ -434,42 +467,6 @@ namespace VisionProject.ViewModels
             }));
 
         #endregion 数据统计
-
-        #region 底部Status
-
-        private string _freeSpace;
-
-        public string FreeSpace
-        {
-            get { return _freeSpace; }
-            set { SetProperty(ref _freeSpace, value); }
-        }
-
-        private string version = Application.ResourceAssembly.GetName().Version.ToString();
-
-        public string Version
-        {
-            get { return version; }
-            set { SetProperty(ref version, value); }
-        }
-
-        private string supplier = "Leader";
-
-        public string Supplier
-        {
-            get { return supplier; }
-            set { SetProperty(ref supplier, value); }
-        }
-
-        private DelegateCommand _showAboutDialog;
-
-        public DelegateCommand ShowAboutDialog =>
-            _showAboutDialog ?? (_showAboutDialog = new DelegateCommand(() =>
-            {
-                Variables.CurDialogService.ShowDialog(GlobalVars.DialogNames.ShowAboutWindow);
-            }));
-
-        #endregion 底部Status
 
         #region 登录密码
 

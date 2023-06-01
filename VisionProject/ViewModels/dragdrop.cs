@@ -1,11 +1,6 @@
 ﻿using GongSolutions.Wpf.DragDrop;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
 {
@@ -13,12 +8,10 @@ namespace VisionProject.ViewModels
     {
         public void DragEnter(IDropInfo dropInfo)
         {
-          
         }
 
         public void DragLeave(IDropInfo dropInfo)
         {
-          
         }
 
         void IDropTarget.DragOver(IDropInfo dropInfo)

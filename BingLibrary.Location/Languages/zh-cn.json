@@ -48,11 +48,19 @@
   "UserLevel": "选择用户",
   "OldPassword": "旧密码",
   "NewPassword": "新密码",
+  "AutoHomeText": "无操造回主界面",
+  "AutoHomeTimeText": "等待时长",
+  "Time3M": "3分钟",
+  "Time5M": "5分钟",
+  "Time10M": "10分钟",
   "RememberParh": "记住路径",
   "RememberLoad": "自动加载",
   "ShowTextWarn2": "记住上次项目文件打开保存的路径",
   "ShowTextWarn3": "打开软件时自动加载上次打开的项目",
   "Drive": "盘符选择",
   "AlarmThreshold": "报警阈值（剩余GB）",
-  "Language": "语言选择"
+  "Language": "语言选择",
+  "ShowLoginText1": "请输入密码",
+  "ConfirmText": "确认",
+  "CancelText": "取消"
 }

@@ -1,10 +1,10 @@
 ﻿using Prism.Ioc;
-using Prism.Modularity;
 using Prism.Services.Dialogs;
 using System;
 using System.Windows;
 using VisionProject.ViewModels;
 using VisionProject.Views;
+using VisionProject.Views.Tools;
 
 namespace VisionProject
 {
@@ -44,13 +44,13 @@ namespace VisionProject
 
             //脚本工具窗口
             containerRegistry.RegisterDialog<Function_ScriptTest, Function_ScriptTestViewModel>(GlobalVars.DialogNames.ToolNams["脚本工具"]);
-            //测试窗口
-            containerRegistry.RegisterDialog<Function_Test, Function_TestViewModel>(GlobalVars.DialogNames.ToolNams["测试"]);
-            //保存图像窗口
-            containerRegistry.RegisterDialog<Function_SaveImage, Function_SaveImageViewModel>(GlobalVars.DialogNames.ToolNams["保存图像"]);
+            containerRegistry.RegisterDialog<Function_Script, Function_ScriptViewModel>(GlobalVars.DialogNames.ToolNams["视觉脚本"]);
 
             //相机操作窗口
             containerRegistry.RegisterDialog<Function_Camera, Function_CameraViewModel>(GlobalVars.DialogNames.ToolNams["相机操作"]);
+
+            //参数设置弹窗
+            containerRegistry.RegisterDialog<Dialog_ParamSet, Dialog_ParamSetViewModel>(GlobalVars.DialogNames.ToolNams["参数设置"]);
         }
     }
 }

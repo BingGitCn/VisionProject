@@ -1,12 +1,15 @@
 ﻿using BingLibrary.FileOpreate;
-using BingLibrary.Logs;
 using Prism.Commands;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using VisionProject.GlobalVars;
 using Log = BingLibrary.Logs.LogOpreate;
 
 namespace VisionProject.ViewModels
 {
+    /*系统配置相关参数*/
+
     public partial class MainWindowViewModel
     {
         private SystemConfigData _systemConfig = new SystemConfigData();
@@ -24,10 +27,11 @@ namespace VisionProject.ViewModels
             {
                 try
                 {
-                    Serialize.WriteJsonV2(SystemConfig, Variables.BaseDirectory + "system.config");
+                    string configPath = Path.Combine(Variables.BaseDirectory, "system.config");
+                    Serialize.WriteJsonV2(SystemConfig, configPath);
                     Log.Info("系统设置保存成功。");
                 }
-                catch { Log.Error("系统设置保存失败。"); }
+                catch (Exception ex) { Log.Error("系统设置保存失败：" + ex.Message); }
             }));
 
         private void getSystemConfig()
@@ -84,6 +88,8 @@ namespace VisionProject.ViewModels
     public class SystemConfigData
     {
         public string Title { set; get; }
+        public bool IsAutoHome { set; get; } = false;
+        public int AutoHomeIndex { set; get; }
 
         public int UserIndex { set; get; }
 

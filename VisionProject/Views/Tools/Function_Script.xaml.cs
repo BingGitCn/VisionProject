@@ -4,11 +4,11 @@ using VisionProject.GlobalVars;
 namespace VisionProject.Views
 {
     /// <summary>
-    /// Interaction logic for Function_Test
+    /// Interaction logic for Function_Script
     /// </summary>
-    public partial class Function_Test : UserControl
+    public partial class Function_Script : UserControl
     {
-        public Function_Test()
+        public Function_Script()
         {
             InitializeComponent();
             Variables.ImageWindowDataForFunction = aimg.windowData;

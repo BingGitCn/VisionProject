@@ -1,15 +1,14 @@
-﻿using BingLibrary.Vision;
+﻿using BingLibrary.Extension;
+using BingLibrary.Vision;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using VisionProject.GlobalVars;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using BingLibrary.Extension;
+using System.Threading.Tasks;
+using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
 {
@@ -321,21 +320,8 @@ namespace VisionProject.ViewModels
         public bool Update()
         {
             Variables.CurrentSubProgram.Parameters.BingAddOrUpdate("EngineIndex", EngineIndex);
-            //if (Variables.CurrentSubProgram.Parameters.ContainsKey("EngineIndex"))
-            //    Variables.CurrentSubProgram.Parameters["EngineIndex"] = EngineIndex;
-            //else
-            //    Variables.CurrentSubProgram.Parameters.Add("EngineIndex", EngineIndex);
             Variables.CurrentSubProgram.Parameters.BingAddOrUpdate("ScriptIndex1", ScriptIndex1);
-            //if (Variables.CurrentSubProgram.Parameters.ContainsKey("ScriptIndex1"))
-            //    Variables.CurrentSubProgram.Parameters["ScriptIndex1"] = ScriptIndex1;
-            //else
-            //    Variables.CurrentSubProgram.Parameters.Add("ScriptIndex1", ScriptIndex1);
             Variables.CurrentSubProgram.Parameters.BingAddOrUpdate(EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1], IOValue1);
-            //if (Variables.CurrentSubProgram.Parameters.ContainsKey(EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1]))
-            //    Variables.CurrentSubProgram.Parameters[EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1]] = IOValue1;
-            //else
-            //    Variables.CurrentSubProgram.Parameters.Add(EngineIndex + "." + ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1], IOValue1);
-
             return true;
         }
 

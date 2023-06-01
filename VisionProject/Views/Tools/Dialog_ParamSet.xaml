@@ -1,0 +1,119 @@
+﻿<UserControl
+    x:Class="VisionProject.Views.Tools.Dialog_ParamSet"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:prism="http://prismlibrary.com/"
+    Width="900"
+    Height="600"
+    prism:ViewModelLocator.AutoWireViewModel="True">
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="SizeToContent" Value="WidthAndHeight" />
+        </Style>
+    </prism:Dialog.WindowStyle>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <TextBox
+                    Height="30"
+                    Margin="5"
+                    Text="{Binding VariableName}" />
+            </Grid>
+            <Grid Grid.Column="1">
+                <StackPanel Orientation="Horizontal">
+                    <Button
+                        Margin="5"
+                        Command="{Binding Operate}"
+                        CommandParameter="add"
+                        Content="添加变量"
+                        Style="{StaticResource ButtonPrimary}" />
+                    <Button
+                        Margin="5"
+                        Command="{Binding Operate}"
+                        CommandParameter="delete"
+                        Content="删除变量"
+                        Style="{StaticResource ButtonDanger}" />
+                    <Button
+                        Margin="5"
+                        Command="{Binding Operate}"
+                        CommandParameter="save"
+                        Content="保存并退出"
+                        Style="{StaticResource ButtonDanger}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="1">
+            <DataGrid
+                Margin="5"
+                hc:DataGridAttach.ShowRowNumber="True"
+                AutoGenerateColumns="False"
+                HeadersVisibility="All"
+                IsReadOnly="True"
+                ItemsSource="{Binding VariableList}"
+                RowHeaderWidth="60"
+                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                SelectedItem="{Binding SelectedVariable}"
+                SelectionMode="Single">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="120" Header="名称">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontWeight="Bold"
+                                    Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="120" Header="类型">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <hc:ComboBox Width="90" SelectedIndex="{Binding SelectedIndex, FallbackValue=0, UpdateSourceTrigger=PropertyChanged}">
+                                    <hc:ComboBox.Items>
+                                        <ComboBoxItem Content="Bool" />
+                                        <ComboBoxItem Content="String" />
+                                        <ComboBoxItem Content="Double" />
+                                        <ComboBoxItem Content="Int" />
+                                    </hc:ComboBox.Items>
+                                </hc:ComboBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="120" Header="当前值">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox VerticalAlignment="Center" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="240" Header="备注">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox VerticalAlignment="Center" Text="{Binding Mark, UpdateSourceTrigger=PropertyChanged}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,4 +1,5 @@
-﻿using BingLibrary.Tools;
+﻿using BingLibrary.FileOpreate;
+using BingLibrary.Tools;
 using OfficeOpenXml;
 using OxyPlot;
 using OxyPlot.Axes;
@@ -6,9 +7,12 @@ using OxyPlot.Legends;
 using OxyPlot.Series;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using VisionProject.GlobalVars;
+using VisionProject.ViewModels;
 
 namespace VisionProject.Views
 {
@@ -41,6 +45,54 @@ namespace VisionProject.Views
 
             //获取统计图表
             getPlot(7);
+
+            // 注册全局的鼠标和键盘事件,用于自动回主界面
+            Mouse.AddMouseUpHandler(this, OnInputActivity);
+            Keyboard.AddKeyUpHandler(this, OnInputActivity);
+            try
+            {
+                SystemConfig = Serialize.ReadJsonV2<SystemConfigData>(Variables.BaseDirectory + "system.config");
+                if (SystemConfig == null)
+                    SystemConfig = new SystemConfigData();
+            }
+            catch { }
+            autoHome();
+        }
+
+        private SystemConfigData SystemConfig = new SystemConfigData();
+
+        private int count = 0;
+
+        private void OnInputActivity(object sender, InputEventArgs e)
+        {
+            count = 0;
+            //
+        }
+
+        /// <summary>
+        /// 一定时间无操作，自动回主界面
+        /// </summary>
+        private async void autoHome()
+        {
+            while (true)
+            {
+                await Task.Delay(1000);
+                if (SystemConfig.IsAutoHome)
+                {
+                    if (count < (SystemConfig.AutoHomeIndex == 0 ? 180 : SystemConfig.AutoHomeIndex == 1 ? 300 : 600))
+                    {
+                        count++;
+                    }
+                    else
+                    {
+                        if (TabControlDemo.SelectedIndex != 0)
+                        {
+                            TabControlDemo.SelectedIndex = 0;
+                            Variables.AutoHomeEventArgs.Publish();
+                        }
+                    }
+                }
+            }
         }
 
         private void getPlot(int days)

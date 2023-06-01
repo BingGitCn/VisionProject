@@ -137,20 +137,31 @@ namespace BingLibrary.Vision.Engine
         {
             try
             {
-                if (paramValue is HImage || paramValue is HRegion)
+                if (devProcedureCalls.TryGetValue(procedureName, out var procedureCall))
                 {
-                    if (devProcedureCalls.Keys.Contains(procedureName))
-                        devProcedureCalls[procedureName].SetInputIconicParamObject(paramName, paramValue as HObject);
+                    switch (paramValue)
+                    {
+                        case HImage hImage:
+                        case HRegion hRegion:
+                            procedureCall.SetInputIconicParamObject(paramName, paramValue as HObject);
+                            break;
+
+                        case HTuple hTuple:
+                            procedureCall.SetInputCtrlParamTuple(paramName, paramValue as HTuple);
+                            break;
+
+                        case HDict hDict:
+                            procedureCall.SetInputCtrlParamTuple(paramName, paramValue as HDict);
+                            break;
+                    }
                 }
-                else if (paramValue is HTuple)
-                {
-                    if (devProcedureCalls.Keys.Contains(procedureName))
-                        devProcedureCalls[procedureName].SetInputCtrlParamTuple(paramName, paramValue as HTuple);
-                }
+
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                // 处理异常，例如记录日志或显示错误信息
+                Console.WriteLine($"An error occurred: {ex.Message}");
                 return false;
             }
         }
@@ -166,24 +177,32 @@ namespace BingLibrary.Vision.Engine
         {
             try
             {
-                if (typeof(T) == typeof(HImage))
+                if (devProcedureCalls.TryGetValue(procedureName, out var procedureCall))
                 {
-                    if (devProcedureCalls.Keys.Contains(procedureName))
-                        return devProcedureCalls[procedureName].GetOutputIconicParamImage(paramName) as T;
+                    if (typeof(T) == typeof(HImage) || typeof(T) == typeof(HRegion))
+                    {
+                        return procedureCall.GetOutputIconicParamImage(paramName) as T;
+                    }
+                    else if (typeof(T) == typeof(HTuple))
+                    {
+                        return procedureCall.GetOutputCtrlParamTuple(paramName) as T;
+                    }
+                    else if (typeof(T) == typeof(HDict))
+                    {
+                        HTuple rst = procedureCall.GetOutputCtrlParamTuple(paramName);
+                        HDict dict = new HDict(rst.H);
+                        return dict as T;
+                    }
                 }
-                else if (typeof(T) == typeof(HRegion))
-                {
-                    if (devProcedureCalls.Keys.Contains(procedureName))
-                        return devProcedureCalls[procedureName].GetOutputIconicParamImage(paramName) as T;
-                }
-                else if (typeof(T) == typeof(HTuple))
-                {
-                    if (devProcedureCalls.Keys.Contains(procedureName))
-                        return devProcedureCalls[procedureName].GetOutputCtrlParamTuple(paramName) as T;
-                }
+
                 return default(T);
             }
-            catch { return default(T); }
+            catch (Exception ex)
+            {
+                // 处理异常，例如记录日志或显示错误信息
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return default(T);
+            }
         }
 
         /// <summary>

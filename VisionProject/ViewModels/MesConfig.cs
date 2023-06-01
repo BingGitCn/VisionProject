@@ -1,15 +1,12 @@
 ﻿using BingLibrary.FileOpreate;
 using Prism.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VisionProject.GlobalVars;
 using Log = BingLibrary.Logs.LogOpreate;
 
 namespace VisionProject.ViewModels
 {
+    /*MES配置相关参数*/
+
     public partial class MainWindowViewModel
     {
         private MesData _mesData = new MesData();

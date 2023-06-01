@@ -2,23 +2,22 @@
 using BingLibrary.Vision;
 using BingLibrary.Vision.Engine;
 using HalconDotNet;
+using Prism.Events;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using VisionProject.ViewModels;
-using BingLibrary.Logs;
 
 namespace VisionProject.GlobalVars
 {
     public static class Variables
     {
-        //Step..
+        #region 相机相关
 
-        #region 按需修改
-
-        //添加 V2 引擎，这里使用数组，方便多相机或多线程使用
+        //添加引擎，这里使用数组，方便多相机或多线程使用
         public static List<WorkerEngine> WorkEngines = new List<WorkerEngine>()
         {
             new WorkerEngine(),
@@ -32,10 +31,6 @@ namespace VisionProject.GlobalVars
             new HCamera("cam2")
         };
 
-        //PLC
-        //不要在多个异步方法中同时调用一个！可以再申明一个。
-        public static ModbusNet HCPLC = new ModbusNet();
-
         //图像窗口，需在mainwindow.cs入口指定对应的windowdata
         public static BingImageWindowData WindowData1 = new BingImageWindowData();
 
@@ -46,15 +41,36 @@ namespace VisionProject.GlobalVars
 
         public static HImage CurrentImageForFunction = new HImage();
 
-        #endregion 按需修改
-
-        //全局Dialog服务
-        public static IDialogService CurDialogService;
-
         //脚本代码
         public static string ScriptCode = "";
 
         public static ScriptEdit scriptEdit = new ScriptEdit();
+
+        #endregion 相机相关
+
+        #region 事件订阅
+
+        //事件订阅
+        //无操造自动回主界面
+        public static PubSubEvent AutoHomeEventArgs = new PubSubEvent();
+
+        #endregion 事件订阅
+
+        #region PLC
+
+        //不要在多个异步方法中同时调用一个！可以再申明一个。
+        public static ModbusNet HCPLC = new ModbusNet();
+
+        #endregion PLC
+
+        public static Dictionary<string,ParamSetVar> ParamSetVars = new Dictionary<string,ParamSetVar>();
+        
+        //public static ObservableCollection<ParamSetVar> GlobalVariableList = new ObservableCollection<ParamSetVar>();
+
+        //Step..
+
+        //全局Dialog服务
+        public static IDialogService CurDialogService;
 
         //标题
         public static string Title = "";
@@ -117,39 +133,64 @@ namespace VisionProject.GlobalVars
 
         public static bool ShowConfirm(string msg)
         {
-            if (HandyControl.Controls.MessageBox.Ask(msg, "确认操作") == System.Windows.MessageBoxResult.OK)
-                return true;
-            else return false;
+            return HandyControl.Controls.MessageBox.Ask(msg, "确认操作") == System.Windows.MessageBoxResult.OK;
         }
 
         //剩余硬盘容量
         public static string GetFreeSpace(string path)
         {
-            DirectoryInfo directory = new DirectoryInfo(path);
-            DriveInfo savedFolderDrive = new DriveInfo(directory.Root.Name);
-            double rst = savedFolderDrive.AvailableFreeSpace / 1024 / 1024;
-            if (rst < 1024)
-                return rst + "M";
-            else
+            try
             {
-                rst = rst / 1024.0;
-                if (rst < 1024)
-                    return rst.ToString("f1") + "G";
+                DirectoryInfo directory = new DirectoryInfo(path);
+                DriveInfo drive = new DriveInfo(directory.Root.Name);
+                double freeSpaceMB = drive.AvailableFreeSpace / (1024.0 * 1024);
+
+                string result;
+                if (freeSpaceMB < 1024)
+                {
+                    result = $"{freeSpaceMB:F2}M";
+                }
                 else
                 {
-                    rst = rst / 1024.0;
-                    return rst.ToString("f1") + "T";
+                    double freeSpaceGB = freeSpaceMB / 1024.0;
+                    if (freeSpaceGB < 1024)
+                    {
+                        result = $"{freeSpaceGB:F2}G";
+                    }
+                    else
+                    {
+                        double freeSpaceTB = freeSpaceGB / 1024.0;
+                        result = $"{freeSpaceTB:F2}T";
+                    }
                 }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return "N/A"; // 或者返回一个特殊值来表示错误情况
             }
         }
 
         //容量
         public static double GetFreeSpaceRateValue(string path)
         {
-            DirectoryInfo directory = new DirectoryInfo(path);
-            DriveInfo savedFolderDrive = new DriveInfo(directory.Root.Name);
-            double rst = savedFolderDrive.AvailableFreeSpace / 1024 / 1024 / 1024;
-            return rst;
+            try
+            {
+                if (!Directory.Exists(path))
+                    return 0;
+
+                DriveInfo drive = new DriveInfo(Path.GetPathRoot(path));
+                if (!drive.IsReady)
+                    return 0;
+
+                double freeSpaceGB = drive.AvailableFreeSpace / (1024.0 * 1024 * 1024);
+                return freeSpaceGB;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
         }
     }
 }
