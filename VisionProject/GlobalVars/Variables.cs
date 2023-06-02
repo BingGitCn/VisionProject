@@ -54,6 +54,8 @@ namespace VisionProject.GlobalVars
         //无操造自动回主界面
         public static PubSubEvent AutoHomeEventArgs = new PubSubEvent();
 
+        public static bool IngoreAutoHome = false;
+
         #endregion 事件订阅
 
         #region PLC
@@ -63,8 +65,8 @@ namespace VisionProject.GlobalVars
 
         #endregion PLC
 
-        public static Dictionary<string,ParamSetVar> ParamSetVars = new Dictionary<string,ParamSetVar>();
-        
+        public static Dictionary<string, ParamSetVar> ParamSetVars = new Dictionary<string, ParamSetVar>();
+
         //public static ObservableCollection<ParamSetVar> GlobalVariableList = new ObservableCollection<ParamSetVar>();
 
         //Step..
@@ -86,8 +88,8 @@ namespace VisionProject.GlobalVars
         //项目
         public static Project CurrentProject = new Project();
 
-        //当前编辑的程序
-        public static SubProgram CurrentSubProgram = new SubProgram();
+        //当前编辑的检测程序
+        public static ProgramData CurrentProgramData = new ProgramData();
 
         //当前编辑的程序名字
         public static string ProgramName = "";
@@ -101,29 +103,29 @@ namespace VisionProject.GlobalVars
         /// <param name="programName">程序名字</param>
         /// <param name="index">获取到第几步</param>
         /// <returns></returns>
-        public static Dictionary<string, object> GetInputParams(string programName)
-        {
-            Dictionary<string, object> inputParams = new Dictionary<string, object>();
-            try
-            {
-                var p = Variables.CurrentProject.Programs[programName];
-                int index = Variables.CurrentSubProgram.Index;
+        //public static Dictionary<string, object> GetInputParams(string programName)
+        //{
+        //    Dictionary<string, object> inputParams = new Dictionary<string, object>();
+        //    try
+        //    {
+        //        var p = Variables.CurrentProject.Programs[programName];
+        //        int index = Variables.CurrentSubProgram.Index;
 
-                if (index > p.Count)
-                    index = p.Count;
-                for (int i = 0; i < index; i++)
-                {
-                    var d = Variables.CurrentProject.Programs[programName][i].Parameters;
-                    for (int j = 0; j < d.Keys.Count; j++)
-                    {
-                        inputParams.Add(programName + ":" + i + "." + p[i].InspectFunction + ":" + d.ElementAt(j).Key, d.ElementAt(j).Value); ;
-                    }
-                }
-            }
-            catch { }
+        //        if (index > p.Count)
+        //            index = p.Count;
+        //        for (int i = 0; i < index; i++)
+        //        {
+        //            var d = Variables.CurrentProject.Programs[programName][i].Parameters;
+        //            for (int j = 0; j < d.Keys.Count; j++)
+        //            {
+        //                inputParams.Add(programName + ":" + i + "." + p[i].InspectFunction + ":" + d.ElementAt(j).Key, d.ElementAt(j).Value); ;
+        //            }
+        //        }
+        //    }
+        //    catch { }
 
-            return inputParams;
-        }
+        //    return inputParams;
+        //}
 
         //弹出窗口确认
         public static void ShowMessage(string msg)

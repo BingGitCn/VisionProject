@@ -77,7 +77,7 @@ namespace VisionProject.Views
             while (true)
             {
                 await Task.Delay(1000);
-                if (SystemConfig.IsAutoHome)
+                if (SystemConfig.IsAutoHome && !Variables.IngoreAutoHome)
                 {
                     if (count < (SystemConfig.AutoHomeIndex == 0 ? 180 : SystemConfig.AutoHomeIndex == 1 ? 300 : 600))
                     {

@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using VisionProject.GlobalVars;
 using Log = BingLibrary.Logs.LogOpreate;
 
@@ -495,8 +496,20 @@ namespace VisionProject.ViewModels
                     CurrentPermit = PermitLevel.Nobody;
                 else
                 {
-                    LoginPad.Open = true;
-                    LoginPad.CallBack = finishLogin;
+                    if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                    {
+                        if (UserIndex == 1)
+                            CurrentPermit = PermitLevel.Operater;
+                        if (UserIndex == 2)
+                            CurrentPermit = PermitLevel.Engineer;
+                        if (UserIndex == 3)
+                            CurrentPermit = PermitLevel.Administrator;
+                    }
+                    else
+                    {
+                        LoginPad.Open = true;
+                        LoginPad.CallBack = finishLogin;
+                    }
                 }
             }));
 

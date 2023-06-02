@@ -191,16 +191,16 @@ namespace VisionProject.ViewModels
                         //这里通过备注来判断执行对应脚本
                         // if (currentProduct[i].Content == "扫码")
 
-                        if (currentProduct[i].InspectFunction == ToolNames[0])
-                        {
-                            //这里可以再对应的工具里面写好对应的静态执行方法，直接调用
-                            //Do Something
-                            //Function_SaveImageViewModel.SaveImages(new HalconDotNet.HImage(),"123", currentProduct[i].Parameters);
-                        }
-                        else if (currentProduct[i].InspectFunction == ToolNames[1])
-                        {
-                            //Do Something
-                        }
+                        //if (currentProduct[i].InspectFunction == ToolNames[0])
+                        //{
+                        //    //这里可以再对应的工具里面写好对应的静态执行方法，直接调用
+                        //    //Do Something
+                        //    //Function_SaveImageViewModel.SaveImages(new HalconDotNet.HImage(),"123", currentProduct[i].Parameters);
+                        //}
+                        //else if (currentProduct[i].InspectFunction == ToolNames[1])
+                        //{
+                        //    //Do Something
+                        //}
                     }
 
                     //结果OK时使用

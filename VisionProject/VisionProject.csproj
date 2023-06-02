@@ -94,10 +94,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Dialogs\ParameterSet.xaml.cs">
-      <DependentUpon>ParameterSet.xaml</DependentUpon>
-    </Compile>
     <Compile Include="GlobalVars\ParamSetVar.cs" />
+    <Compile Include="ViewModels\Tools\Dialog_InspectCreateViewModel.cs" />
     <Compile Include="ViewModels\Tools\Dialog_ParamSetViewModel.cs" />
     <Compile Include="ViewModels\dragdrop.cs" />
     <Compile Include="ViewModels\Tools\Function_ScriptViewModel.cs" />
@@ -107,6 +105,9 @@
     <Compile Include="ViewModels\Tools\Function_ScriptTestViewModel.cs" />
     <Compile Include="ViewModels\NumberPadViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_ViewModel_Interface.cs" />
+    <Compile Include="Views\Tools\Dialog_InspectCreate.xaml.cs">
+      <DependentUpon>Dialog_InspectCreate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LoginDialog.xaml.cs">
       <DependentUpon>LoginDialog.xaml</DependentUpon>
     </Compile>
@@ -125,11 +126,11 @@
     <Compile Include="Views\NumberPad.xaml.cs">
       <DependentUpon>NumberPad.xaml</DependentUpon>
     </Compile>
-    <Page Include="Dialogs\ParameterSet.xaml">
+    <Page Include="Views\AboutDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\AboutDialog.xaml">
+    <Page Include="Views\Tools\Dialog_InspectCreate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

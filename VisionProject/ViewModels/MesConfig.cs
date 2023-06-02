@@ -2,6 +2,8 @@
 using Prism.Commands;
 using VisionProject.GlobalVars;
 using Log = BingLibrary.Logs.LogOpreate;
+using System;
+using System.IO;
 
 namespace VisionProject.ViewModels
 {

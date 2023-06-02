@@ -87,13 +87,13 @@ namespace VisionProject.ViewModels
         private void ExecuteSelectedCamera()
         {
             // CameraIndex = int.Parse(Variables.CurrentSubProgram.Parameters.BingGetOrAdd("CameraIndex", 0).ToString());
-            CameraTypeIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".CameraTypeIndex", 0).ToString().BingToInt();
-            ExpouseTime = Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".ExpouseTime", 200).ToString().BingToDouble();
+            //CameraTypeIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".CameraTypeIndex", 0).ToString().BingToInt();
+            //ExpouseTime = Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".ExpouseTime", 200).ToString().BingToDouble();
 
-            if (Variables.Cameras[CameraIndex].IsOpened)
-                NotOpened = false;
-            else
-                NotOpened = true;
+            //if (Variables.Cameras[CameraIndex].IsOpened)
+            //    NotOpened = false;
+            //else
+            //    NotOpened = true;
         }
 
         public Function_CameraViewModel()
@@ -223,9 +223,9 @@ namespace VisionProject.ViewModels
                 for (int i = 0; i < Variables.Cameras.Count; i++)
                     CameraNames.Add(Variables.Cameras[i].CameraName);
 
-                CameraIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd("CameraIndex", 0).ToString().BingToInt();
-                CameraTypeIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".CameraTypeIndex", 0).ToString().BingToInt();
-                ExpouseTime = Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".ExpouseTime", 200).ToString().BingToDouble();
+                //CameraIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd("CameraIndex", 0).ToString().BingToInt();
+                //CameraTypeIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".CameraTypeIndex", 0).ToString().BingToInt();
+                //ExpouseTime = Variables.CurrentSubProgram.Parameters.BingGetOrAdd(CameraIndex + ".ExpouseTime", 200).ToString().BingToDouble();
 
                 Update();
                 if (Variables.Cameras[CameraIndex].IsOpened)
@@ -239,9 +239,9 @@ namespace VisionProject.ViewModels
 
         public bool Update()
         {
-            Variables.CurrentSubProgram.Parameters.BingAddOrUpdate("CameraIndex", CameraIndex);
-            Variables.CurrentSubProgram.Parameters.BingAddOrUpdate(CameraIndex + ".CameraTypeIndex", CameraTypeIndex);
-            Variables.CurrentSubProgram.Parameters.BingAddOrUpdate(CameraIndex + ".ExpouseTime", ExpouseTime);
+            //Variables.CurrentSubProgram.Parameters.BingAddOrUpdate("CameraIndex", CameraIndex);
+            //Variables.CurrentSubProgram.Parameters.BingAddOrUpdate(CameraIndex + ".CameraTypeIndex", CameraTypeIndex);
+            //Variables.CurrentSubProgram.Parameters.BingAddOrUpdate(CameraIndex + ".ExpouseTime", ExpouseTime);
             return true;
         }
 

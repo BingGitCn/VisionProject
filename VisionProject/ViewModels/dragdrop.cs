@@ -25,17 +25,17 @@ namespace VisionProject.ViewModels
         {
             SubProgram sourceItem = dropInfo.Data as SubProgram;
 
-            Program1.Remove(sourceItem);
-            if (Program1.Count <= dropInfo.InsertIndex)
-                Program1.Add(sourceItem);
+            CurrentProgram.Remove(sourceItem);
+            if (CurrentProgram.Count <= dropInfo.InsertIndex)
+                CurrentProgram.Add(sourceItem);
             else
-                Program1.Insert(dropInfo.InsertIndex, sourceItem);
+                CurrentProgram.Insert(dropInfo.InsertIndex, sourceItem);
             //将界面的program更新到项目的程序集合中。
             try
             {
                 Programs[ProgramsName[ProgramsIndex]].Clear();
-                for (int i = 0; i < Program1.Count; i++)
-                    Programs[ProgramsName[ProgramsIndex]].Add(Program1[i]);
+                for (int i = 0; i < CurrentProgram.Count; i++)
+                    Programs[ProgramsName[ProgramsIndex]].Add(CurrentProgram[i]);
             }
             catch (Exception ex) { }
         }

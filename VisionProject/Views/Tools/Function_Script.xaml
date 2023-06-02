@@ -40,8 +40,9 @@
                     hc:InfoElement.TitlePlacement="Left"
                     hc:InfoElement.TitleWidth="100"
                     ItemsSource="{Binding ScriptNames}"
-                    SelectedIndex="{Binding ScriptIndex}"
-                    Style="{StaticResource ComboBoxExtend}">
+
+                    Style="{StaticResource ComboBoxExtend}"
+                    Text="{Binding ScriptName}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DropDownClosed">
                             <i:InvokeCommandAction Command="{Binding SelectedScript}" />
@@ -60,10 +61,10 @@
                     <Button
                         Width="125"
                         Margin="5"
-                        IsEnabled="{Binding IsDrawROIEnabled}"
                         Command="{Binding DrawROI}"
                         CommandParameter="del"
                         Content="清除 ROI"
+                        IsEnabled="{Binding IsDrawROIEnabled}"
                         Style="{StaticResource ButtonDanger}" />
                 </StackPanel>
 

@@ -1,0 +1,59 @@
+﻿<UserControl
+    x:Class="VisionProject.Views.Dialog_InspectCreate"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:prism="http://prismlibrary.com/"
+    Width="480"
+    Height="160"
+    prism:ViewModelLocator.AutoWireViewModel="True">
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="SizeToContent" Value="WidthAndHeight" />
+        </Style>
+    </prism:Dialog.WindowStyle>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <ComboBox
+                Margin="5"
+                hc:InfoElement.Title="方法选择："
+                hc:InfoElement.TitlePlacement="Left"
+                hc:InfoElement.TitleWidth="110"
+                ItemsSource="{Binding InspectNames}"
+                SelectedIndex="{Binding InspectNamesIndex, Mode=TwoWay}"
+                Style="{StaticResource ComboBoxExtend}" />
+            <TextBox
+                Margin="5"
+                hc:InfoElement.Placeholder="请输入备注（可为空）"
+                hc:InfoElement.Title="备注："
+                hc:InfoElement.TitlePlacement="Left"
+                hc:InfoElement.TitleWidth="110"
+                Style="{StaticResource TextBoxExtend}"
+                Text="{Binding Content}" />
+
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button
+                    Width="100"
+                    Margin="25"
+                    Command="{Binding Confirm}"
+                    Content="确  认"
+                    Style="{StaticResource ButtonPrimary}" />
+                <Button
+                    Width="100"
+                    Margin="25"
+                    Command="{Binding Cancel}"
+                    Content="取  消"
+                    Style="{StaticResource ButtonPrimary}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

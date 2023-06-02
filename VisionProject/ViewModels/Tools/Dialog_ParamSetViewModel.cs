@@ -11,7 +11,6 @@ using System.Collections.ObjectModel;
 using System.Text;
 using VisionProject.GlobalVars;
 using BingLibrary.Vision;
-using VisionProject.Dialogs;
 using VisionProject.Views.Tools;
 using HandyControl.Tools.Extension;
 using MySqlX.XDevAPI.Common;

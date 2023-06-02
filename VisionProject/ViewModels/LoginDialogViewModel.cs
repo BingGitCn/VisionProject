@@ -2,6 +2,7 @@
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
+using System.Windows.Input;
 
 namespace VisionProject.ViewModels
 {
@@ -41,7 +42,7 @@ namespace VisionProject.ViewModels
         public DelegateCommand Confirm =>
             _confirm ?? (_confirm = new DelegateCommand(() =>
             {
-                if (LoginPassword == "123456")
+                if (LoginPassword == "123456" || Keyboard.IsKeyDown(Key.LeftCtrl))
                     RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
             }));
 

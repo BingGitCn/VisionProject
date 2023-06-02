@@ -22,7 +22,7 @@ namespace VisionProject.ViewModels
         private ObservableCollection<ProjectInfo> _projectNames = new ObservableCollection<ProjectInfo>();
 
         /// <summary>
-        /// 项目合集
+        /// 项目名称合集
         /// </summary>
         public ObservableCollection<ProjectInfo> ProjectNames
         {
@@ -70,10 +70,10 @@ namespace VisionProject.ViewModels
                         }
                         Variables.CurrentProject = Serialize.ReadJsonV2<Project>(SelectProjectName.Path);
                         Programs = Variables.CurrentProject.Programs;
-                        Program1.Clear();
+                        CurrentProgram.Clear();
                         if (Programs.Keys.ToList().Count > 0)
                             for (int i = 0; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
-                                Program1.Add(Programs[Programs.Keys.ToList()[0]][i]);
+                                CurrentProgram.Add(Programs[Programs.Keys.ToList()[0]][i]);
                         ProgramsIndex = 0;
                         ProjectName = SelectProjectName.Name;
                         CreateDate = Variables.CurrentProject.CreateDate;
@@ -182,10 +182,10 @@ namespace VisionProject.ViewModels
 
                             Variables.CurrentProject = Serialize.ReadJsonV2<Project>(SelectProjectName.Path);
                             Programs = Variables.CurrentProject.Programs;
-                            Program1.Clear();
+                            CurrentProgram.Clear();
                             if (Programs.Keys.ToList().Count > 0)
                                 for (int i = 0; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
-                                    Program1.Add(Programs[Programs.Keys.ToList()[0]][i]);
+                                    CurrentProgram.Add(Programs[Programs.Keys.ToList()[0]][i]);
                             ProgramsIndex = 0;
                             ProjectName = SelectProjectName.Name;
                             CreateDate = Variables.CurrentProject.CreateDate;
@@ -245,10 +245,10 @@ namespace VisionProject.ViewModels
                                 Variables.CurrentProject = new Project();
                                 Variables.CurrentProject = Serialize.ReadJsonV2<Project>(dig_openFileDialog.FileName);
                                 Programs = Variables.CurrentProject.Programs;
-                                Program1.Clear();
+                                CurrentProgram.Clear();
                                 if (Programs.Keys.ToList().Count > 0)
                                     for (int i = 0; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
-                                        Program1.Add(Programs[Programs.Keys.ToList()[0]][i]);
+                                        CurrentProgram.Add(Programs[Programs.Keys.ToList()[0]][i]);
                                 ProgramsIndex = 0;
                                 ProjectName = dig_openFileDialog.SafeFileName.Replace(".lprj", "");
                                 CreateDate = Variables.CurrentProject.CreateDate;
@@ -270,14 +270,22 @@ namespace VisionProject.ViewModels
                     case "save":
                         try
                         {
-                            System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-                            saveFileDialog.Title = ("请选择项目文件路径");
-
-                            saveFileDialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "Projects";
-
-                            saveFileDialog.Filter = "项目文件(*.lprj)|*.lprj";
-                            if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                            //bool rst = Variables.ShowConfirm("是否要保存文件？");
+                            if (true)
                             {
+                                if (ProjectPath == "" || ProjectPath == null)
+                                {
+                                    System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+                                    saveFileDialog.Title = ("请选择项目文件路径");
+
+                                    saveFileDialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "Projects";
+
+                                    saveFileDialog.Filter = "项目文件(*.lprj)|*.lprj";
+                                    if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                                    {
+                                        ProjectPath = saveFileDialog.FileName;
+                                    }
+                                }
                                 if (Variables.CurrentProject.CreateDate == "")
                                 {
                                     Variables.CurrentProject.CreateDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -285,7 +293,6 @@ namespace VisionProject.ViewModels
                                 }
                                 Variables.CurrentProject.LastDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 LastDate = Variables.CurrentProject.LastDate;
-                                ProjectPath = saveFileDialog.FileName;
 
                                 Variables.CurrentProject.Programs = Programs;
 
@@ -304,12 +311,64 @@ namespace VisionProject.ViewModels
 
                                 if (isSaveOK)
                                 {
-                                    Serialize.WriteJsonV2(Variables.CurrentProject, saveFileDialog.FileName);
+                                    Serialize.WriteJsonV2(Variables.CurrentProject, ProjectPath);
                                 }
                             }
+                            Variables.ShowMessage("保存文件成功。");
                             Log.Info("保存了项目");
                         }
-                        catch { }
+                        catch (Exception ex) { Variables.ShowMessage("保存文件出错，当前项目文件未受影响。" + "\r\n" + ex.Message); }
+                        break;
+
+                    case "saveas":
+                        try
+                        {
+                            bool rst = Variables.ShowConfirm("是否要保存文件？");
+                            if (rst)
+                            {
+                                System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+                                saveFileDialog.Title = ("请选择项目文件路径");
+
+                                saveFileDialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "Projects";
+
+                                saveFileDialog.Filter = "项目文件(*.lprj)|*.lprj";
+                                if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                                {
+                                    ProjectPath = saveFileDialog.FileName;
+                                }
+
+                                if (Variables.CurrentProject.CreateDate == "")
+                                {
+                                    Variables.CurrentProject.CreateDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                    CreateDate = Variables.CurrentProject.CreateDate;
+                                }
+                                Variables.CurrentProject.LastDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                LastDate = Variables.CurrentProject.LastDate;
+
+                                Variables.CurrentProject.Programs = Programs;
+
+                                bool isSaveOK = true;
+
+                                try
+                                {
+                                    Serialize.WriteJsonV2(Variables.CurrentProject, AppDomain.CurrentDomain.BaseDirectory + "cache.lprj");
+                                    Serialize.ReadJsonV2<Project>(AppDomain.CurrentDomain.BaseDirectory + "cache.lprj");
+                                }
+                                catch (Exception ex)
+                                {
+                                    isSaveOK = false;
+                                    Variables.ShowMessage("保存文件出错，当前项目文件未受影响。" + "\r\n" + ex.Message);
+                                }
+
+                                if (isSaveOK)
+                                {
+                                    Serialize.WriteJsonV2(Variables.CurrentProject, ProjectPath);
+                                }
+                            }
+                            Variables.ShowMessage("保存文件成功。");
+                            Log.Info("保存了项目");
+                        }
+                        catch (Exception ex) { Variables.ShowMessage("保存文件出错，当前项目文件未受影响。" + "\r\n" + ex.Message); }
                         break;
                 }
             }));
@@ -320,34 +379,34 @@ namespace VisionProject.ViewModels
 
         /*
          * 说明：
-         * Program1 为当前程序用。主要是界面交互。
+         * currentProgram 为当前程序用。主要是界面交互。
          * Programs 为程序合集。
          * Variables.CurrentProgram 为全局变量，主要是用于子工具中使用。
          *
          */
 
-        //程序索引
-        private int program1Index;
-
-        public int Program1Index
-        {
-            get { return program1Index; }
-            set { SetProperty(ref program1Index, value); }
-        }
-
         //界面上的多程序
         public Dictionary<string, ObservableCollection<SubProgram>> Programs = new Dictionary<string, ObservableCollection<SubProgram>>();
 
+        //程序索引
+        private int currentProgramIndex;
+
+        public int CurrentProgramIndex
+        {
+            get { return currentProgramIndex; }
+            set { SetProperty(ref currentProgramIndex, value); }
+        }
+
         //程序列表
-        private ObservableCollection<SubProgram> program1 = new ObservableCollection<SubProgram>();
+        private ObservableCollection<SubProgram> currentProgram = new ObservableCollection<SubProgram>();
 
         /// <summary>
         /// 界面上当前编辑的程序
         /// </summary>
-        public ObservableCollection<SubProgram> Program1
+        public ObservableCollection<SubProgram> CurrentProgram
         {
-            get { return program1; }
-            set { SetProperty(ref program1, value); }
+            get { return currentProgram; }
+            set { SetProperty(ref currentProgram, value); }
         }
 
         //各程序索引
@@ -357,6 +416,30 @@ namespace VisionProject.ViewModels
         {
             get { return programsIndex; }
             set { SetProperty(ref programsIndex, value); }
+        }
+
+        private ProgramData currentSelectedProgramData;
+
+        public ProgramData CurrentSelectedProgramData
+        {
+            get { return currentSelectedProgramData; }
+            set { SetProperty(ref currentSelectedProgramData, value); }
+        }
+
+        private ObservableCollection<ProgramData> currentprogramDatas = new ObservableCollection<ProgramData>();
+
+        public ObservableCollection<ProgramData> CurrentProgramDatas
+        {
+            get { return currentprogramDatas; }
+            set { SetProperty(ref currentprogramDatas, value); }
+        }
+
+        private int currentprogramDatasIndex;
+
+        public int CurrentProgramDatasIndex
+        {
+            get { return currentprogramDatasIndex; }
+            set { SetProperty(ref currentprogramDatasIndex, value); }
         }
 
         //各程序名称
@@ -401,22 +484,14 @@ namespace VisionProject.ViewModels
                                                 var newProgram = new ObservableCollection<SubProgram>();
                                                 for (int i = 0; i < Programs[ProgramsName[ProgramsIndex]].Count; i++)
                                                 {
-                                                    //这里需要深复制
-                                                    var subProgram = new SubProgram()
-                                                    {
-                                                        Content = Programs[ProgramsName[ProgramsIndex]][i].Content,
-                                                        Index = Programs[ProgramsName[ProgramsIndex]][i].Index,
-                                                        InspectFunction = Programs[ProgramsName[ProgramsIndex]][i].InspectFunction,
-                                                        IsUse = Programs[ProgramsName[ProgramsIndex]][i].IsUse,
-                                                        ProductIndex = Programs[ProgramsName[ProgramsIndex]][i].ProductIndex,
-                                                        ProductIndexs = Programs[ProgramsName[ProgramsIndex]][i].ProductIndexs,
-                                                        ToolNames = Programs[ProgramsName[ProgramsIndex]][i].ToolNames,
-                                                        Parameters = new Dictionary<string, object>()
-                                                    };
-                                                    foreach (var r in Programs[ProgramsName[ProgramsIndex]][i].Parameters)
-                                                        subProgram.Parameters.Add(r.Key, r.Value);
+                                                    var subProgram = new SubProgram();
+                                                    subProgram.ProductIndex = Programs[ProgramsName[ProgramsIndex]][i].ProductIndex;
+                                                    subProgram.ProgramDatas = new ObservableCollection<ProgramData>();
+                                                    for (int j = 0; j < Programs[ProgramsName[ProgramsIndex]][i].ProgramDatas.Count; j++)
+                                                        subProgram.ProgramDatas.Add(Programs[ProgramsName[ProgramsIndex]][i].ProgramDatas[j].Clone());
                                                     newProgram.Add(subProgram);
                                                 }
+
                                                 Programs.Add(ProgramName, newProgram);
                                                 ProgramsName.Add(ProgramName);
                                                 ProgramName = "";
@@ -477,19 +552,19 @@ namespace VisionProject.ViewModels
                 try
                 {
                     //将程序集合中选中的程序给到界面
-                    Program1.Clear();
+                    CurrentProgram.Clear();
                     for (int i = 0; i < Programs[ProgramsName[ProgramsIndex]].Count; i++)
-                        Program1.Add(Programs[ProgramsName[ProgramsIndex]][i]);
+                        CurrentProgram.Add(Programs[ProgramsName[ProgramsIndex]][i]);
                     Variables.ProgramName = ProgramsName[ProgramsIndex];
                 }
                 catch (Exception ex) { }
             }));
 
         //增加删除子程序
-        private DelegateCommand<string> _programs1Operate;
+        private DelegateCommand<string> _programOperate;
 
-        public DelegateCommand<string> Programs1Operate =>
-            _programs1Operate ?? (_programs1Operate = new DelegateCommand<string>((string param) =>
+        public DelegateCommand<string> ProgramOperate =>
+            _programOperate ?? (_programOperate = new DelegateCommand<string>((string param) =>
             {
                 if (ProgramsName.Count == 0)
                 {
@@ -502,24 +577,16 @@ namespace VisionProject.ViewModels
                     case "add":
                         try
                         {
-                            Program1.Add(new SubProgram());
+                            CurrentProgram.Add(new SubProgram() { ProductIndex = CurrentProgram.Count() });
                         }
                         catch { }
                         break;
 
                     case "del":
-
-                        //try
-                        //{
-                        //    Program1.Insert(Program1Index, Program1[Program1Index]);
-                        //}
-                        //catch { }
-                        //break;
-
                         try
                         {
-                            if (Variables.ShowConfirm("确认删除当前子程序？") == true)
-                                Program1.RemoveAt(Program1Index);
+                            if (Variables.ShowConfirm("禁止直接删除！\r\n将删除最后一行程序？") == true)
+                                CurrentProgram.RemoveAt(CurrentProgram.Count - 1);
                         }
                         catch { }
                         break;
@@ -529,24 +596,108 @@ namespace VisionProject.ViewModels
                 try
                 {
                     Programs[ProgramsName[ProgramsIndex]].Clear();
-                    for (int i = 0; i < Program1.Count; i++)
-                        Programs[ProgramsName[ProgramsIndex]].Add(Program1[i]);
+                    for (int i = 0; i < CurrentProgram.Count; i++)
+                        Programs[ProgramsName[ProgramsIndex]].Add(CurrentProgram[i]);
                 }
                 catch (Exception ex) { }
             }));
 
-        //Step..
-        private DelegateCommand<string> _program1Config;
+        //各位置子程序删减
+        private DelegateCommand<string> _programDatasOperate;
 
-        public DelegateCommand<string> Program1Config =>
-            _program1Config ?? (_program1Config = new DelegateCommand<string>((param) =>
+        public DelegateCommand<string> ProgramDatasOperate =>
+            _programDatasOperate ?? (_programDatasOperate = new DelegateCommand<string>(ExecuteProgramDatasOperate));
+
+        private void ExecuteProgramDatasOperate(string parameter)
+        {
+            if (ProgramsName.Count == 0)
+            {
+                Variables.ShowMessage("请选择或创建一个程序！");
+                return;
+            }
+            if (CurrentProgramIndex < 0 || CurrentProgramIndex >= CurrentProgram.Count)
+            {
+                Variables.ShowMessage("请选择或添加一个位置！");
+                return;
+            }
+            //禁止自动返回主界面
+            Variables.IngoreAutoHome = true;
+            switch (parameter)
+            {
+                case "add":
+                    try
+                    {
+                        DialogParameters param = new DialogParameters
+                        {
+                            { "Title", "" }
+                        };
+                        Variables.CurDialogService.ShowDialog(DialogNames.ShowInspectCreateDialog, param, callback =>
+                        {
+                            if (callback.Result == ButtonResult.Yes)
+                            {
+                                var inspectName = callback.Parameters.GetValue<string>("InspectName");
+                                var content = callback.Parameters.GetValue<string>("Content");
+                                currentprogramDatas.Add(new ProgramData() { InspectFunction = inspectName, Content = content, IsUse = true });
+                            }
+                        });
+                    }
+                    catch { }
+                    break;
+
+                case "del":
+                    try
+                    {
+                        if (Variables.ShowConfirm("确认删除检测？") == true)
+                            currentprogramDatas.Remove(CurrentSelectedProgramData);
+                    }
+                    catch { }
+                    break;
+            }
+
+            //将界面的programdata更新到项目的程序集合中。
+            try
+            {
+                Programs[ProgramsName[ProgramsIndex]][currentProgramIndex].ProgramDatas.Clear();
+                for (int i = 0; i < currentprogramDatas.Count; i++)
+                    Programs[ProgramsName[ProgramsIndex]][currentProgramIndex].ProgramDatas.Add(currentprogramDatas[i]);
+            }
+            catch { }
+            Variables.IngoreAutoHome = false;
+        }
+
+        private DelegateCommand _updateSelectedCurrentProgram;
+
+        public DelegateCommand UpdateSelectedCurrentProgram =>
+            _updateSelectedCurrentProgram ?? (_updateSelectedCurrentProgram = new DelegateCommand(ExecuteUpdateSelectedCurrentProgram));
+
+        private void ExecuteUpdateSelectedCurrentProgram()
+        {
+            try
+            {
+                CurrentProgramDatas.Clear();
+
+                for (int i = 0; i < Programs[ProgramsName[ProgramsIndex]][currentProgramIndex].ProgramDatas.Count; i++)
+                    CurrentProgramDatas.Add(Programs[ProgramsName[ProgramsIndex]][currentProgramIndex].ProgramDatas[i]);
+            }
+            catch { }
+        }
+
+        //Step..
+        private DelegateCommand<string> _programDataConfig;
+
+        public DelegateCommand<string> ProgramDataConfig =>
+            _programDataConfig ?? (_programDataConfig = new DelegateCommand<string>((param) =>
             {
                 try
                 {
-                    Variables.CurrentSubProgram = Program1[Program1Index].Clone();
-                    Variables.CurrentSubProgram.Index = Program1Index;
+                    //禁止自动返回主界面
+                    Variables.IngoreAutoHome = true;
+                    Variables.CurrentProgramData = CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex];
+
                     Variables.CurDialogService.ShowDialog(DialogNames.ToolNams[param]);
-                    Program1[Program1Index] = Variables.CurrentSubProgram.Clone(); 
+                    CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex] = Variables.CurrentProgramData.Clone();
+
+                    Variables.IngoreAutoHome = false;
                 }
                 catch (Exception ex) { }
             }));
@@ -562,18 +713,23 @@ namespace VisionProject.ViewModels
         public string LastDate = "";
     }
 
-    //程序类
     public class SubProgram
+    {
+        /// <summary>
+        /// 产品索引
+        /// </summary>
+        public int ProductIndex { set; get; } = 0;
+
+        public ObservableCollection<ProgramData> ProgramDatas { set; get; } = new ObservableCollection<ProgramData>();
+    }
+
+    //程序类
+    public class ProgramData
     {
         /// <summary>
         /// 是否启用
         /// </summary>
         public bool IsUse { set; get; } = true;
-
-        /// <summary>
-        /// 产品索引
-        /// </summary>
-        public int ProductIndex { set; get; } = 0;
 
         public string InspectFunction { set; get; } = "无";
 
@@ -593,27 +749,9 @@ namespace VisionProject.ViewModels
         [JsonIgnore]
         public Dictionary<string, object> Results = new Dictionary<string, object>();
 
-        /// <summary>
-        /// 产品索引
-        /// </summary>
-        [JsonIgnore]
-        public List<int> ProductIndexs { set; get; } = new List<int>() { 0, 1, 2, };
-
-        [JsonIgnore]
-        public int Index { set; get; }
-
-        [JsonIgnore]
-        public List<string> ToolNames { set; get; } = DialogNames.ToolNams.Keys.ToList();
-
-        public SubProgram()
+        public ProgramData Clone()
         {
-            ProductIndexs.Clear();
-            for (int i = 0; i < 48; i++) ProductIndexs.Add(i);
-        }
-
-        public SubProgram Clone()
-        {
-            return (SubProgram)this.MemberwiseClone();
+            return (ProgramData)this.MemberwiseClone();
         }
     }
 

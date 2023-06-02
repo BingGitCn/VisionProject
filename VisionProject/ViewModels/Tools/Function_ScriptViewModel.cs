@@ -11,7 +11,6 @@ using System.Collections.ObjectModel;
 using System.Text;
 using VisionProject.GlobalVars;
 using BingLibrary.Vision;
-using VisionProject.Dialogs;
 using VisionProject.Views.Tools;
 using HandyControl.Tools.Extension;
 using DryIoc;
@@ -70,12 +69,12 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _engineIndex, value); }
         }
 
-        private int _scriptIndex;
+        private string _scriptName;
 
-        public int ScriptIndex
+        public string ScriptName
         {
-            get { return _scriptIndex; }
-            set { SetProperty(ref _scriptIndex, value); }
+            get { return _scriptName; }
+            set { SetProperty(ref _scriptName, value); }
         }
 
         private ObservableCollection<string> _scriptNames = new ObservableCollection<string>();
@@ -97,8 +96,8 @@ namespace VisionProject.ViewModels
                 for (int i = 0; i < Variables.WorkEngines.Count; i++)
                     EngineNames.Add("执行引擎" + i);
 
-                EngineIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd("EngineIndex", 0).ToString().BingToInt();
-                paramDict = (Dictionary<string, ParamSetVar>)Variables.CurrentSubProgram.Parameters.BingGetOrAdd("ParamDict", new Dictionary<string, ParamSetVar>());
+                EngineIndex = Variables.CurrentProgramData.Parameters.BingGetOrAdd("EngineIndex", 0).ToString().BingToInt();
+                paramDict = (Dictionary<string, ParamSetVar>)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ParamDict", new Dictionary<string, ParamSetVar>());
 
                 if (!paramDict.ContainsKey("ROIRow1"))
                     paramDict.BingAddOrUpdate("ROIRow1", new ParamSetVar() { Name = "ROIRow1", SelectedIndex = 2, Type = paramSetType.Double, Value = DrawRow1.ToString() });
@@ -115,14 +114,15 @@ namespace VisionProject.ViewModels
                 //获取脚本列表
                 ScriptNames = new ObservableCollection<string>();
                 var procedureNames = Variables.WorkEngines[EngineIndex].GetProcedureNames();
-                for (int i = 0; i < procedureNames.Count; i++)
-                    ScriptNames.Add(procedureNames[i]);
 
+                for (int i = 0; i < procedureNames.Count; i++)
+                {
+                    ScriptNames.Add(procedureNames[i]);
+                }
+                ScriptName = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ScriptName", "").ToString();
                 //这里判断，如果当前引擎下未挂在过程则返回。
                 if (ScriptNames.Count == 0) return false;
 
-                //选择挂在的过程
-                ScriptIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd("ScriptIndex", 0).ToString().BingToInt();
                 // 脚本册立不清除，因为共用。清除多余的key，仅保留当前设置。
                 // Variables.CurrentSubProgram.Parameters.Clear();
                 // Update();
@@ -143,10 +143,10 @@ namespace VisionProject.ViewModels
 
         public bool Update()
         {
-            Variables.CurrentSubProgram.Parameters.BingAddOrUpdate("EngineIndex", EngineIndex);
-            Variables.CurrentSubProgram.Parameters.BingAddOrUpdate("ScriptIndex", ScriptIndex);
+            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("EngineIndex", EngineIndex);
+            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ScriptName", ScriptName);
 
-            Variables.CurrentSubProgram.Parameters.BingAddOrUpdate("ParamDict", paramDict);
+            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ParamDict", paramDict);
             return true;
         }
 
@@ -169,7 +169,7 @@ namespace VisionProject.ViewModels
             //这里判断，如果当前引擎下未挂在过程则返回。
             if (ScriptNames.Count == 0) return;
 
-            ScriptIndex = Variables.CurrentSubProgram.Parameters.BingGetOrAdd("ScriptIndex", 0).ToString().BingToInt();
+            ScriptName = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ScriptName", 0).ToString();
 
             //脚本册立不清除，因为共用。清除多余的key，仅保留当前设置。
             // Variables.CurrentSubProgram.Parameters.Clear();
@@ -183,8 +183,6 @@ namespace VisionProject.ViewModels
 
         private void ExecuteSelectedScript()
         {
-            if (ScriptIndex < 0) return;
-
             //获取输入变量值
             //  IOValue = Variables.CurrentSubProgram.Parameters.BingGetOrAdd(EngineIndex + "." +
             //  ScriptIndex1 + "." + IOIndex1 + "." + IOVariables1[IOIndex1], "").ToString();
@@ -211,7 +209,7 @@ namespace VisionProject.ViewModels
                 //打开脚本窗口
                 ScriptDIalog sd = new ScriptDIalog();
                 //读取并显示脚本
-                sd.SetCode(Variables.scriptEdit.ReadProcedure(ScriptNames[ScriptIndex]));
+                sd.SetCode(Variables.scriptEdit.ReadProcedure(ScriptName));
                 sd.ShowDialog();
                 //保存脚本
                 Variables.scriptEdit.SaveProcedure(sd.GetCode());
@@ -234,7 +232,7 @@ namespace VisionProject.ViewModels
                     { "ParamDict", paramDict }
                 };
 
-                Variables.CurDialogService.ShowDialog(DialogNames.ToolNams["参数设置"], param, callback =>
+                Variables.CurDialogService.ShowDialog(DialogNames.ShowParamSetDialog, param, callback =>
                 {
                     paramDict = callback.Parameters.GetValue<Dictionary<string, ParamSetVar>>("ParamDict");
                 });
@@ -343,7 +341,7 @@ namespace VisionProject.ViewModels
         {
             try
             {
-                paramDict = (Dictionary<string, ParamSetVar>)Variables.CurrentSubProgram.Parameters.BingGetOrAdd("ParamDict", new Dictionary<string, ParamSetVar>());
+                paramDict = (Dictionary<string, ParamSetVar>)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ParamDict", new Dictionary<string, ParamSetVar>());
 
                 HDict dict = new HDict();
                 dict.CreateDict();
@@ -365,10 +363,10 @@ namespace VisionProject.ViewModels
                 //dict.SetDictObject(hImage, "Image");
 
                 Variables.WorkEngines[EngineIndex].SetParam(
-                     ScriptNames[ScriptIndex], "InputDict", dict);
-                bool rst = Variables.WorkEngines[EngineIndex].InspectProcedure(ScriptNames[ScriptIndex]);
+                     ScriptName, "InputDict", dict);
+                bool rst = Variables.WorkEngines[EngineIndex].InspectProcedure(ScriptName);
                 //获取结果
-                HDict resultDict = Variables.WorkEngines[EngineIndex].GetParam<HalconDotNet.HDict>(ScriptNames[ScriptIndex], "OutputDict");
+                HDict resultDict = Variables.WorkEngines[EngineIndex].GetParam<HalconDotNet.HDict>(ScriptName, "OutputDict");
                 //这里约定好对应的输出结果
                 RunScriptResult = resultDict.GetDictTuple("Result").D.ToString();
             }

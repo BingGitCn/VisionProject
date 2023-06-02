@@ -96,6 +96,11 @@ namespace BingLibrary.Location
             get => Get();
             set => Set(value);
         }
+        public string ButtonSaveAs
+        {
+            get => Get();
+            set => Set(value);
+        }
         public string ProjectPath
         {
             get => Get();
@@ -127,6 +132,31 @@ namespace BingLibrary.Location
             set => Set(value);
         }
         public string Dragging
+        {
+            get => Get();
+            set => Set(value);
+        }
+        public string ButtonAddP
+        {
+            get => Get();
+            set => Set(value);
+        }
+        public string ButtonDeleteP
+        {
+            get => Get();
+            set => Set(value);
+        }
+        public string InspectPContent
+        {
+            get => Get();
+            set => Set(value);
+        }
+        public string ButtonAddI
+        {
+            get => Get();
+            set => Set(value);
+        }
+        public string ButtonDeleteI
         {
             get => Get();
             set => Set(value);
