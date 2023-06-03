@@ -19,10 +19,13 @@ namespace VisionProject.GlobalVars
         //工具或检测方式的名称，在此添加
         public static Dictionary<string, string> ToolNams = new Dictionary<string, string>()
         {
-             { "无",""},
-             { "相机操作","7E0B398D-F0E9-415B-8C76-16BF7781FF6D"},
-             { "脚本工具","96E74602-DDE9-4AF6-9D58-8B90B9BB93F0"},
-             { "视觉脚本","67137939-F6C5-4B8E-9862-D1D9AD46E1FD"},
+            // { "无",""},
+           //  { "相机操作","7E0B398D-F0E9-415B-8C76-16BF7781FF6D"},
+            // { "脚本工具","96E74602-DDE9-4AF6-9D58-8B90B9BB93F0"},
+
+              { "图像比对","8EBAA376-988A-4CDF-AD40-3FC9DE3B369C"},
+              { "色彩分析","99462AEB-2C55-4442-B12E-66D0B4B5A737"},
+              { "视觉脚本","67137939-F6C5-4B8E-9862-D1D9AD46E1FD"},
         };
     }
 }

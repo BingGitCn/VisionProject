@@ -70,10 +70,34 @@ namespace VisionProject.ViewModels
                         }
                         Variables.CurrentProject = Serialize.ReadJsonV2<Project>(SelectProjectName.Path);
                         Programs = Variables.CurrentProject.Programs;
+
                         CurrentProgram.Clear();
-                        if (Programs.Keys.ToList().Count > 0)
-                            for (int i = 0; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
-                                CurrentProgram.Add(Programs[Programs.Keys.ToList()[0]][i]);
+                        if (Programs.Count > 0)
+                            CurrentProgram = JsonConvert.DeserializeObject<ObservableCollection<SubProgram>>(JsonConvert.SerializeObject(Programs[Programs.Keys.ToList()[0]]));
+                        CurrentProgramDatas.Clear();
+                        if (CurrentProgram.Count > 0)
+                            CurrentProgramDatas = JsonConvert.DeserializeObject<ObservableCollection<ProgramData>>(JsonConvert.SerializeObject(CurrentProgram[0].ProgramDatas));
+
+                        //if (Programs.Keys.ToList().Count > 0)
+                        //{
+                        //    for (int i = 0; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
+                        //    {
+                        //        CurrentProgram.Add(new SubProgram() { ProductIndex = Programs[Programs.Keys.ToList()[0]][i].ProductIndex });
+                        //        for (int j = 0; j < Programs[Programs.Keys.ToList()[0]][i].ProgramDatas.Count; j++)
+                        //            CurrentProgram[i].ProgramDatas.Add(Programs[Programs.Keys.ToList()[0]][i].ProgramDatas[j].Clone());
+                        //    }
+
+                        //    CurrentProgramIndex = 0;
+                        //}
+
+                        //CurrentProgramDatas.Clear();
+                        //if (CurrentProgram.Count > 0)
+                        //{
+                        //    for (int i = 0; i < CurrentProgram[0].ProgramDatas.Count; i++)
+                        //        CurrentProgramDatas.Add(CurrentProgram[0].ProgramDatas[i].Clone());
+                        //    CurrentProgramDatasIndex = 0;
+                        //}
+
                         ProgramsIndex = 0;
                         ProjectName = SelectProjectName.Name;
                         CreateDate = Variables.CurrentProject.CreateDate;
@@ -182,10 +206,34 @@ namespace VisionProject.ViewModels
 
                             Variables.CurrentProject = Serialize.ReadJsonV2<Project>(SelectProjectName.Path);
                             Programs = Variables.CurrentProject.Programs;
+
                             CurrentProgram.Clear();
-                            if (Programs.Keys.ToList().Count > 0)
-                                for (int i = 0; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
-                                    CurrentProgram.Add(Programs[Programs.Keys.ToList()[0]][i]);
+                            if (Programs.Count > 0)
+                                CurrentProgram = JsonConvert.DeserializeObject<ObservableCollection<SubProgram>>(JsonConvert.SerializeObject(Programs[Programs.Keys.ToList()[0]]));
+                            CurrentProgramDatas.Clear();
+                            if (CurrentProgram.Count > 0)
+                                CurrentProgramDatas = JsonConvert.DeserializeObject<ObservableCollection<ProgramData>>(JsonConvert.SerializeObject(CurrentProgram[0].ProgramDatas));
+
+                            //CurrentProgram.Clear();
+                            //if (Programs.Keys.ToList().Count > 0)
+                            //{
+                            //    for (int i = 0; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
+                            //    {
+                            //        CurrentProgram.Add(new SubProgram() { ProductIndex = Programs[Programs.Keys.ToList()[0]][i].ProductIndex });
+                            //        for (int j = 0; j < Programs[Programs.Keys.ToList()[0]][i].ProgramDatas.Count; j++)
+                            //            CurrentProgram[i].ProgramDatas.Add(Programs[Programs.Keys.ToList()[0]][i].ProgramDatas[j].Clone());
+                            //    }
+                            //    CurrentProgramIndex = 0;
+                            //}
+
+                            //CurrentProgramDatas.Clear();
+                            //if (CurrentProgram.Count > 0)
+                            //{
+                            //    for (int i = 0; i < CurrentProgram[0].ProgramDatas.Count; i++)
+                            //        CurrentProgramDatas.Add(CurrentProgram[0].ProgramDatas[i].Clone());
+                            //    CurrentProgramDatasIndex = 0;
+                            //}
+
                             ProgramsIndex = 0;
                             ProjectName = SelectProjectName.Name;
                             CreateDate = Variables.CurrentProject.CreateDate;
@@ -245,10 +293,34 @@ namespace VisionProject.ViewModels
                                 Variables.CurrentProject = new Project();
                                 Variables.CurrentProject = Serialize.ReadJsonV2<Project>(dig_openFileDialog.FileName);
                                 Programs = Variables.CurrentProject.Programs;
+
                                 CurrentProgram.Clear();
-                                if (Programs.Keys.ToList().Count > 0)
-                                    for (int i = 0; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
-                                        CurrentProgram.Add(Programs[Programs.Keys.ToList()[0]][i]);
+                                if (Programs.Count > 0)
+                                    CurrentProgram = JsonConvert.DeserializeObject<ObservableCollection<SubProgram>>(JsonConvert.SerializeObject(Programs[Programs.Keys.ToList()[0]]));
+                                CurrentProgramDatas.Clear();
+                                if (CurrentProgram.Count > 0)
+                                    CurrentProgramDatas = JsonConvert.DeserializeObject<ObservableCollection<ProgramData>>(JsonConvert.SerializeObject(CurrentProgram[0].ProgramDatas));
+
+                                //CurrentProgram.Clear();
+                                //if (Programs.Keys.ToList().Count > 0)
+                                //{
+                                //    for (int i = 0; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
+                                //    {
+                                //        CurrentProgram.Add(new SubProgram() { ProductIndex = Programs[Programs.Keys.ToList()[0]][i].ProductIndex });
+                                //        for (int j = 0; j < Programs[Programs.Keys.ToList()[0]][i].ProgramDatas.Count; j++)
+                                //            CurrentProgram[i].ProgramDatas.Add(Programs[Programs.Keys.ToList()[0]][i].ProgramDatas[j].Clone());
+                                //    }
+
+                                //    CurrentProgramIndex = 0;
+                                //}
+
+                                //CurrentProgramDatas.Clear();
+                                //if (CurrentProgram.Count > 0)
+                                //{
+                                //    for (int i = 0; i < CurrentProgram[0].ProgramDatas.Count; i++)
+                                //        CurrentProgramDatas.Add(CurrentProgram[0].ProgramDatas[i].Clone());
+                                //    CurrentProgramDatasIndex = 0;
+                                //}
                                 ProgramsIndex = 0;
                                 ProjectName = dig_openFileDialog.SafeFileName.Replace(".lprj", "");
                                 CreateDate = Variables.CurrentProject.CreateDate;
@@ -293,6 +365,8 @@ namespace VisionProject.ViewModels
                                 }
                                 Variables.CurrentProject.LastDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 LastDate = Variables.CurrentProject.LastDate;
+
+                                Programs[Programs.Keys.ToList()[ProgramsIndex]] = JsonConvert.DeserializeObject<ObservableCollection<SubProgram>>(JsonConvert.SerializeObject(CurrentProgram));
 
                                 Variables.CurrentProject.Programs = Programs;
 
@@ -389,7 +463,7 @@ namespace VisionProject.ViewModels
         public Dictionary<string, ObservableCollection<SubProgram>> Programs = new Dictionary<string, ObservableCollection<SubProgram>>();
 
         //程序索引
-        private int currentProgramIndex;
+        private int currentProgramIndex = -1;
 
         public int CurrentProgramIndex
         {
@@ -426,20 +500,20 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref currentSelectedProgramData, value); }
         }
 
-        private ObservableCollection<ProgramData> currentprogramDatas = new ObservableCollection<ProgramData>();
+        private ObservableCollection<ProgramData> currentProgramDatas = new ObservableCollection<ProgramData>();
 
         public ObservableCollection<ProgramData> CurrentProgramDatas
         {
-            get { return currentprogramDatas; }
-            set { SetProperty(ref currentprogramDatas, value); }
+            get { return currentProgramDatas; }
+            set { SetProperty(ref currentProgramDatas, value); }
         }
 
-        private int currentprogramDatasIndex;
+        private int currentProgramDatasIndex;
 
         public int CurrentProgramDatasIndex
         {
-            get { return currentprogramDatasIndex; }
-            set { SetProperty(ref currentprogramDatasIndex, value); }
+            get { return currentProgramDatasIndex; }
+            set { SetProperty(ref currentProgramDatasIndex, value); }
         }
 
         //各程序名称
@@ -481,26 +555,33 @@ namespace VisionProject.ViewModels
                                             var ns = ProgramsName[ProgramsIndex];
                                             if (Variables.ShowConfirm("是否复制【" + ns + "】程序到新程序【" + ProgramName + "】？") == true)
                                             {
-                                                var newProgram = new ObservableCollection<SubProgram>();
-                                                for (int i = 0; i < Programs[ProgramsName[ProgramsIndex]].Count; i++)
-                                                {
-                                                    var subProgram = new SubProgram();
-                                                    subProgram.ProductIndex = Programs[ProgramsName[ProgramsIndex]][i].ProductIndex;
-                                                    subProgram.ProgramDatas = new ObservableCollection<ProgramData>();
-                                                    for (int j = 0; j < Programs[ProgramsName[ProgramsIndex]][i].ProgramDatas.Count; j++)
-                                                        subProgram.ProgramDatas.Add(Programs[ProgramsName[ProgramsIndex]][i].ProgramDatas[j].Clone());
-                                                    newProgram.Add(subProgram);
-                                                }
+                                                var newProgram = JsonConvert.DeserializeObject<ObservableCollection<SubProgram>>(JsonConvert.SerializeObject(Programs[ProgramsName[ProgramsIndex]]));
+
+                                                //var newProgram = new ObservableCollection<SubProgram>();
+                                                //for (int i = 0; i < Programs[ProgramsName[ProgramsIndex]].Count; i++)
+                                                //{
+                                                //    var subProgram = new SubProgram();
+                                                //    subProgram.ProductIndex = Programs[ProgramsName[ProgramsIndex]][i].ProductIndex;
+                                                //    subProgram.ProgramDatas = new ObservableCollection<ProgramData>();
+                                                //    for (int j = 0; j < Programs[ProgramsName[ProgramsIndex]][i].ProgramDatas.Count; j++)
+                                                //        subProgram.ProgramDatas.Add(Programs[ProgramsName[ProgramsIndex]][i].ProgramDatas[j].Clone());
+                                                //    newProgram.Add(subProgram);
+                                                //}
 
                                                 Programs.Add(ProgramName, newProgram);
                                                 ProgramsName.Add(ProgramName);
+                                                ProgramsIndex = Programs.Count - 1;
+                                                Variables.ProgramName = ProgramsName[ProgramsIndex];
+                                                Log.Info("增加了程序");
                                                 ProgramName = "";
                                             }
                                             else
                                             {
                                                 ProgramsName.Add(ProgramName);
                                                 Programs.Add(ProgramName, new ObservableCollection<SubProgram>());
+                                                ProgramsIndex = Programs.Count - 1;
                                                 Variables.ProgramName = ProgramsName[ProgramsIndex];
+
                                                 Log.Info("增加了程序");
                                                 ProgramName = "";
                                             }
@@ -509,6 +590,7 @@ namespace VisionProject.ViewModels
                                         {
                                             ProgramsName.Add(ProgramName);
                                             Programs.Add(ProgramName, new ObservableCollection<SubProgram>());
+                                            ProgramsIndex = Programs.Count - 1;
                                             Variables.ProgramName = ProgramsName[ProgramsIndex];
                                             Log.Info("增加了程序");
                                             ProgramName = "";
@@ -551,10 +633,18 @@ namespace VisionProject.ViewModels
             {
                 try
                 {
-                    //将程序集合中选中的程序给到界面
                     CurrentProgram.Clear();
-                    for (int i = 0; i < Programs[ProgramsName[ProgramsIndex]].Count; i++)
-                        CurrentProgram.Add(Programs[ProgramsName[ProgramsIndex]][i]);
+                    CurrentProgram = JsonConvert.DeserializeObject<ObservableCollection<SubProgram>>(JsonConvert.SerializeObject(Programs[ProgramsName[ProgramsIndex]]));
+
+                    ////将程序集合中选中的程序给到界面
+                    //CurrentProgram.Clear();
+                    //for (int i = 0; i < Programs[ProgramsName[ProgramsIndex]].Count; i++)
+                    //{
+                    //    CurrentProgram.Add(new SubProgram() { ProductIndex = Programs[ProgramsName[ProgramsIndex]][i].ProductIndex });
+                    //    for (int j = 0; j < Programs[ProgramsName[ProgramsIndex]][i].ProgramDatas.Count; j++)
+                    //        CurrentProgram[i].ProgramDatas.Add(Programs[ProgramsName[ProgramsIndex]][i].ProgramDatas[j].Clone());
+                    //}
+
                     Variables.ProgramName = ProgramsName[ProgramsIndex];
                 }
                 catch (Exception ex) { }
@@ -575,9 +665,37 @@ namespace VisionProject.ViewModels
                 switch (param)
                 {
                     case "add":
+
                         try
                         {
-                            CurrentProgram.Add(new SubProgram() { ProductIndex = CurrentProgram.Count() });
+                            if (Variables.ShowConfirm("确认添加新的位置？") == true)
+                            {
+                                if (CurrentProgram.Count > 0)
+                                {
+                                    if (Variables.ShowConfirm("是否复制【位置" + CurrentProgramIndex + "】到新位置？") == true)
+                                    {
+                                        var sp = new SubProgram();
+                                        sp = JsonConvert.DeserializeObject<SubProgram>(JsonConvert.SerializeObject(CurrentProgram[CurrentProgramIndex]));
+                                        sp.ProductIndex = currentProgram.Count;
+                                        CurrentProgram.Add(sp);
+
+                                        //int oldIndex = CurrentProgramIndex;
+                                        //CurrentProgram.Add(new SubProgram() { ProductIndex = CurrentProgram.Count() });
+                                        //for (int i = 0; i < CurrentProgram[oldIndex].ProgramDatas.Count; i++)
+                                        //    CurrentProgram[currentProgram.Count - 1].ProgramDatas.Add(CurrentProgram[oldIndex].ProgramDatas[i].Clone());
+                                    }
+                                    else
+                                    {
+                                        CurrentProgram.Add(new SubProgram() { ProductIndex = CurrentProgram.Count() });
+                                        Log.Info("增加了新的检测位置");
+                                    }
+                                }
+                                else
+                                {
+                                    CurrentProgram.Add(new SubProgram() { ProductIndex = CurrentProgram.Count() });
+                                    Log.Info("增加了新的检测位置");
+                                }
+                            }
                         }
                         catch { }
                         break;
@@ -592,14 +710,11 @@ namespace VisionProject.ViewModels
                         break;
                 }
 
-                //将界面的program更新到项目的程序集合中。
                 try
                 {
-                    Programs[ProgramsName[ProgramsIndex]].Clear();
-                    for (int i = 0; i < CurrentProgram.Count; i++)
-                        Programs[ProgramsName[ProgramsIndex]].Add(CurrentProgram[i]);
+                    Programs[Programs.Keys.ToList()[ProgramsIndex]] = JsonConvert.DeserializeObject<ObservableCollection<SubProgram>>(JsonConvert.SerializeObject(CurrentProgram));
                 }
-                catch (Exception ex) { }
+                catch { }
             }));
 
         //各位置子程序删减
@@ -637,7 +752,7 @@ namespace VisionProject.ViewModels
                             {
                                 var inspectName = callback.Parameters.GetValue<string>("InspectName");
                                 var content = callback.Parameters.GetValue<string>("Content");
-                                currentprogramDatas.Add(new ProgramData() { InspectFunction = inspectName, Content = content, IsUse = true });
+                                CurrentProgramDatas.Add(new ProgramData() { InspectFunction = inspectName, Content = content, IsUse = true });
                             }
                         });
                     }
@@ -648,7 +763,7 @@ namespace VisionProject.ViewModels
                     try
                     {
                         if (Variables.ShowConfirm("确认删除检测？") == true)
-                            currentprogramDatas.Remove(CurrentSelectedProgramData);
+                            CurrentProgramDatas.Remove(CurrentSelectedProgramData);
                     }
                     catch { }
                     break;
@@ -657,9 +772,11 @@ namespace VisionProject.ViewModels
             //将界面的programdata更新到项目的程序集合中。
             try
             {
-                Programs[ProgramsName[ProgramsIndex]][currentProgramIndex].ProgramDatas.Clear();
-                for (int i = 0; i < currentprogramDatas.Count; i++)
-                    Programs[ProgramsName[ProgramsIndex]][currentProgramIndex].ProgramDatas.Add(currentprogramDatas[i]);
+                Programs[ProgramsName[ProgramsIndex]][currentProgramIndex] = JsonConvert.DeserializeObject<SubProgram>(JsonConvert.SerializeObject(CurrentProgram[CurrentProgramIndex]));
+
+                //Programs[ProgramsName[ProgramsIndex]][currentProgramIndex].ProgramDatas.Clear();
+                //for (int i = 0; i < currentProgramDatas.Count; i++)
+                //    Programs[ProgramsName[ProgramsIndex]][currentProgramIndex].ProgramDatas.Add(currentProgramDatas[i]);
             }
             catch { }
             Variables.IngoreAutoHome = false;
@@ -674,10 +791,12 @@ namespace VisionProject.ViewModels
         {
             try
             {
-                CurrentProgramDatas.Clear();
+                CurrentProgramDatas = JsonConvert.DeserializeObject<ObservableCollection<ProgramData>>(JsonConvert.SerializeObject(CurrentProgram[CurrentProgramIndex].ProgramDatas));
 
-                for (int i = 0; i < Programs[ProgramsName[ProgramsIndex]][currentProgramIndex].ProgramDatas.Count; i++)
-                    CurrentProgramDatas.Add(Programs[ProgramsName[ProgramsIndex]][currentProgramIndex].ProgramDatas[i]);
+                //CurrentProgramDatas.Clear();
+
+                //for (int i = 0; i < CurrentProgram[CurrentProgramIndex].ProgramDatas.Count; i++)
+                //    CurrentProgramDatas.Add(CurrentProgram[CurrentProgramIndex].ProgramDatas[i].Clone());
             }
             catch { }
         }
@@ -692,10 +811,13 @@ namespace VisionProject.ViewModels
                 {
                     //禁止自动返回主界面
                     Variables.IngoreAutoHome = true;
-                    Variables.CurrentProgramData = CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex];
+                    Variables.CurrentProgramData = JsonConvert.DeserializeObject<ProgramData>(JsonConvert.SerializeObject(CurrentProgramDatas[CurrentProgramDatasIndex]));
 
                     Variables.CurDialogService.ShowDialog(DialogNames.ToolNams[param]);
-                    CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex] = Variables.CurrentProgramData.Clone();
+
+                    CurrentProgramDatas[CurrentProgramDatasIndex] = JsonConvert.DeserializeObject<ProgramData>(JsonConvert.SerializeObject(Variables.CurrentProgramData));
+
+                    CurrentProgram[CurrentProgramIndex].ProgramDatas = JsonConvert.DeserializeObject<ObservableCollection<ProgramData>>(JsonConvert.SerializeObject(CurrentProgramDatas));
 
                     Variables.IngoreAutoHome = false;
                 }

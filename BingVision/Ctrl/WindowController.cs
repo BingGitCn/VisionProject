@@ -416,6 +416,8 @@ namespace BingLibrary.Vision
             IsShowWaterString = isShow;
         }
 
+        private bool isFirstShowImage = true;
+
         /// <summary>
         /// Í¼ÏñÏÔÊ¾µ½´°¿Ú
         /// </summary>
@@ -425,6 +427,11 @@ namespace BingLibrary.Vision
             this.image?.Dispose();
             this.image = image;
             Repaint();
+            if (isFirstShowImage)
+            {
+                isFirstShowImage = false;
+                FitImageToWindow();
+            }
         }
 
         /// <summary>
