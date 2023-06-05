@@ -2,6 +2,7 @@
 using BingLibrary.Vision;
 using BingLibrary.Vision.Engine;
 using HalconDotNet;
+using Newtonsoft.Json;
 using Prism.Events;
 using Prism.Services.Dialogs;
 using System;
@@ -47,6 +48,20 @@ namespace VisionProject.GlobalVars
         public static ScriptEdit scriptEdit = new ScriptEdit();
 
         #endregion 相机相关
+
+        #region 克隆，深复制
+
+        public static T DeepClone<T>(T data)
+        {
+            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+            jsonSerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.All;
+            jsonSerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
+            jsonSerializerSettings.TypeNameHandling = TypeNameHandling.All;
+            jsonSerializerSettings.Formatting = Formatting.Indented;
+            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(data, jsonSerializerSettings), jsonSerializerSettings);
+        }
+
+        #endregion 克隆，深复制
 
         #region 事件订阅
 

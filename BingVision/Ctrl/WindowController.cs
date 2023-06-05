@@ -191,6 +191,9 @@ namespace BingLibrary.Vision
             //∑Ò‘Ú“∆∂ØÕºœÒ
             else if (viewMode == HalconMouseMode.View_Move)
             {
+                if (startX == 0 && startY == 0)
+                    return;
+
                 motionX = e.Column - startX;
                 motionY = e.Row - startY;
 

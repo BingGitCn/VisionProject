@@ -125,7 +125,7 @@ namespace BingLibrary.Vision
             catch { }
         }
 
-        public void Reset()
+        public void Clear()
         {
             ROIList.Clear();
             ActiveROIidx = -1;

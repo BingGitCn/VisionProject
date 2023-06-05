@@ -1,12 +1,14 @@
 ﻿using BingLibrary.Extension;
 using BingLibrary.Vision;
 using HalconDotNet;
-using ImageResizer.ExtensionMethods;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
@@ -15,6 +17,61 @@ namespace VisionProject.ViewModels
     {
         public Function_MatchViewModel()
         {
+        }
+
+        private int tabIndex;
+
+        public int TabIndex
+        {
+            get { return tabIndex; }
+            set { SetProperty(ref tabIndex, value); }
+        }
+
+        private int oldTabIndex = -1;
+        private DelegateCommand _doSwitchTab;
+
+        public DelegateCommand DoSwitchTab =>
+            _doSwitchTab ?? (_doSwitchTab = new DelegateCommand(ExecuteDoSwitchTab));
+
+        private void ExecuteDoSwitchTab()
+        {
+            if (oldTabIndex != TabIndex)
+            {
+                oldTabIndex = TabIndex;
+                if (TabIndex == 0)
+                { }
+                else if (TabIndex == 1)
+                {
+                    ExecuteModelOperate("trans");
+                }
+                else if (TabIndex == 2)
+                {
+                    ExecuteModelOperate("trans");
+                    image?.Dispose();
+                    image = resultImage.CopyImage();
+                    runPreEnhance();
+                }
+                else if (TabIndex == 3)
+                {
+                    ExecuteModelOperate("trans");
+                    image?.Dispose();
+                    image = resultImage.CopyImage();
+                    runPreEnhance();
+                    image?.Dispose();
+                    image = resultImage.CopyImage();
+                    runGray();
+                }
+                else if (TabIndex == 4)
+                {
+                    ExecuteModelOperate("trans");
+                    image?.Dispose();
+                    image = resultImage.CopyImage();
+                    runPreEnhance();
+                    image?.Dispose();
+                    image = resultImage.CopyImage();
+                    runGray();
+                }
+            }
         }
 
         #region 图像选择
@@ -50,6 +107,10 @@ namespace VisionProject.ViewModels
                         {
                             originalImage?.Dispose();
                             originalImage = new HImage(rst);
+                            Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                            Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+                            Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(originalImage.CopyImage());
+                            Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
 
                             var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
                             var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
@@ -67,9 +128,6 @@ namespace VisionProject.ViewModels
 
                                 Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
                             }
-
-                            Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(originalImage.CopyImage());
-                            Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
                         }
                     }
                     catch { }
@@ -204,6 +262,293 @@ namespace VisionProject.ViewModels
 
         #endregion 图像选择
 
+        #region 图像矫正
+
+        private DelegateCommand _transResetPreEnhance;
+
+        public DelegateCommand TransResetPreEnhance =>
+            _transResetPreEnhance ?? (_transResetPreEnhance = new DelegateCommand(ExecutetransResetPreEnhance));
+
+        private void ExecutetransResetPreEnhance()
+        {
+            TransBrightnessValue = 128;
+            TransContrastValue = 128;
+            TransGammaValue = 1.0;
+            runTransPreEnhance();
+        }
+
+        private bool isTrans;
+
+        public bool IsTrans
+        {
+            get { return isTrans; }
+            set { SetProperty(ref isTrans, value); }
+        }
+
+        private double transBrightnessValue = 128;
+
+        public double TransBrightnessValue
+        {
+            get { return transBrightnessValue; }
+            set
+            {
+                transBrightnessValue = value;
+                RaisePropertyChanged(nameof(TransBrightnessValue));
+            }
+        }
+
+        private double transContrastValue = 128;
+
+        public double TransContrastValue
+        {
+            get { return transContrastValue; }
+            set
+            {
+                transContrastValue = value;
+                RaisePropertyChanged(nameof(TransContrastValue));
+            }
+        }
+
+        private double transGammaValue = 1;
+
+        public double TransGammaValue
+        {
+            get { return transGammaValue; }
+            set
+            {
+                transGammaValue = value;
+                RaisePropertyChanged(nameof(TransGammaValue));
+            }
+        }
+
+        private DelegateCommand _transPreEnhanceValueChanged;
+
+        public DelegateCommand TransPreEnhanceValueChanged =>
+            _transPreEnhanceValueChanged ?? (_transPreEnhanceValueChanged = new DelegateCommand(ExecuteTransPreEnhanceValueChanged));
+
+        private void ExecuteTransPreEnhanceValueChanged()
+        {
+            try
+            {
+                runTransPreEnhance();
+            }
+            catch { }
+        }
+
+        private HImage modelImage = new HImage();
+
+        private void runTransPreEnhance()
+        {
+            if (!isInitlized)
+                return;
+            try
+            {
+                if (!originalImage.IsInitialized())
+                    image = ((HImage)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", new HImage())).CopyImage();
+                else
+                {
+                    var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
+                    var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
+                    var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn1", 0.0);
+                    var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn2", 0.0);
+                    if (row1 + row2 == 0)
+                    {
+                        image = originalImage.CopyImage();
+                    }
+                    else
+                    {
+                        image = originalImage.CropRectangle1(row1, col1, row2, col2);
+                    }
+                }
+                resultImage = image.CopyImage();
+                if (!isTrans)
+                {
+                }
+                else
+                {
+                    modelImage = image.AddImage(image, 0.5, TransBrightnessValue - 128);
+                    if (ContrastValue >= 128)
+                    {
+                        double max = 383.0 - TransContrastValue;
+                        double min = TransContrastValue - 128.0;
+
+                        double mult = 255.0 / (max - min);
+                        double add = -mult * min;
+                        modelImage = modelImage.ScaleImage(mult, add);
+                    }
+                    else
+                    {
+                        double max = 127.0 + TransContrastValue;
+                        double min = 128.0 - TransContrastValue;
+
+                        double mult = (2 * TransContrastValue - 1) / 255.0;
+                        double add = 128 - TransContrastValue;
+                        modelImage = modelImage.ScaleImage(mult, add);
+                    }
+                    modelImage = modelImage.GammaImage(TransGammaValue, 0, 0, 255.0, "true");
+                }
+            }
+            catch
+            {
+                if (!image.IsInitialized())
+                    modelImage = new HImage();
+                else
+                    modelImage = image.CopyImage();
+            }
+
+            Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+            Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+            Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(isTrans ? modelImage : resultImage);
+            Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+
+            try
+            {
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsTrans", IsTrans);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("TransBrightnessValue", TransBrightnessValue);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("TransContrastValue", TransContrastValue);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("TransGammaValue", TransGammaValue);
+            }
+            catch { }
+        }
+
+        private HRegion modelRegion = new HRegion();
+
+        private DelegateCommand<string> _modelRegionOperate;
+
+        public DelegateCommand<string> ModelRegionOperate =>
+            _modelRegionOperate ?? (_modelRegionOperate = new DelegateCommand<string>(ExecuteModelRegionOperate));
+
+        private void ExecuteModelRegionOperate(string parameter)
+        {
+            try
+            {
+                switch (parameter)
+                {
+                    case "draw":
+                        NotDrawIng = false;
+                        if (!modelRegion.IsInitialized())
+                            modelRegion.GenEmptyRegion();
+
+                        Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.margin;
+                        Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = true;
+                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(HalconColors.橙色.ToDescription());
+                        HRegion tempRegion = Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRegion();
+                        Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                        modelRegion = modelRegion.Union2(tempRegion);
+                        Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(modelRegion);
+                        Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                        Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
+                        break;
+
+                    case "clear":
+                        modelRegion = new HRegion();
+                        modelRegion.GenEmptyRegion();
+                        Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                        Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                        break;
+                }
+            }
+            catch { }
+            NotDrawIng = true;
+        }
+
+        private HTuple modelRow = new HTuple(), modelCol = new HTuple(), modelAngle = new HTuple(), modelScore = new HTuple();
+        private HShapeModel modelSM = new HShapeModel();
+
+        private DelegateCommand<string> _modelOperate;
+
+        public DelegateCommand<string> ModelOperate =>
+             _modelOperate ?? (_modelOperate = new DelegateCommand<string>(ExecuteModelOperate));
+
+        private void ExecuteModelOperate(string parameter)
+        {
+            try
+            {
+                runTransPreEnhance();
+
+                HTuple row = new HTuple(), col = new HTuple(), angle = new HTuple();
+                HHomMat2D hHomMat2D = new HHomMat2D();
+                switch (parameter)
+                {
+                    case "create":
+                        HTuple paramterValue = new HTuple();
+                        HTuple paramterName = modelImage.ReduceDomain(modelRegion).DetermineShapeModelParams(
+                           new HTuple("auto"), -0.39, 0.79, new HTuple(0.9), new HTuple(1.1), "auto",
+                           "use_polarity", new HTuple("auto"), new HTuple("auto"), new HTuple("all"), out paramterValue
+                            );
+
+                        Dictionary<string, HTuple> dict = new Dictionary<string, HTuple>();
+                        for (int i = 0; i < paramterName.SArr.Length; i++)
+                            dict.Add(paramterName.SArr[i], paramterValue[i]);
+
+                        modelSM = modelImage.ReduceDomain(modelRegion).CreateShapeModel(
+                               dict["num_levels"], -0.39, 0.79, dict["angle_step"], dict["optimization"], "use_polarity",
+                                dict["contrast_low"].TupleConcat(dict["contrast_high"]), dict["min_contrast"]);
+
+                        modelImage.FindShapeModel(modelSM, -0.39, 0.79, 0.5, 1, 0.5, "least_squares", 3, 0.5,
+                            out modelRow, out modelCol, out modelAngle, out modelScore);
+
+                        Variables.ShowMessage("创建成功！\r\n模板分：" + modelScore.D);
+                        break;
+
+                    case "registe":
+                        var rst = Variables.ShowConfirm("是否注册为模板？");
+                        Variables.CurrentProgramData.Parameters.BingAddOrUpdate("Model", modelSM);
+                        Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ModelRow", modelRow);
+                        Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ModelCol", modelCol);
+                        Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ModelAngle", modelAngle);
+
+                        break;
+
+                    case "find":
+
+                        modelSM = (HShapeModel)Variables.CurrentProgramData.Parameters.BingGetOrAdd("Model", null);
+                        modelRow = (HTuple)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ModelRow", new HTuple(0));
+                        modelCol = (HTuple)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ModelCol", new HTuple(0));
+                        modelAngle = (HTuple)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ModelAngle", new HTuple(0));
+
+                        var con = modelSM.GetShapeModelContours(1);
+
+                        modelImage.FindShapeModel(modelSM, -0.39, 0.79, 0.5, 1, 0.5, "least_squares", 3, 0.5,
+                          out row, out col, out angle, out modelScore);
+
+                        hHomMat2D.VectorAngleToRigid(0, 0, 0, row, col, angle);
+                        var rstCon = con.AffineTransContourXld(hHomMat2D);
+                        Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                        Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(rstCon);
+                        Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                        Variables.ShowMessage("查找成功！\r\n" +
+                            "模板行位置：" + row.D.ToString("3f") + "\r\n" +
+                            "模板列位置：" + col.D.ToString("3f") + "\r\n" +
+                            "模板角度：" + (angle.D * 180.0 / Math.PI).ToString("3f") + "\r\n" +
+                            "模板分：" + modelScore.D);
+                        break;
+
+                    case "trans":
+
+                        modelSM = (HShapeModel)Variables.CurrentProgramData.Parameters.BingGetOrAdd("Model", null);
+                        modelRow = (HTuple)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ModelRow", new HTuple(0));
+                        modelCol = (HTuple)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ModelCol", new HTuple(0));
+                        modelAngle = (HTuple)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ModelAngle", new HTuple(0));
+
+                        modelImage.FindShapeModel(modelSM, -0.39, 0.79, 0.5, 1, 0.5, "least_squares", 3, 0.5,
+                          out row, out col, out angle, out modelScore);
+
+                        hHomMat2D.VectorAngleToRigid(row, col, angle, modelRow, modelCol, modelAngle);
+                        resultImage = resultImage.AffineTransImage(hHomMat2D, "constant", "false");
+
+                        Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(resultImage.CopyImage());
+                        Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
+                        Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+
+                        break;
+                }
+            }
+            catch { }
+        }
+
+        #endregion 图像矫正
+
         #region 预处理
 
         private DelegateCommand _resetPreEnhance;
@@ -292,27 +637,6 @@ namespace VisionProject.ViewModels
                 return;
             try
             {
-                if (!originalImage.IsInitialized())
-                    image = (HImage)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", new HImage());
-                else
-                {
-                    var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
-                    var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
-                    var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn1", 0.0);
-                    var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn2", 0.0);
-                    if (row1 + row2 == 0)
-                    {
-                        image = originalImage.CopyImage();
-                    }
-                    else
-                    {
-                        image = originalImage.CropRectangle1(row1, col1, row2, col2);
-                    }
-                }
-
-                if (!IsPreEnhance)
-                    resultImage = image.CopyImage();
-                else
                 {
                     resultImage = image.AddImage(image, 0.5, BrightnessValue - 128);
                     if (ContrastValue >= 128)
@@ -344,6 +668,8 @@ namespace VisionProject.ViewModels
                     resultImage = image.CopyImage();
             }
 
+            Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+            Variables.ImageWindowDataForFunction.ROICtrl.Clear();
             Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(resultImage);
             Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
 
@@ -451,28 +777,38 @@ namespace VisionProject.ViewModels
             runGray();
         }
 
+        private HRegion resultRegion = new HRegion();
+
         private void runGray()
         {
             Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.fill;
             if (!isInitlized)
                 return;
-            HRegion resultRegion = new HRegion();
+
             resultRegion.GenEmptyRegion();
             try
             {
-                runPreEnhance();
-
                 if (IsGray)
                 {
                     if (GrayModeIndex == 0)
                     {
-                        if (resultImage.CountChannels() == 1)
+                        if (image.CountChannels() == 1)
                         {
+                            resultImage = image.CopyImage();
+                            if (!IsReverse4)
+                            {
+                                resultRegion = resultImage.Threshold((double)ValueS4, (double)ValueE4);
+                            }
+                            else
+                            {
+                                resultRegion = resultImage.Threshold((new HTuple(0)).TupleConcat(new HTuple(ValueE4)), (new HTuple(ValueS4)).TupleConcat(255));
+                                resultRegion = resultRegion.Union1();
+                            }
                         }
                         else
                         {
                             HImage image1, image2, image3;
-                            image1 = resultImage.Decompose3(out image2, out image3);
+                            image1 = image.Decompose3(out image2, out image3);
                             var rstImage1 = image1.AddImage(image1, ValueE1 * 0.5 / 100.0, 0);
                             var rstImage2 = image2.AddImage(image2, ValueE2 * 0.5 / 100.0, 0);
                             var rstImage3 = image3.AddImage(image3, ValueE3 * 0.5 / 100.0, 0);
@@ -495,8 +831,9 @@ namespace VisionProject.ViewModels
                     }
                     else if (GrayModeIndex == 1)
                     {
-                        if (resultImage.CountChannels() == 1)
+                        if (image.CountChannels() == 1)
                         {
+                            resultImage = image.CopyImage();
                             if (!IsReverse4)
                             {
                                 resultRegion = resultImage.Threshold((double)ValueS4, (double)ValueE4);
@@ -510,7 +847,7 @@ namespace VisionProject.ViewModels
                         else
                         {
                             HImage image1, image2, image3;
-                            image1 = resultImage.Decompose3(out image2, out image3);
+                            image1 = image.Decompose3(out image2, out image3);
 
                             HRegion resultRegion1 = new HRegion(); resultRegion1.GenEmptyRegion();
                             HRegion resultRegion2 = new HRegion(); resultRegion2.GenEmptyRegion();
@@ -574,8 +911,9 @@ namespace VisionProject.ViewModels
                     }
                     else if (GrayModeIndex == 2)
                     {
-                        if (resultImage.CountChannels() == 1)
+                        if (image.CountChannels() == 1)
                         {
+                            resultImage = image.CopyImage();
                             if (!IsReverse4)
                             {
                                 resultRegion = resultImage.Threshold((double)ValueS4, (double)ValueE4);
@@ -589,7 +927,7 @@ namespace VisionProject.ViewModels
                         else
                         {
                             HImage image1, image2, image3;
-                            image1 = resultImage.Decompose3(out image2, out image3);
+                            image1 = image.Decompose3(out image2, out image3);
                             HImage tImage1, tImage2, tImage3;
                             tImage1 = image1.TransFromRgb(image2, image3, out tImage2, out tImage3, "hsv");
 
@@ -642,9 +980,9 @@ namespace VisionProject.ViewModels
             {
             }
 
-            Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(resultImage);
-            Variables.ImageWindowDataForFunction.ROICtrl.Reset();
-            Variables.ImageWindowDataForFunction.ROICtrl.AddROI(new BingLibrary.Vision.ROIRegion(resultRegion) { ROIColor = BingLibrary.Vision.HalconColors.黄色七五成 });
+            Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(resultImage.CopyImage());
+            Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+            Variables.ImageWindowDataForFunction.ROICtrl.AddROI(new BingLibrary.Vision.ROIRegion(resultRegion) { ROIColor = BingLibrary.Vision.HalconColors.蓝色 });
             Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
 
             try
@@ -948,6 +1286,182 @@ namespace VisionProject.ViewModels
 
         #endregion 二值处理
 
+        #region 判定
+
+        private int inspectIndex;
+
+        public int InspectIndex
+        {
+            get { return inspectIndex; }
+            set { SetProperty(ref inspectIndex, value); }
+        }
+
+        private DelegateCommand<string> _inspectROIOperate;
+
+        public DelegateCommand<string> InspectROIOperate =>
+            _inspectROIOperate ?? (_inspectROIOperate = new DelegateCommand<string>(ExecuteInspectROIOperate));
+
+        private void ExecuteInspectROIOperate(string parameter)
+        {
+            Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.margin;
+            NotDrawIng = false;
+            try
+            {
+                var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow" + parameter + "1", 0.0);
+                var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow" + parameter + "2", 0.0);
+                var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn" + parameter + "1", 0.0);
+                var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn" + parameter + "2", 0.0);
+
+                if ((row1 + row2) == 0)
+                {
+                    Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = true;
+
+                    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(HalconColors.橙色.ToDescription());
+                    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1(out row1, out col1, out row2, out col2);
+
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "1", row1);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "2", row2);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "1", col1);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "2", col2);
+
+                    Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                    Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
+                }
+                else
+                {
+                    Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = true;
+                    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(HalconColors.橙色.ToDescription());
+                    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1Mod(row1, col1, row2, col2, out row1, out col1, out row2, out col2);
+
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "1", row1);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "2", row2);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "1", col1);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "2", col2);
+
+                    Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                    Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
+                }
+            }
+            catch { }
+
+            Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.fill;
+            Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+            NotDrawIng = true;
+        }
+
+        private HNCCModel nCCModel = new HNCCModel();
+        private DelegateCommand _nccRegiste;
+
+        public DelegateCommand NccRegiste =>
+            _nccRegiste ?? (_nccRegiste = new DelegateCommand(ExecuteNccRegiste));
+
+        private void ExecuteNccRegiste()
+        {
+            try
+            {
+                var rst = Variables.ShowConfirm("是否注册标准检测？");
+
+                var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow01", 0.0);
+                var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow02", 0.0);
+                var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn01", 0.0);
+                var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn02", 0.0);
+
+                HTuple paramterValue = new HTuple();
+                HTuple paramterName = resultImage.ReduceDomain(new HRegion(row1, col1, row2, col2)).DetermineShapeModelParams(
+                   new HTuple("auto"), -0.39, 0.79, new HTuple(0.9), new HTuple(1.1), "auto",
+                   "use_polarity", new HTuple("auto"), new HTuple("auto"), new HTuple("all"), out paramterValue
+                    );
+
+                Dictionary<string, HTuple> dict = new Dictionary<string, HTuple>();
+                for (int i = 0; i < paramterName.SArr.Length; i++)
+                    dict.Add(paramterName.SArr[i], paramterValue[i]);
+
+                nCCModel = resultImage.ReduceDomain(new HRegion(row1, col1, row2, col2)).CreateNccModel(
+                       dict["num_levels"], -0.39, 0.79, dict["angle_step"], "use_polarity");
+
+                HTuple nccModelRow = new HTuple(); HTuple nccModelCol = new HTuple(); HTuple nccModelAngle = new HTuple(); HTuple nccModelScore = new HTuple();
+                resultImage.FindNccModel(nCCModel, -0.39, 0.79, 0.5, 1, 0.5, "true", 3,
+                    out nccModelRow, out nccModelCol, out nccModelAngle, out nccModelScore);
+
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NccModel", nCCModel);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NccModelRow", nccModelRow);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NccModelCol", nccModelCol);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NccModelAngle", nccModelAngle);
+            }
+            catch (Exception ex) { Variables.ShowMessage("注册失败：" + ex.Message); }
+        }
+
+        private DelegateCommand<string> _testRun;
+
+        public DelegateCommand<string> TestRun =>
+            _testRun ?? (_testRun = new DelegateCommand<string>(ExecuteTestRun));
+
+        private void ExecuteTestRun(string parameter)
+        {
+            try
+            {
+                switch (parameter)
+                {
+                    case "0":
+
+                        var nccModel = (HNCCModel)Variables.CurrentProgramData.Parameters.BingGetOrAdd("NccModel", null);
+                        HTuple nccModelRow = new HTuple(); HTuple nccModelCol = new HTuple(); HTuple nccModelAngle = new HTuple(); HTuple nccModelScore = new HTuple();
+                        resultImage.FindNccModel(nccModel, -0.39, 0.79, 0.5, 1, 0.5, "true", 3,
+                            out nccModelRow, out nccModelCol, out nccModelAngle, out nccModelScore);
+
+                        var row01 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow01", 0.0);
+                        var row02 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow02", 0.0);
+                        var col01 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn01", 0.0);
+                        var col02 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn02", 0.0);
+
+                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
+                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
+                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DispRectangle1(row01, col01, row02, col02);
+                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("fill");
+
+                        CurrentNCCScore = nccModelScore.D.ToString("f3");
+                        break;
+
+                    case "1":
+
+                        var row11 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow11", 0.0);
+                        var row12 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow12", 0.0);
+                        var col11 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn11", 0.0);
+                        var col12 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn12", 0.0);
+                        var region = new HRegion(row11, col11, row12, col12).Intersection(resultRegion);
+
+                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
+                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
+                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DispRectangle1(row11, col11, row12, col12);
+                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("fill");
+                        CurrentArea = region.Area.D.ToString();
+
+                        break;
+                }
+            }
+            catch { }
+        }
+
+        private string currentNCCScore;
+
+        public string CurrentNCCScore
+        {
+            get { return currentNCCScore; }
+            set { SetProperty(ref currentNCCScore, value); }
+        }
+
+        private string currentArea;
+
+        public string CurrentArea
+        {
+            get { return currentArea; }
+            set { SetProperty(ref currentArea, value); }
+        }
+
+        //
+
+        #endregion 判定
+
         public string Title => "图像比对";
 
         public event Action<IDialogResult> RequestClose;
@@ -963,6 +1477,15 @@ namespace VisionProject.ViewModels
         {
             isInitlized = false;
             await Task.Delay(300);
+            try
+            {
+                IsTrans = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsTrans", false);
+                TransBrightnessValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("TransBrightnessValue", 128.0);
+                TransContrastValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("TransContrastValue", 128.0);
+                TransGammaValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("TransGammaValue", 1.0);
+            }
+            catch { }
+
             IsPreEnhance = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsPreEnhance", false);
             BrightnessValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("BrightnessValue", 128.0);
             ContrastValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ContrastValue", 128.0);
@@ -1008,10 +1531,10 @@ namespace VisionProject.ViewModels
             IsReverse2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse12", false);
             IsReverse3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse13", false);
             IsReverse4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse14", false);
-            if ((ValueS1 + ValueS2 + ValueS3 + ValueS4) == 0)
-            {
-                ExecuteResetGray();
-            }
+            //if ((ValueE1 + ValueE2 + ValueE3 + ValueE4) == 0)
+            //{
+            //    ExecuteResetGray();
+            //}
 
             await Task.Delay(200);
             isInitlized = true;

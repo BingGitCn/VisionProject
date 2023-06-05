@@ -19,7 +19,12 @@
         </Grid>
 
         <Grid Grid.Column="1" IsEnabled="{Binding NotDrawIng}">
-            <TabControl>
+            <TabControl SelectedIndex="{Binding TabIndex}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding DoSwitchTab}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <TabItem Header="图像">
                     <StackPanel Orientation="Vertical">
 
@@ -60,13 +65,173 @@
                         </StackPanel>
                     </StackPanel>
                 </TabItem>
+                <TabItem Header="补正">
+
+                    <StackPanel Orientation="Vertical">
+                        <Grid>
+                            <CheckBox
+                                Margin="5"
+                                Content="启用"
+                                FontWeight="Bold"
+                                IsChecked="{Binding IsTrans, UpdateSourceTrigger=PropertyChanged}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Checked">
+                                        <i:InvokeCommandAction Command="{Binding TransPreEnhanceValueChanged}" CommandParameter="changed" />
+                                    </i:EventTrigger>
+                                    <i:EventTrigger EventName="Unchecked">
+                                        <i:InvokeCommandAction Command="{Binding TransPreEnhanceValueChanged}" CommandParameter="changed" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </CheckBox>
+
+                            <Button
+                                Width="80"
+                                Margin="5"
+                                HorizontalAlignment="Right"
+                                Command="{Binding TransResetPreEnhance}"
+                                Content="重  置"
+                                IsEnabled="{Binding IsTrans}"
+                                Style="{StaticResource ButtonDashed}" />
+                        </Grid>
+                        <DockPanel
+                            Height="30"
+                            Margin="30,2,2,2"
+                            VerticalAlignment="Bottom"
+                            IsEnabled="{Binding IsTrans}">
+                            <TextBlock
+                                Width="50"
+                                VerticalAlignment="Center"
+                                Text="亮度: " />
+                            <Slider
+                                Name="TransBrightnessSlider"
+                                Width="210"
+                                Margin="5"
+                                VerticalAlignment="Center"
+                                Maximum="255"
+                                Minimum="1"
+                                Value="{Binding TransBrightnessValue, Mode=TwoWay}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                        <i:InvokeCommandAction Command="{Binding TransPreEnhanceValueChanged}" CommandParameter="changed" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Slider>
+                            <TextBox Width="50" Text="{Binding ElementName=TransBrightnessSlider, Path=Value}" />
+                        </DockPanel>
+                        <DockPanel
+                            Height="30"
+                            Margin="30,2,2,2"
+                            VerticalAlignment="Bottom"
+                            IsEnabled="{Binding IsTrans}">
+                            <TextBlock
+                                Width="50"
+                                VerticalAlignment="Center"
+                                Text="对比度: " />
+                            <Slider
+                                Name="TransContrastSlider"
+                                Width="210"
+                                Margin="5"
+                                VerticalAlignment="Center"
+                                Maximum="255"
+                                Minimum="1"
+                                Value="{Binding TransContrastValue, Mode=TwoWay}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                        <i:InvokeCommandAction Command="{Binding TransPreEnhanceValueChanged}" CommandParameter="changed" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Slider>
+                            <TextBox Width="50" Text="{Binding ElementName=TransContrastSlider, Path=Value}" />
+                        </DockPanel>
+                        <DockPanel
+                            Height="30"
+                            Margin="30,2,2,2"
+                            VerticalAlignment="Bottom"
+                            IsEnabled="{Binding IsTrans}">
+                            <TextBlock
+                                Width="50"
+                                VerticalAlignment="Center"
+                                Text="Gamma: " />
+                            <Slider
+                                Name="TransGammaSlider"
+                                Width="210"
+                                Margin="5"
+                                VerticalAlignment="Center"
+                                Maximum="10.0"
+                                Minimum="0.1"
+                                Value="{Binding TransGammaValue, Mode=TwoWay}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                        <i:InvokeCommandAction Command="{Binding TransPreEnhanceValueChanged}" CommandParameter="changed" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Slider>
+                            <TextBox Width="50" Text="{Binding ElementName=TransGammaSlider, Path=Value}" />
+                        </DockPanel>
+                        <StackPanel IsEnabled="{Binding IsTrans}" Orientation="Horizontal">
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ModelRegionOperate}"
+                                CommandParameter="draw"
+                                Content="绘制模板区域"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ModelRegionOperate}"
+                                CommandParameter="clear"
+                                Content="清除模板区域"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
+                        <StackPanel IsEnabled="{Binding IsTrans}" Orientation="Horizontal">
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ModelOperate}"
+                                CommandParameter="create"
+                                Content="创建模板"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ModelOperate}"
+                                CommandParameter="registe"
+                                Content="注册模板"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
+                        <StackPanel IsEnabled="{Binding IsTrans}" Orientation="Horizontal">
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ModelOperate}"
+                                CommandParameter="find"
+                                Content="查找测试"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ModelOperate}"
+                                CommandParameter="trans"
+                                Content="矫正测试"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
                 <TabItem Header="调节">
+
                     <StackPanel Orientation="Vertical">
 
                         <Grid>
                             <CheckBox
                                 Margin="5"
-                                Content="预处理"
+                                Content="启用"
                                 FontWeight="Bold"
                                 IsChecked="{Binding IsPreEnhance, UpdateSourceTrigger=PropertyChanged}">
                                 <i:Interaction.Triggers>
@@ -161,14 +326,15 @@
                         </DockPanel>
                     </StackPanel>
                 </TabItem>
-                <TabItem Header="定位" />
+
                 <TabItem Header="过滤">
+
                     <StackPanel Orientation="Vertical">
 
                         <Grid>
                             <CheckBox
                                 Margin="5"
-                                Content="灰阶图像"
+                                Content="启用"
                                 FontWeight="Bold"
                                 IsChecked="{Binding IsGray, UpdateSourceTrigger=PropertyChanged}">
                                 <i:Interaction.Triggers>
@@ -209,8 +375,8 @@
                             Margin="30,2,2,2"
                             VerticalAlignment="Bottom">
                             <CheckBox
-                                Width="60"
-                                Content="启用 R"
+                                Width="50"
+                                Content="En 1"
                                 IsChecked="{Binding IsEnable1}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Checked">
@@ -224,7 +390,7 @@
                             <TextBox Width="50" Text="{Binding ElementName=Channel1Slider, Path=ValueStart}" />
                             <hc:RangeSlider
                                 Name="Channel1Slider"
-                                Width="100"
+                                Width="115"
                                 Margin="5"
                                 VerticalAlignment="Center"
                                 Maximum="{Binding Maximum1, Mode=TwoWay}"
@@ -240,9 +406,9 @@
                             </hc:RangeSlider>
                             <TextBox Width="50" Text="{Binding ElementName=Channel1Slider, Path=ValueEnd}" />
                             <CheckBox
-                                Width="60"
+                                Width="50"
                                 Margin="5,0,0,0"
-                                Content="取反"
+                                Content="Rev"
                                 IsChecked="{Binding IsReverse1}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Checked">
@@ -259,8 +425,8 @@
                             Margin="30,2,2,2"
                             VerticalAlignment="Bottom">
                             <CheckBox
-                                Width="60"
-                                Content="启用 G"
+                                Width="50"
+                                Content="En 2"
                                 IsChecked="{Binding IsEnable2}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Checked">
@@ -274,7 +440,7 @@
                             <TextBox Width="50" Text="{Binding ElementName=Channel2Slider, Path=ValueStart}" />
                             <hc:RangeSlider
                                 Name="Channel2Slider"
-                                Width="100"
+                                Width="115"
                                 Margin="5"
                                 VerticalAlignment="Center"
                                 Maximum="{Binding Maximum2, Mode=TwoWay}"
@@ -289,9 +455,9 @@
                             </hc:RangeSlider>
                             <TextBox Width="50" Text="{Binding ElementName=Channel2Slider, Path=ValueEnd}" />
                             <CheckBox
-                                Width="60"
+                                Width="50"
                                 Margin="5,0,0,0"
-                                Content="取反"
+                                Content="Rev"
                                 IsChecked="{Binding IsReverse2}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Checked">
@@ -308,8 +474,8 @@
                             Margin="30,2,2,2"
                             VerticalAlignment="Bottom">
                             <CheckBox
-                                Width="60"
-                                Content="启用 B"
+                                Width="50"
+                                Content="En 3"
                                 IsChecked="{Binding IsEnable3}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Checked">
@@ -323,7 +489,7 @@
                             <TextBox Width="50" Text="{Binding ElementName=Channel3Slider, Path=ValueStart}" />
                             <hc:RangeSlider
                                 Name="Channel3Slider"
-                                Width="100"
+                                Width="115"
                                 Margin="5"
                                 VerticalAlignment="Center"
                                 Maximum="{Binding Maximum3, Mode=TwoWay}"
@@ -338,9 +504,9 @@
                             </hc:RangeSlider>
                             <TextBox Width="50" Text="{Binding ElementName=Channel3Slider, Path=ValueEnd}" />
                             <CheckBox
-                                Width="60"
+                                Width="50"
                                 Margin="5,0,0,0"
-                                Content="取反"
+                                Content="Rev"
                                 IsChecked="{Binding IsReverse3}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Checked">
@@ -357,8 +523,8 @@
                             Margin="30,2,2,2"
                             VerticalAlignment="Bottom">
                             <CheckBox
-                                Width="60"
-                                Content="启用 T"
+                                Width="50"
+                                Content="En T"
                                 IsChecked="{Binding IsEnable4}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Checked">
@@ -372,7 +538,7 @@
                             <TextBox Width="50" Text="{Binding ElementName=Channel4Slider, Path=ValueStart}" />
                             <hc:RangeSlider
                                 Name="Channel4Slider"
-                                Width="100"
+                                Width="115"
                                 Margin="5"
                                 VerticalAlignment="Center"
                                 Maximum="{Binding Maximum4, Mode=TwoWay}"
@@ -387,9 +553,9 @@
                             </hc:RangeSlider>
                             <TextBox Width="50" Text="{Binding ElementName=Channel4Slider, Path=ValueEnd}" />
                             <CheckBox
-                                Width="60"
+                                Width="50"
                                 Margin="5,0,0,0"
-                                Content="取反"
+                                Content="Rev"
                                 IsChecked="{Binding IsReverse4}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Checked">
@@ -401,28 +567,128 @@
                                 </i:Interaction.Triggers>
                             </CheckBox>
                         </DockPanel>
-
-                        <StackPanel Orientation="Horizontal">
-
-                            <Button
-                                Width="125"
-                                Margin="5"
-                                Command="{Binding SaveParam}"
-                                Content="保存参数"
-                                Style="{StaticResource ButtonPrimary}" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Button
-                                Width="125"
-                                Margin="5"
-                                Command="{Binding RunScript}"
-                                Content="运行测试"
-                                Style="{StaticResource ButtonPrimary}" />
-                            <TextBlock VerticalAlignment="Center" Text="{Binding RunScriptResult}" />
-                        </StackPanel>
                     </StackPanel>
                 </TabItem>
-                <TabItem Header="检测" />
+                <TabItem Header="判定">
+                    <StackPanel Orientation="Vertical">
+                        <hc:ComboBox
+                            x:Name="cb"
+                            Margin="5"
+                            hc:InfoElement.Title="检测方法"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="100"
+                            DropDownClosed="cb_DropDownClosed"
+                            SelectedIndex="{Binding InspectIndex}"
+                            Style="{StaticResource ComboBoxExtend}">
+
+                            <ComboBoxItem Content="相似度" IsSelected="True" />
+                            <ComboBoxItem Content="颜色占比" />
+                        </hc:ComboBox>
+                        <Grid x:Name="g1">
+                            <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal">
+                                    <Button
+                                        Width="170"
+                                        Margin="5"
+                                        Command="{Binding InspectROIOperate}"
+                                        CommandParameter="0"
+                                        Content="绘制检测框"
+                                        Style="{StaticResource ButtonPrimary}" />
+                                    <Button
+                                        Width="170"
+                                        Margin="5"
+                                        Command="{Binding NccRegiste}"
+                                        Content="注册标准检测"
+                                        Style="{StaticResource ButtonPrimary}" />
+                                </StackPanel>
+                                <hc:TextBox
+                                    Margin="5"
+                                    hc:InfoElement.Title="设定相似度阈值"
+                                    hc:InfoElement.TitlePlacement="Left"
+                                    hc:InfoElement.TitleWidth="100"
+                                    Style="{StaticResource TextBoxExtend}"
+                                    Text="{Binding NCCScore}" />
+                                <hc:TextBox
+                                    Margin="5"
+                                    hc:InfoElement.Title="当前相似度阈值"
+                                    hc:InfoElement.TitlePlacement="Left"
+                                    hc:InfoElement.TitleWidth="100"
+                                    IsReadOnly="True"
+                                    Style="{StaticResource TextBoxExtend}"
+                                    Text="{Binding CurrentNCCScore}" />
+
+                                <StackPanel Orientation="Horizontal">
+                                    <Button
+                                        Width="170"
+                                        Margin="5"
+                                        Command="{Binding TestRun}"
+                                        CommandParameter="0"
+                                        Content="测试运行"
+                                        Style="{StaticResource ButtonPrimary}" />
+                                    <Button
+                                        Width="170"
+                                        Margin="5"
+                                        Command="{Binding Save}"
+                                        CommandParameter="0"
+                                        Content="保存参数"
+                                        Style="{StaticResource ButtonPrimary}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                        <Grid x:Name="g2">
+                            <StackPanel Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal">
+                                    <Button
+                                        Width="170"
+                                        Margin="5"
+                                        Command="{Binding InspectROIOperate}"
+                                        CommandParameter="1"
+                                        Content="绘制检测框"
+                                        Style="{StaticResource ButtonPrimary}" />
+                                </StackPanel>
+                                <hc:TextBox
+                                    Margin="5"
+                                    hc:InfoElement.Title="设定面积(Min)"
+                                    hc:InfoElement.TitlePlacement="Left"
+                                    hc:InfoElement.TitleWidth="100"
+                                    Style="{StaticResource TextBoxExtend}"
+                                    Text="{Binding ResultScore}" />
+                                <hc:TextBox
+                                    Margin="5"
+                                    hc:InfoElement.Title="设定面积(Max)"
+                                    hc:InfoElement.TitlePlacement="Left"
+                                    hc:InfoElement.TitleWidth="100"
+                                    Style="{StaticResource TextBoxExtend}"
+                                    Text="{Binding ResultScore}" />
+                                <hc:TextBox
+                                    Margin="5"
+                                    hc:InfoElement.Title="当前面积"
+                                    hc:InfoElement.TitlePlacement="Left"
+                                    hc:InfoElement.TitleWidth="100"
+                                    IsReadOnly="True"
+                                    Style="{StaticResource TextBoxExtend}"
+                                    Text="{Binding CurrentArea}" />
+
+                                <StackPanel Orientation="Horizontal">
+                                    <Button
+                                        Width="170"
+                                        Margin="5"
+                                        Command="{Binding TestRun}"
+                                        CommandParameter="1"
+                                        Content="测试运行"
+                                        Style="{StaticResource ButtonPrimary}" />
+                                    <Button
+                                        Width="170"
+                                        Margin="5"
+                                        Command="{Binding Save}"
+                                        CommandParameter="1"
+                                        Content="保存参数"
+                                        Style="{StaticResource ButtonPrimary}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </TabItem>
             </TabControl>
         </Grid>
     </Grid>
