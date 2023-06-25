@@ -56,7 +56,7 @@ namespace VisionProject.ViewModels
                     ProjectNames.Add(new ProjectInfo() { Name = fileInfo.Name.Replace(".lprj", ""), Path = files[i] });
             }
 
-            await System.Threading.Tasks.Task.Delay(5000);
+            await System.Threading.Tasks.Task.Delay(1000);
             if (SystemConfig.IsLoadProject)
                 if (SystemConfig.ProjectIndex != -1)
                 {
@@ -68,7 +68,11 @@ namespace VisionProject.ViewModels
                         {
                             return;
                         }
-                        Variables.CurrentProject = Serialize.ReadJsonV2<Project>(SelectProjectName.Path);
+                        await System.Threading.Tasks.Task.Run(() =>
+                        {
+                            Variables.CurrentProject = Serialize.ReadJsonV2<Project>(SelectProjectName.Path);
+                        });
+
                         Programs = Variables.CurrentProject.Programs;
 
                         CurrentProgram.Clear();
@@ -77,26 +81,6 @@ namespace VisionProject.ViewModels
                         CurrentProgramDatas.Clear();
                         if (CurrentProgram.Count > 0)
                             CurrentProgramDatas = Variables.DeepClone(CurrentProgram[0].ProgramDatas);
-
-                        //if (Programs.Keys.ToList().Count > 0)
-                        //{
-                        //    for (int i = 0; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
-                        //    {
-                        //        CurrentProgram.Add(new SubProgram() { ProductIndex = Programs[Programs.Keys.ToList()[0]][i].ProductIndex });
-                        //        for (int j = 0; j < Programs[Programs.Keys.ToList()[0]][i].ProgramDatas.Count; j++)
-                        //            CurrentProgram[i].ProgramDatas.Add(Programs[Programs.Keys.ToList()[0]][i].ProgramDatas[j].Clone());
-                        //    }
-
-                        //    CurrentProgramIndex = 0;
-                        //}
-
-                        //CurrentProgramDatas.Clear();
-                        //if (CurrentProgram.Count > 0)
-                        //{
-                        //    for (int i = 0; i < CurrentProgram[0].ProgramDatas.Count; i++)
-                        //        CurrentProgramDatas.Add(CurrentProgram[0].ProgramDatas[i].Clone());
-                        //    CurrentProgramDatasIndex = 0;
-                        //}
 
                         ProgramsIndex = 0;
                         CurrentProgramIndex = 0;
@@ -344,6 +328,34 @@ namespace VisionProject.ViewModels
                     case "save":
                         try
                         {
+                            // 疑问点：保存问题
+                            /*
+                            项目文件 主要结构
+                            第一层 project
+                            第二层 project 下面的 programs
+                            第三层 project 下面的 programs，program 下面的 ProgramDatas
+
+                            全局
+                                Variables.CurrentProject
+                                Variables.CurrentProgramData
+                                Variables.CurrentConfigSet
+
+                            界面绑定
+                                CurrentProgram
+                                CurrentProgramDatas
+                                CurrentSelectedProgramData
+
+                            所有编辑保存的思路都是，
+                            1. 当选择 program 时，将全局的 CurrentProject 对应的 program， deepclone 给 界面的 CurrentProgram，用于绑定显示
+                            2. 接下来所有的操作均改变的是 CurrentProgram ，只要不保存，原来的项目不会变。
+                            3. 当选择位置时，将 CurrentProgram 对应的 ProgramDatas 给 界面的 CurrentProgramDatas，用于绑定显示
+                                   编辑完成后，将 CurrentProgramDatas 再deepclone 给 CurrentProgram 的 ProgramDatas
+                                   CurrentConfigSet 也是一样，编辑完成后，更新 CurrentProgram
+
+                            4. 保存是，将 CurrentProgram deepclone 给 Variables.CurrentProject
+
+                             */
+
                             //bool rst = Variables.ShowConfirm("是否要保存文件？");
                             if (true)
                             {
@@ -368,8 +380,11 @@ namespace VisionProject.ViewModels
                                 Variables.CurrentProject.LastDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 LastDate = Variables.CurrentProject.LastDate;
 
+                                CurrentProgram[CurrentProgramIndex].ProgramDatas = Variables.DeepClone(CurrentProgramDatas);
+
                                 Programs[Programs.Keys.ToList()[ProgramsIndex]] = Variables.DeepClone(CurrentProgram);
 
+                                //Programs[Programs.Keys.ToList()[ProgramsIndex]] = Variables.DeepClone(ParamSetVars);
                                 Variables.CurrentProject.Programs = Programs;
 
                                 bool isSaveOK = true;
@@ -574,6 +589,7 @@ namespace VisionProject.ViewModels
                                                 ProgramsName.Add(ProgramName);
                                                 ProgramsIndex = Programs.Count - 1;
                                                 Variables.ProgramName = ProgramsName[ProgramsIndex];
+
                                                 Log.Info("增加了程序");
                                                 ProgramName = "";
                                             }
@@ -648,6 +664,9 @@ namespace VisionProject.ViewModels
                     //}
 
                     Variables.ProgramName = ProgramsName[ProgramsIndex];
+
+                    if (CurrentProgram.Count > 0)
+                        CurrentProgramIndex = 0;
                 }
                 catch (Exception ex) { }
             }));
@@ -674,23 +693,9 @@ namespace VisionProject.ViewModels
                             {
                                 if (CurrentProgram.Count > 0)
                                 {
-                                    if (Variables.ShowConfirm("是否复制【位置" + CurrentProgramIndex + "】到新位置？") == true)
-                                    {
-                                        var sp = new SubProgram();
-                                        sp = Variables.DeepClone(CurrentProgram[CurrentProgramIndex]);
-                                        sp.ProductIndex = currentProgram.Count;
-                                        CurrentProgram.Add(sp);
-
-                                        //int oldIndex = CurrentProgramIndex;
-                                        //CurrentProgram.Add(new SubProgram() { ProductIndex = CurrentProgram.Count() });
-                                        //for (int i = 0; i < CurrentProgram[oldIndex].ProgramDatas.Count; i++)
-                                        //    CurrentProgram[currentProgram.Count - 1].ProgramDatas.Add(CurrentProgram[oldIndex].ProgramDatas[i].Clone());
-                                    }
-                                    else
-                                    {
-                                        CurrentProgram.Add(new SubProgram() { ProductIndex = CurrentProgram.Count() });
-                                        Log.Info("增加了新的检测位置");
-                                    }
+                                    CurrentProgram.Add(new SubProgram() { ProductIndex = CurrentProgram.Count() });
+                                    //Variables.ConfigSets[]
+                                    Log.Info("增加了新的检测位置");
                                 }
                                 else
                                 {
@@ -769,6 +774,38 @@ namespace VisionProject.ViewModels
                     }
                     catch { }
                     break;
+
+                case "locate":
+                    try
+                    {
+                        DialogParameters param = new DialogParameters
+                        {
+                            { "Title", "" },
+                            {"ProgramsIndex",ProgramsIndex },
+                            {"CurrentProgramIndex",CurrentProgramIndex },
+                            {"RowDefault",400 },//疑问点：这里需要读到图片然后拿到；现场相机像素2000w，分辨率固定，可以用固定值
+                            {"ColDefault",400 },
+                        };
+                        //这里从当前程序获取
+                        Variables.CurrentConfigSet = Variables.DeepClone(CurrentProgram[CurrentProgramIndex].ProductConfigSet);
+
+                        Variables.CurDialogService.ShowDialog(DialogNames.ShowLocationDialog, param, callback =>
+                        {
+                            if (callback.Result == ButtonResult.Yes)
+                            {
+                                //var Program = callback.Parameters.GetValue<string>("Program");
+                                //var RowDefault = callback.Parameters.GetValue<string>("RowDefault");
+                                //var ColDefault = callback.Parameters.GetValue<string>("ColDefault");
+                                //var RowInput = callback.Parameters.GetValue<string>("RowInput");
+                                //var ColInput = callback.Parameters.GetValue<string>("ColInput");
+                            }
+                        });
+
+                        //设置完成后还给当前程序
+                        CurrentProgram[CurrentProgramIndex].ProductConfigSet = Variables.DeepClone(Variables.CurrentConfigSet);
+                    }
+                    catch (Exception ex) { }
+                    break;
             }
 
             //将界面的programdata更新到项目的程序集合中。
@@ -828,23 +865,112 @@ namespace VisionProject.ViewModels
                 catch (Exception ex) { }
             }));
 
+        private ObservableCollection<ProgramData> copyDatas = new ObservableCollection<ProgramData>();
+        private string copyMsg = "";
+        private DelegateCommand<string> _ctrlProgramDatasOperate;
+
+        public DelegateCommand<string> CtrlProgramDatasOperate =>
+            _ctrlProgramDatasOperate ?? (_ctrlProgramDatasOperate = new DelegateCommand<string>(ExecuteCtrlProgramDatasOperate));
+
+        private void ExecuteCtrlProgramDatasOperate(string parameter)
+        {
+            CurrentProgramDatas.Remove(CurrentSelectedProgramData);
+
+            try
+            {
+                CurrentProgram[CurrentProgramIndex].ProgramDatas = Variables.DeepClone(CurrentProgramDatas);
+            }
+            catch { }
+
+            switch (parameter)
+            {
+                case "copy":
+                    // 深拷贝程序数据
+                    copyDatas = GlobalVars.Variables.DeepClone(CurrentProgram[CurrentProgramIndex].ProgramDatas);
+                    // 设置复制提示消息
+                    copyMsg = "确认从【程序" + ProgramsName[ProgramsIndex] + "】【" + (CurrentProgramIndex) + "】号位置粘贴吗？";
+                    break;
+
+                case "paste":
+                    // 显示确认对话框
+                    bool rst = GlobalVars.Variables.ShowConfirm(copyMsg);
+                    // 粘贴程序数据
+                    CurrentProgram[CurrentProgramIndex].ProgramDatas = Variables.DeepClone(copyDatas);
+
+                    CurrentProgramDatas = Variables.DeepClone(CurrentProgram[CurrentProgramIndex].ProgramDatas);
+                    break;
+
+                case "clear":
+                    // 显示确认对话框，询问是否清空当前位置
+                    bool isClear = GlobalVars.Variables.ShowConfirm("是否清空当前位置？");
+                    if (isClear)
+                    {
+                        // 再次显示确认对话框，确认是否清空当前位置
+                        isClear = GlobalVars.Variables.ShowConfirm("请确认是否清空当前位置？");
+                        if (isClear)
+                        {
+                            CurrentProgramDatas.Clear();
+                            CurrentProgram[CurrentProgramIndex].ProgramDatas = Variables.DeepClone(CurrentProgramDatas);
+                        }
+                    }
+                    break;
+            }
+        }
+
         #endregion 程序编辑
+
+        #region Run方法
+
+        private DelegateCommand _runAll;
+
+        public DelegateCommand RunAll =>
+            _runAll ?? (_runAll = new DelegateCommand(() =>
+            {
+                try
+                {
+                    //run在 run.cs中重写，测试的话可以重新写一个runtest方法
+
+                    // 疑问点：  图片为了测试先写死了一个，需要修改
+                    string path = @"C:\Users\PC\Desktop\202211181359345410.tif";
+                    var rst = new HImage(path);
+                    // run(rst);//需要换图片；
+                }
+                catch (Exception ex) { }
+            }));
+
+        #endregion Run方法
     }
 
     //项目类
     public class Project
     {
+        //public Dictionary<int, List<ConfigSet>> ConfigSets = new Dictionary<int, List<ConfigSet>>();
+
         public Dictionary<string, ObservableCollection<SubProgram>> Programs = new Dictionary<string, ObservableCollection<SubProgram>>();
         public string CreateDate = "";
         public string LastDate = "";
     }
 
+    // 疑问点：
+    /*
+        ConfigSet 放到 SubProgram 中，它是跟着检测位置走的。
+
+        SubProgram 包含
+            - 当前检测位置索引
+            - 当前检测位置参数
+            - 当前检测位置各检测项
+
+     */
+
     public class SubProgram
     {
         /// <summary>
-        /// 产品索引
+        /// 产品索引,位置
         /// </summary>
         public int ProductIndex { set; get; } = 0;
+
+        //对应位置的参数设置
+        public ConfigSet ProductConfigSet { set; get; } = new ConfigSet();
 
         public ObservableCollection<ProgramData> ProgramDatas { set; get; } = new ObservableCollection<ProgramData>();
     }

@@ -94,7 +94,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\InspectCY.cs" />
+    <Compile Include="Core\InspectDL.cs" />
+    <Compile Include="Core\InspectSM.cs" />
     <Compile Include="GlobalVars\ParamSetVar.cs" />
+    <Compile Include="RunTools\Function_ScriptTool.cs" />
+    <Compile Include="RunTools\Function_CodeTool.cs" />
+    <Compile Include="RunTools\Function_MatchTool.cs" />
+    <Compile Include="RunTools\Function_BlobTool.cs" />
+    <Compile Include="ViewModels\Tools\Dialog_LocationViewModel.cs" />
+    <Compile Include="ViewModels\Tools\Dialog_ModelSetViewModel.cs" />
+    <Compile Include="ViewModels\Tools\Function_ClsViewModel.cs" />
+    <Compile Include="ViewModels\Tools\Function_CodeViewModel.cs" />
+    <Compile Include="ViewModels\Tools\Function_BlobViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_MatchViewModel.cs" />
     <Compile Include="ViewModels\Tools\Dialog_InspectCreateViewModel.cs" />
     <Compile Include="ViewModels\Tools\Dialog_ParamSetViewModel.cs" />
@@ -106,6 +118,21 @@
     <Compile Include="ViewModels\Tools\Function_ScriptTestViewModel.cs" />
     <Compile Include="ViewModels\NumberPadViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_ViewModel_Interface.cs" />
+    <Compile Include="Views\Tools\Dialog_Location.xaml.cs">
+      <DependentUpon>Dialog_Location.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tools\Dialog_ModelSet.xaml.cs">
+      <DependentUpon>Dialog_ModelSet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tools\Function_Cls.xaml.cs">
+      <DependentUpon>Function_Cls.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tools\Function_Code.xaml.cs">
+      <DependentUpon>Function_Code.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tools\Function_Blob.xaml.cs">
+      <DependentUpon>Function_Blob.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Tools\Function_Match.xaml.cs">
       <DependentUpon>Function_Match.xaml</DependentUpon>
     </Compile>
@@ -133,6 +160,26 @@
     <Page Include="Views\AboutDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Tools\Dialog_Location.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Tools\Dialog_ModelSet.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Tools\Function_Cls.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Tools\Function_Code.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Tools\Function_Blob.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Tools\Function_Match.xaml">
       <SubType>Designer</SubType>
@@ -270,7 +317,9 @@
   <ItemGroup>
     <Resource Include="Login.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="1686792000863.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

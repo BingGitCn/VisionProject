@@ -1,12 +1,15 @@
 ﻿using BingLibrary.Extension;
 using BingLibrary.Tools;
-using Prism.Commands;
+using HalconDotNet;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
+using VisionProject.RunTools;
 using Log = BingLibrary.Logs.LogOpreate;
+using Prism;
 
 namespace VisionProject.ViewModels
 {
@@ -40,7 +43,7 @@ namespace VisionProject.ViewModels
             //初始化引擎，可选
             initEngine();
 
-            run();
+            //run(new HImage());//需要换
 
             Variables.AutoHomeEventArgs.Subscribe(autoHome);
         }
@@ -142,73 +145,269 @@ namespace VisionProject.ViewModels
             //初始化PLC
 
             await 1000;
-            for (int i = 0; i < 10; i++)
+
+            await Task.Run(() =>
             {
-                if (Variables.HCPLC.IsConnected)
-                    break;
-                Variables.HCPLC.Close();
-                await Task.Run(() =>
-                {
-                    Variables.HCPLC.Init("127.0.0.1", 502, 01);
-                });
+                Variables.HCPLC0.Init("127.0.0.1", 502, 0);
+                Variables.HCPLC1.Init("127.0.0.1", 502, 0);
+                Variables.HCPLC2.Init("127.0.0.1", 502, 0);
+            });
+            PLCStatus.Value = Variables.HCPLC0.IsConnected && Variables.HCPLC1.IsConnected && Variables.HCPLC2.IsConnected;
 
-                await 1000;
-            }
-
-            Log.Info(Variables.HCPLC.IsConnected ? "PLC连接成功" : "PLC连接失败");
-            PLCStatus.Value = Variables.HCPLC.IsConnected;
+            Log.Info(PLCStatus.Value ? "PLC连接成功" : "PLC连接失败");
         }
 
         #endregion 初始化
 
-        //运行
-        //如果有多个产品，且一个产品需分多次检测，可以设置产品的索引号，同一索引号依次处理。
+        private HImage Cam1Image = new HImage();
+        private HImage Cam2Image = new HImage();
+
+        private List<RunResult> run1Results = new List<RunResult>();
+        private List<RunResult> run2Results = new List<RunResult>();
+
+        private bool grab1Done = false;
+        private bool grab2Done = false;
+
+        private bool run1Done = false;
+        private bool run2Done = false;
+
         private async void run()
         {
-            //Step..
-            //获取工具名称
-            List<string> ToolNames = DialogNames.ToolNams.Keys.ToList();
+            int step1 = 0;
+            int step2 = 0;
+
+            int position1 = 0;
+            int position2 = 0;
+
+            bool run1Last = false;
+            bool run2Last = false;
+
             while (true)
             {
-                await 100;
-                if (false)
+                await Task.Delay(10);
+                if (!PLCStatus.Value) continue;
+
+                // 握手信号
+                var heartBeat = Variables.HCPLC0.ReadM(2500, 1)[0];
+                if (heartBeat)
                 {
-                    //这里需要判断下程序数量
-                    if (Variables.CurrentProject.Programs.Count > 0)
-                        continue;
+                    Variables.HCPLC0.WriteM(2500, new bool[] { false });
+                    Variables.HCPLC0.WriteM(2550, new bool[] { false });
+                }
 
-                    //选择子程序。这里选择第一个0，
-                    var program = Variables.CurrentProject.Programs.ElementAt(0).Value;
-                    //选择对应产品的所有检测子程序。这里可以在打开项目的时候获取一次，无需每次执行获取。
-                    int index = 1;//产品位置索引，这里通过索引来选择，也可以通过其它的，如ToolNames名称等。
-                    var currentProduct = (from step in program
-                                          where step.ProductIndex == index
-                                          select step)
-                                          .ToList();
+                switch (step1)
+                {
+                    case 0:
+                        //触发拍照，左相机
+                        bool grabTrigger1 = Variables.HCPLC0.ReadM(2501, 1)[0];
+                        if (grabTrigger1)
+                        {
+                            Variables.HCPLC0.WriteM(2501, new bool[] { false });
+                            grab1();
+                            step1 = 2;
+                        }
+                        break;
 
-                    for (int i = 0; i < currentProduct.Count - 1; i++)
-                    {
-                        //这里通过备注来判断执行对应脚本
-                        // if (currentProduct[i].Content == "扫码")
+                    case 2:
+                        //拍照完成，左相机
+                        if (grab1Done)
+                        {
+                            grab1Done = false;
+                            position1 = Variables.HCPLC0.ReadD(356, 1)[0];
 
-                        //if (currentProduct[i].InspectFunction == ToolNames[0])
-                        //{
-                        //    //这里可以再对应的工具里面写好对应的静态执行方法，直接调用
-                        //    //Do Something
-                        //    //Function_SaveImageViewModel.SaveImages(new HalconDotNet.HImage(),"123", currentProduct[i].Parameters);
-                        //}
-                        //else if (currentProduct[i].InspectFunction == ToolNames[1])
-                        //{
-                        //    //Do Something
-                        //}
-                    }
+                            //undone 默认第一次拍照是扫码，同时生成大图
+                            if (position1 == 0)
+                            {
+                                // 1 是左右拍同一产品，2 是左右拍不同产品
+                                var mode = Variables.HCPLC0.ReadD(352, 1)[0];
+                                initTotalImage(mode);
+                            }
 
-                    //结果OK时使用
-                    setOK();
-                    //结果NG时使用
-                    setNG();
+                            await imageQueues.Enqueue(new ImageQueue() { CameraIndex = 1, PositionIndex = position1, HImage = Cam1Image.CopyImage() }, imageQueues.tokenNone);
+
+                            run1(position1, Cam1Image.CopyImage(), Variables.CurrentProject.Programs.ElementAt(0).Value[position1]);
+                            Variables.HCPLC0.WriteM(2551, new bool[] { false });//拍照完成信号，同时去处理
+                            step1 = 3;
+                        }
+
+                        break;
+
+                    case 3:
+                        if (run1Done)
+                        {
+                            run1Done = false;
+
+                            foreach (var rst in run1Results)
+                            {
+                                //todo 根据结果做对应处理
+                            }
+
+                            bool grabDone1 = Variables.HCPLC0.ReadM(2511, 1)[0];
+                            if (grabDone1)
+                            {
+                                Variables.HCPLC0.WriteM(2511, new bool[] { false });//最后一次拍照标志位
+                                Variables.HCPLC0.WriteM(2553, new bool[] { true });//处理完成信号
+                                run1Last = true;
+                                step1 = 4;
+                            }
+                            else
+                            {
+                                step1 = 0;
+                                Variables.HCPLC0.WriteM(2553, new bool[] { true });//处理完成信号
+                                //todo 当前位置处理失败
+                            }
+                        }
+
+                        break;
+
+                    case 4:
+                        if (run1Last && run2Last)
+                        {
+                            //全部处理完成
+                        }
+
+                        break;
                 }
             }
+        }
+
+        //用于拼图，队列
+        private class ImageQueue
+        {
+            public int CameraIndex { set; get; }
+            public int PositionIndex { set; get; }
+            public HImage HImage { set; get; }
+        }
+
+        private AsyncQueue<ImageQueue> imageQueues = new AsyncQueue<ImageQueue>();
+
+        private HImage TotalImageLeft = new HImage();
+        private HImage TotalImageRight = new HImage();
+
+        /// <summary>
+        /// 生成大图
+        /// </summary>
+        private void initTotalImage(int mode)
+        {
+            int rows = 0, cols = 0;
+            HImage image = new HImage();
+            if (mode == 1)
+            {
+                HImage image1 = new HImage(); HImage image2 = new HImage(); HImage image3 = new HImage();
+
+                for (int i = 0; i < 2; i++)
+                {
+                    var p = Variables.CurrentProject.Programs.ElementAt(i).Value;
+                    for (int j = 0; j < p.Count; j++)
+                    {
+                        if (rows < p.ElementAt(j).ProductConfigSet.RowInput)
+                            rows = p.ElementAt(j).ProductConfigSet.RowInput;
+                        if (cols < p.ElementAt(j).ProductConfigSet.ColInput)
+                            cols = p.ElementAt(j).ProductConfigSet.ColInput;
+                    }
+                }
+
+                image.GenImageConst("byte", Variables.ImageWidth * cols, Variables.ImageHeight * rows);
+
+                image1 = image.GenImageProto(new HTuple(128));
+                image2 = image.GenImageProto(new HTuple(128));
+                image3 = image.GenImageProto(new HTuple(128));
+                TotalImageLeft = image1.Compose3(image2, image3);
+            }
+            else if (mode == 2)
+            {
+                HImage image1 = new HImage(); HImage image2 = new HImage(); HImage image3 = new HImage();
+                //左
+                var p = Variables.CurrentProject.Programs.ElementAt(0).Value;
+                for (int j = 0; j < p.Count; j++)
+                {
+                    if (rows < p.ElementAt(j).ProductConfigSet.RowInput)
+                        rows = p.ElementAt(j).ProductConfigSet.RowInput;
+                    if (cols < p.ElementAt(j).ProductConfigSet.ColInput)
+                        cols = p.ElementAt(j).ProductConfigSet.ColInput;
+                }
+
+                image.GenImageConst("byte", Variables.ImageWidth * cols, Variables.ImageHeight * rows);
+
+                image1 = image.GenImageProto(new HTuple(128));
+                image2 = image.GenImageProto(new HTuple(128));
+                image3 = image.GenImageProto(new HTuple(128));
+                TotalImageLeft = image1.Compose3(image2, image3);
+
+                //右
+                p = Variables.CurrentProject.Programs.ElementAt(1).Value;
+                for (int j = 0; j < p.Count; j++)
+                {
+                    if (rows < p.ElementAt(j).ProductConfigSet.RowInput)
+                        rows = p.ElementAt(j).ProductConfigSet.RowInput;
+                    if (cols < p.ElementAt(j).ProductConfigSet.ColInput)
+                        cols = p.ElementAt(j).ProductConfigSet.ColInput;
+                }
+
+                image.GenImageConst("byte", Variables.ImageWidth * cols, Variables.ImageHeight * rows);
+
+                image1 = image.GenImageProto(new HTuple(128));
+                image2 = image.GenImageProto(new HTuple(128));
+                image3 = image.GenImageProto(new HTuple(128));
+                TotalImageRight = image1.Compose3(image2, image3);
+            }
+        }
+
+        //拼图和显示
+        private async void showImage()
+        {
+            while (true)
+            {
+                await Task.Delay(10);
+                var imageQueue = await imageQueues.Dequeue(imageQueues.tokenNone);
+                //todo 拼图
+            }
+        }
+
+        private async void grab1()
+        {
+            grab1Done = false;
+            await Task.Run(() =>
+            {
+                Cam1Image = Variables.Cameras[0].GrabOne();
+            });
+            grab1Done = true;
+        }
+
+        private async void run1(int position, HImage image, SubProgram sp)
+        {
+            run1Done = false;
+            run1Results.Clear();
+            if (Variables.CurrentProject.Programs.Count < 2)
+                return;
+            if (position != sp.ProductIndex)
+                Log.Warn(string.Format("【run1】检测位置不对应：{0} & {1}", position, sp.ProductIndex));
+
+            await Task.Run(() =>
+            {
+                foreach (var pd in sp.ProgramDatas)
+                {
+                    if (pd.InspectFunction == Functions.图像比对.ToDescription())
+                    {
+                        run1Results.Add(
+                                   Function_MatchTool.Run(image, pd)
+                                   );
+                    }
+                    else if (pd.InspectFunction == Functions.Blob分析.ToDescription())
+                    {
+                        run1Results.Add(
+                                 Function_BlobTool.Run(image, pd)
+                                 );
+                    }
+                    else if (pd.InspectFunction == Functions.条码识别.ToDescription())
+                    {
+                        run1Results.Add(
+                                Function_CodeTool.Run(image, pd)
+                               );
+                    }
+                }
+            });
+            run1Done = true;
         }
     }
 }

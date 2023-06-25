@@ -71,6 +71,7 @@ namespace BingLibrary.Vision
             HOperatorSet.SetSystem("store_empty_region", "true");
 
             //HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color", WindowBackgroud.ToString());
+            //HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color","");
             HOperatorSet.ClearWindow(iwin.HalconWindow);
             iwin.HMouseUp += (sender0, e0) => { if (e0.Button == MouseButton.Right && windowData.WindowCtrl.IsDrawing == false) CM.IsOpen = true; };
 
@@ -93,6 +94,7 @@ namespace BingLibrary.Vision
                : config.ColorIndex == 9 ? "dark olive green"
 
                : "black");
+            HOperatorSet.SetWindowParam(iwin.HalconWindow, "background_color", "#1e1e1e");
 
             c1.IsChecked = config.IsShowWaterString;
             c2.IsChecked = config.IsShowMargin;
@@ -254,6 +256,87 @@ namespace BingLibrary.Vision
                         {
                             hd.Text = "灰度：" + gray[0];
                         }
+
+                        try
+                        {
+                            HTuple hv_R = new HTuple(), hv_G = new HTuple();
+                            HTuple hv_B = new HTuple(), hv_Min = new HTuple(), hv_Max = new HTuple();
+                            HTuple hv_V = new HTuple(), hv_S = new HTuple(), hv_H = new HTuple();
+                            // Initialize local and output iconic variables
+                            hv_R.Dispose();
+                            hv_R = (int)gray[0];
+                            hv_G.Dispose();
+                            hv_G = (int)gray[1];
+                            hv_B.Dispose();
+                            hv_B = (int)gray[2];
+
+                            hv_Min.Dispose();
+                            using (HDevDisposeHelper dh = new HDevDisposeHelper())
+                            {
+                                hv_Min = ((((hv_R.TupleConcat(
+                                    hv_G))).TupleConcat(hv_B))).TupleMin();
+                            }
+                            hv_Max.Dispose();
+                            using (HDevDisposeHelper dh = new HDevDisposeHelper())
+                            {
+                                hv_Max = ((((hv_R.TupleConcat(
+                                    hv_G))).TupleConcat(hv_B))).TupleMax();
+                            }
+                            hv_V.Dispose();
+                            hv_V = new HTuple(hv_Max);
+                            if ((int)(new HTuple(hv_Max.TupleEqual(hv_Min))) != 0)
+                            {
+                                hv_S.Dispose();
+                                hv_S = 0;
+                                hv_H.Dispose();
+                                hv_H = 0;
+                            }
+                            else
+                            {
+                                hv_S.Dispose();
+                                using (HDevDisposeHelper dh = new HDevDisposeHelper())
+                                {
+                                    hv_S = (hv_Max.D - hv_Min.D) / (1.0 * hv_Max.D);
+                                }
+                                if ((int)(new HTuple(hv_R.TupleEqual(hv_Max))) != 0)
+                                {
+                                    hv_H.Dispose();
+                                    using (HDevDisposeHelper dh = new HDevDisposeHelper())
+                                    {
+                                        hv_H = ((hv_G.D - hv_B.D) / (hv_Max.D - hv_Min.D)) * ((new HTuple(60)).TupleRad()
+                                            );
+                                    }
+                                }
+                                else if ((int)(new HTuple(hv_G.TupleEqual(hv_Max))) != 0)
+                                {
+                                    hv_H.Dispose();
+                                    using (HDevDisposeHelper dh = new HDevDisposeHelper())
+                                    {
+                                        hv_H = (2 + ((hv_B.D - hv_R.D) / (hv_Max.D - hv_Min.D))) * ((new HTuple(60)).TupleRad()
+                                            );
+                                    }
+                                }
+                                else if ((int)(new HTuple(hv_B.TupleEqual(hv_Max))) != 0)
+                                {
+                                    hv_H.Dispose();
+                                    using (HDevDisposeHelper dh = new HDevDisposeHelper())
+                                    {
+                                        hv_H = (4 + ((hv_R.D - hv_G.D) / (hv_Max.D - hv_Min.D))) * ((new HTuple(60)).TupleRad()
+                                            );
+                                    }
+                                }
+                            }
+
+                            hv_H = (int)(hv_H.D / 2.0 / Math.PI * 255);
+                            hv_S = (int)(hv_S.D * 255);
+
+                            hsv.Text = "HSV：" + hv_H + " , " + hv_S + " , " + hv_V;
+                        }
+                        catch
+                        {
+                            hsv.Text = "HSV：" + gray[0];
+                        }
+
                         sd.Text = "尺寸：" + w.D + " * " + h.D;
                         Pop.IsOpen = false;
                         Pop.IsOpen = true;

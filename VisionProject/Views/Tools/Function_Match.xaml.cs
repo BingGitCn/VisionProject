@@ -12,6 +12,10 @@ namespace VisionProject.Views
         {
             InitializeComponent();
             Variables.ImageWindowDataForFunction = aimg.windowData;
+        }
+
+        private void cb_DropDownClosed(object sender, System.EventArgs e)
+        {
             if (cb.SelectedIndex == 0)
             {
                 g1.Visibility = System.Windows.Visibility.Visible;
@@ -24,7 +28,7 @@ namespace VisionProject.Views
             }
         }
 
-        private void cb_DropDownClosed(object sender, System.EventArgs e)
+        private void TabItem_PreviewMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (cb.SelectedIndex == 0)
             {

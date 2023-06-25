@@ -131,8 +131,12 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <Grid Grid.RowSpan="2" Grid.ColumnSpan="2">
+                            <Grid Grid.RowSpan="2" Grid.Column="0">
                                 <bingVision:BingImageWindow x:Name="ImageWindow1" />
+                            </Grid>
+
+                            <Grid Grid.RowSpan="2" Grid.Column="1">
+                                <bingVision:BingImageWindow x:Name="ImageWindow2" />
                             </Grid>
                         </Grid>
 
@@ -248,35 +252,6 @@
                                         Content="{Binding ButtonClearRunStatistic, Source={StaticResource BingLocation}, Mode=OneWay}"
                                         Style="{StaticResource ButtonDanger}" />
                                 </StackPanel>
-                                <StackPanel
-                                    HorizontalAlignment="Left"
-                                    DataContext="{Binding MESData}"
-                                    Orientation="Vertical">
-                                    <hc:TextBox
-                                        Width="410"
-                                        Margin="5,5,5,0"
-                                        hc:InfoElement.Title="操作员"
-                                        hc:InfoElement.TitlePlacement="Left"
-                                        hc:InfoElement.TitleWidth="80"
-                                        FontSize="14"
-                                        Text="{Binding OperateName, FallbackValue=ABCD}" />
-                                    <hc:TextBox
-                                        Width="410"
-                                        Margin="5"
-                                        hc:InfoElement.Title="设备ID"
-                                        hc:InfoElement.TitlePlacement="Left"
-                                        hc:InfoElement.TitleWidth="80"
-                                        FontSize="14"
-                                        Text="{Binding MachineName, FallbackValue=ABCD}" />
-                                </StackPanel>
-                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                    <Button
-                                        Width="100"
-                                        Margin="5,5,5,0"
-                                        Command="{Binding SaveMesData}"
-                                        Content="{Binding ButtonSaveMesData, Source={StaticResource BingLocation}, Mode=OneWay}"
-                                        Style="{StaticResource ButtonPrimary}" />
-                                </StackPanel>
                             </StackPanel>
 
                             <StackPanel VerticalAlignment="Bottom" Orientation="Vertical">
@@ -329,7 +304,6 @@
                                 Margin="5"
                                 Background="#f9f9f9"
                                 FontSize="14"
-
                                 Style="{StaticResource GroupBoxOriginal}">
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
@@ -366,6 +340,12 @@
                                                 FontSize="14"
                                                 Text="&#xe67c; "><Run FontSize="13" Text="{Binding ButtonSaveAs, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
                                         </Button>
+                                        <Button
+                                            Width="100"
+                                            Margin="5"
+                                            Command="{Binding RunAll}"
+                                            Content="运行"
+                                            Style="{StaticResource ButtonPrimary}" />
                                         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                                             <TextBlock
                                                 Width="80"
@@ -382,7 +362,10 @@
                                     </StackPanel>
                                 </StackPanel>
                                 <GroupBox.Header>
-                                    <TextBlock FontWeight="Bold" FontSize="16" Text="{Binding ProjectManagement, Source={StaticResource BingLocation}, Mode=OneWay}"></TextBlock>
+                                    <TextBlock
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Text="{Binding ProjectManagement, Source={StaticResource BingLocation}, Mode=OneWay}" />
                                 </GroupBox.Header>
                             </GroupBox>
                         </Grid>
@@ -392,7 +375,6 @@
                             <GroupBox
                                 Margin="5,-5,5,5"
                                 FontSize="14"
-
                                 Style="{StaticResource GroupBoxOriginal}">
                                 <Grid>
                                     <Grid.RowDefinitions>
@@ -503,7 +485,12 @@
                                                     </Grid>
                                                 </Grid>
                                                 <Grid Grid.Row="1">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition Width="2*" />
+                                                    </Grid.ColumnDefinitions>
                                                     <ListView
+                                                        Grid.ColumnSpan="2"
                                                         ItemsSource="{Binding CurrentProgram}"
                                                         ScrollViewer.CanContentScroll="True"
                                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -511,7 +498,10 @@
 
                                                         <ListView.View>
                                                             <GridView>
-                                                                <GridViewColumn Width="290" DisplayMemberBinding="{Binding ProductIndex, StringFormat=检测位置：{0}}" Header="{Binding InspectPContent, Source={StaticResource BingLocation}, Mode=OneWay}" />
+                                                                <GridViewColumn
+                                                                    Width="290"
+                                                                    DisplayMemberBinding="{Binding ProductIndex, StringFormat=检测位置：{0}}"
+                                                                    Header="{Binding InspectPContent, Source={StaticResource BingLocation}, Mode=OneWay}" />
                                                             </GridView>
                                                         </ListView.View>
                                                         <i:Interaction.Triggers>
@@ -519,6 +509,26 @@
                                                                 <i:InvokeCommandAction Command="{Binding UpdateSelectedCurrentProgram}" />
                                                             </i:EventTrigger>
                                                         </i:Interaction.Triggers>
+                                                        <ListView.ContextMenu>
+                                                            <ContextMenu>
+                                                                <MenuItem
+                                                                    Command="{Binding CtrlProgramDatasOperate}"
+                                                                    CommandParameter="copy"
+                                                                    FontWeight="Bold"
+                                                                    Header="复制" />
+                                                                <MenuItem
+                                                                    Command="{Binding CtrlProgramDatasOperate}"
+                                                                    CommandParameter="paste"
+                                                                    FontWeight="Bold"
+                                                                    Header="粘贴" />
+                                                                <MenuItem
+                                                                    Command="{Binding CtrlProgramDatasOperate}"
+                                                                    CommandParameter="clear"
+                                                                    FontWeight="Bold"
+                                                                    Foreground="Red"
+                                                                    Header="清除" />
+                                                            </ContextMenu>
+                                                        </ListView.ContextMenu>
                                                     </ListView>
                                                 </Grid>
                                             </Grid>
@@ -553,6 +563,17 @@
                                                                         VerticalAlignment="Center"
                                                                         FontSize="14"
                                                                         Text="&#xe677; "><Run FontSize="12" Text="{Binding ButtonDeleteI, Source={StaticResource BingLocation}, Mode=OneWay}" /></TextBlock>
+                                                                </Button>
+                                                                <Button
+                                                                    Width="130"
+                                                                    Margin="5"
+                                                                    Command="{Binding ProgramDatasOperate}"
+                                                                    CommandParameter="locate"
+                                                                    Style="{StaticResource ButtonDashedPrimary}">
+                                                                    <TextBlock
+                                                                        VerticalAlignment="Center"
+                                                                        FontSize="14"
+                                                                        Text="&#xe677; "><Run FontSize="12" Text="位置参数" /></TextBlock>
                                                                 </Button>
                                                             </StackPanel>
                                                         </StackPanel>
@@ -616,9 +637,112 @@
                                     </Grid>
                                 </Grid>
                                 <GroupBox.Header>
-                                    <TextBlock FontWeight="Bold" FontSize="16" Text="{Binding ProgramEdit, Source={StaticResource BingLocation}, Mode=OneWay}"></TextBlock>
+                                    <TextBlock
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Text="{Binding ProgramEdit, Source={StaticResource BingLocation}, Mode=OneWay}" />
                                 </GroupBox.Header>
                             </GroupBox>
+                        </Grid>
+                    </Grid>
+                </hc:TabItem>
+
+                <hc:TabItem
+                    Width="150"
+                    FontSize="21"
+                    Header="MES"
+                    HeaderStringFormat="{}&#xe74f; {0}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="90" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid>
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBox
+                                            Width="335"
+                                            Height="30"
+                                            Margin="5"
+                                            HorizontalAlignment="Right"
+                                            hc:InfoElement.Placeholder="请输入MES字段值"
+                                            FontSize="14"
+                                            IsEnabled="{Binding CurrentPermit, Converter={StaticResource BingPermit}, ConverterParameter=2}"
+                                            Style="{StaticResource TextBoxExtend}"
+                                            Text="{Binding VariableName}" />
+                                    </StackPanel>
+                                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                        <Button
+                                            Width="80"
+                                            Margin="5"
+                                            Command="{Binding Operate}"
+                                            CommandParameter="add"
+                                            Content="添加变量"
+                                            IsEnabled="{Binding CurrentPermit, Converter={StaticResource BingPermit}, ConverterParameter=2}"
+                                            Style="{StaticResource ButtonPrimary}" />
+                                        <Button
+                                            Width="80"
+                                            Margin="5"
+                                            Command="{Binding Operate}"
+                                            CommandParameter="delete"
+                                            Content="删除变量"
+                                            IsEnabled="{Binding CurrentPermit, Converter={StaticResource BingPermit}, ConverterParameter=2}"
+                                            Style="{StaticResource ButtonDanger}" />
+                                        <Button
+                                            Width="80"
+                                            Margin="5"
+                                            Command="{Binding Operate}"
+                                            CommandParameter="save"
+                                            Content="保存"
+                                            Style="{StaticResource ButtonPrimary}" />
+                                        <CheckBox
+                                            Content="启用MES"
+                                            DataContext="{Binding SystemConfig}"
+                                            IsChecked="{Binding UseMES}"
+                                            IsEnabled="{Binding CurrentPermit, Converter={StaticResource BingPermit}, ConverterParameter=2}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                        <Grid Grid.Row="1">
+
+                            <DataGrid
+                                Grid.Column="1"
+                                Margin="5"
+                                hc:DataGridAttach.ShowRowNumber="True"
+                                AutoGenerateColumns="False"
+                                FontSize="14"
+                                HeadersVisibility="All"
+                                IsReadOnly="True"
+                                ItemsSource="{Binding MesDatasTemp}"
+                                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                SelectedItem="{Binding SelectedVariable}"
+                                SelectionMode="Single">
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Width="180" Header="字段">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock VerticalAlignment="Center" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Width="*" Header="内容">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox VerticalAlignment="Center" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTemplateColumn Width="*" Header="备注">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBox VerticalAlignment="Center" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
                         </Grid>
                     </Grid>
                 </hc:TabItem>
@@ -969,7 +1093,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
-                        Margin="5"
+                        Margin="15,5,5,5"
                         VerticalAlignment="Center"
                         FontSize="16"
                         Text="相机:" />
@@ -978,7 +1102,16 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
-                        Margin="5"
+                        Margin="15,5,5,5"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Text="MES:" />
+                    <Ellipse DataContext="{Binding MesStatus}" Style="{StaticResource StatusEllipse}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        Margin="15,5,5,5"
                         VerticalAlignment="Center"
                         FontSize="16"
                         Text="硬盘容量:" />

@@ -47,11 +47,15 @@ namespace VisionProject
 
             //脚本参数设置窗口
             containerRegistry.RegisterDialog<Dialog_ParamSet, Dialog_ParamSetViewModel>(GlobalVars.DialogNames.ShowParamSetDialog);
+            //位置参数设置窗口
+            containerRegistry.RegisterDialog<Dialog_Location, Dialog_LocationViewModel>(GlobalVars.DialogNames.ShowLocationDialog);
 
             //脚本工具窗口
-            // containerRegistry.RegisterDialog<Function_ScriptTest, Function_ScriptTestViewModel>(GlobalVars.DialogNames.ToolNams["脚本工具"]);
+            //containerRegistry.RegisterDialog<Function_ScriptTest, Function_ScriptTestViewModel>(GlobalVars.DialogNames.ToolNams["脚本工具"]);
             containerRegistry.RegisterDialog<Function_Match, Function_MatchViewModel>(GlobalVars.DialogNames.ToolNams["图像比对"]);
             containerRegistry.RegisterDialog<Function_Script, Function_ScriptViewModel>(GlobalVars.DialogNames.ToolNams["视觉脚本"]);
+            containerRegistry.RegisterDialog<Function_Blob, Function_BlobViewModel>(GlobalVars.DialogNames.ToolNams["Blob分析"]);
+            containerRegistry.RegisterDialog<Function_Code, Function_CodeViewModel>(GlobalVars.DialogNames.ToolNams["条码识别"]);
         }
     }
 }

@@ -8,7 +8,8 @@
     xmlns:prism="http://prismlibrary.com/"
     Width="960"
     Height="690"
-    prism:ViewModelLocator.AutoWireViewModel="True">
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    FontFamily="pack://application:,,,/VisionProject;component/fonts/#iconfont,pack://application:,,,/VisionProject;component/fonts/#仓耳今楷03 W04">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />

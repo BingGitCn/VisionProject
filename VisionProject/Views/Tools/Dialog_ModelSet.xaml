@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="VisionProject.Views.Tools.Dialog_ParamSet"
+    x:Class="VisionProject.Views.Tools.Dialog_ModelSet"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:hc="https://handyorg.github.io/handycontrol"
@@ -45,13 +45,13 @@
                         Margin="5"
                         Command="{Binding Operate}"
                         CommandParameter="add"
-                        Content="添加变量"
+                        Content="添加模型"
                         Style="{StaticResource ButtonPrimary}" />
                     <Button
                         Margin="5"
                         Command="{Binding Operate}"
                         CommandParameter="delete"
-                        Content="删除变量"
+                        Content="删除模型"
                         Style="{StaticResource ButtonDanger}" />
                     <Button
                         Margin="5"
@@ -82,20 +82,6 @@
                                     VerticalAlignment="Center"
                                     FontWeight="Bold"
                                     Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Width="120" Header="类型">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <hc:ComboBox Width="90" SelectedIndex="{Binding SelectedIndex, FallbackValue=0, UpdateSourceTrigger=PropertyChanged}">
-                                    <hc:ComboBox.Items>
-                                        <ComboBoxItem Content="Bool" />
-                                        <ComboBoxItem Content="String" />
-                                        <ComboBoxItem Content="Double" />
-                                        <ComboBoxItem Content="Int" />
-                                    </hc:ComboBox.Items>
-                                </hc:ComboBox>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

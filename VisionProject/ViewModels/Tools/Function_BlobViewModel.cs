@@ -1,26 +1,39 @@
-﻿using BingLibrary.Extension;
+﻿using BingLibrary.Communication.Net;
+using BingLibrary.Extension;
 using BingLibrary.Vision;
 using HalconDotNet;
+using HandyControl.Controls;
+using ImageResizer.ExtensionMethods;
+using MySqlX.XDevAPI.Common;
+using MySqlX.XDevAPI.Relational;
 using Prism.Commands;
 using Prism.Mvvm;
+using Prism.Regions;
 using Prism.Services.Dialogs;
-using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Forms;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using VisionProject.GlobalVars;
+using static VisionProject.ViewModels.Function_BlobViewModel;
 
 namespace VisionProject.ViewModels
 {
-    public class Function_MatchViewModel : BindableBase, IDialogAware, IFunction_ViewModel_Interface
+    public class Function_BlobViewModel : BindableBase, IDialogAware, IFunction_ViewModel_Interface
     {
-        public Function_MatchViewModel()
+        public Function_BlobViewModel()
         {
         }
 
+        public bool Result = false;
         private int tabIndex;
 
         public int TabIndex
@@ -35,45 +48,96 @@ namespace VisionProject.ViewModels
         public DelegateCommand DoSwitchTab =>
             _doSwitchTab ?? (_doSwitchTab = new DelegateCommand(ExecuteDoSwitchTab));
 
+        private HRegion regionTemp;
+
         private void ExecuteDoSwitchTab()
         {
-            if (oldTabIndex != TabIndex)
+            try
             {
-                oldTabIndex = TabIndex;
-                if (TabIndex == 0)
-                { }
-                else if (TabIndex == 1)
+                if (oldTabIndex != TabIndex)
                 {
-                    ExecuteModelOperate("trans");
-                }
-                else if (TabIndex == 2)
-                {
-                    ExecuteModelOperate("trans");
-                    image?.Dispose();
-                    image = resultImage.CopyImage();
-                    runPreEnhance();
-                }
-                else if (TabIndex == 3)
-                {
-                    ExecuteModelOperate("trans");
-                    image?.Dispose();
-                    image = resultImage.CopyImage();
-                    runPreEnhance();
-                    image?.Dispose();
-                    image = resultImage.CopyImage();
-                    runGray();
-                }
-                else if (TabIndex == 4)
-                {
-                    ExecuteModelOperate("trans");
-                    image?.Dispose();
-                    image = resultImage.CopyImage();
-                    runPreEnhance();
-                    image?.Dispose();
-                    image = resultImage.CopyImage();
-                    runGray();
+                    oldTabIndex = TabIndex;
+                    if (TabIndex == 0)
+                    { }
+                    else if (TabIndex == 1)
+                    {
+                        ExecuteModelOperate("trans");
+                    }
+                    else if (TabIndex == 2)
+                    {
+                        ExecuteModelOperate("trans");
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        runPreEnhance();
+                    }
+                    else if (TabIndex == 3)
+                    {
+                        ExecuteModelOperate("trans");
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        runPreEnhance();
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        runGray();
+                    }
+                    else if (TabIndex == 4)
+                    {
+                        ExecuteModelOperate("trans");
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        runPreEnhance();
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        runGray();
+
+                        regionTemp?.Dispose();
+                        regionTemp = resultRegion.Clone();
+                        runDispose();
+
+                        regionTemp?.Dispose();
+                        regionTemp = resultRegion.Clone();
+                        runExtract();
+                    }
+                    else if (TabIndex == 5)
+                    {
+                        ExecuteModelOperate("trans");
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        runPreEnhance();
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        runGray();
+
+                        regionTemp?.Dispose();
+                        regionTemp = resultRegion.Clone();
+                        runDispose();
+
+                        regionTemp?.Dispose();
+                        regionTemp = resultRegion.Clone();
+                        runExtract();
+                    }
+                    else if (TabIndex == 6)
+                    {
+                        ExecuteModelOperate("trans");
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        runPreEnhance();
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        runGray();
+
+                        regionTemp?.Dispose();
+                        regionTemp = resultRegion.Clone();
+                        runDispose();
+
+                        regionTemp?.Dispose();
+                        regionTemp = resultRegion.Clone();
+                        runExtract();
+                        ExecuteTestRunJudge();
+                    }
                 }
             }
+            catch { }
         }
 
         #region 图像选择
@@ -169,7 +233,6 @@ namespace VisionProject.ViewModels
 
                             Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
                         }
-
                         Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(originalImage.CopyImage());
                         Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
                     }
@@ -257,7 +320,6 @@ namespace VisionProject.ViewModels
 
                             //Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ROIImage", image);
                             //Variables.CurrentProgramData.Parameters.BingAddOrUpdate("OriginalImage", originalImage);
-
                             Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(image.CopyImage());
                             Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
                             Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
@@ -387,7 +449,6 @@ namespace VisionProject.ViewModels
 
                     image = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
                 }
-                else
                 {
                     var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
                     var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
@@ -572,9 +633,13 @@ namespace VisionProject.ViewModels
                         modelRow = (HTuple)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ModelRow", new HTuple(0));
                         modelCol = (HTuple)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ModelCol", new HTuple(0));
                         modelAngle = (HTuple)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ModelAngle", new HTuple(0));
-
-                        modelImage.FindShapeModel(modelSM, -0.39, 0.79, 0.5, 1, 0.5, "least_squares", 3, 0.5,
-                          out row, out col, out angle, out modelScore);
+                        //搜索06101143
+                        try
+                        {
+                            modelImage.FindShapeModel(modelSM, -0.39, 0.79, 0.5, 1, 0.5, "least_squares", 3, 0.5,
+                              out row, out col, out angle, out modelScore);
+                        }
+                        catch { }
 
                         hHomMat2D.VectorAngleToRigid(row, col, angle, modelRow, modelCol, modelAngle);
                         resultImage = resultImage.AffineTransImage(hHomMat2D, "constant", "false");
@@ -729,13 +794,13 @@ namespace VisionProject.ViewModels
 
         #region 二值处理
 
-        private bool isGray;
+        //private bool isGray;
 
-        public bool IsGray
-        {
-            get { return isGray; }
-            set { SetProperty(ref isGray, value); }
-        }
+        //public bool IsGray
+        //{
+        //    get { return isGray; }
+        //    set { SetProperty(ref isGray, value); }
+        //}
 
         private DelegateCommand _resetGray;
 
@@ -830,7 +895,7 @@ namespace VisionProject.ViewModels
             resultRegion.GenEmptyRegion();
             try
             {
-                if (IsGray)
+                if (true)
                 {
                     if (GrayModeIndex == 0)
                     {
@@ -1029,7 +1094,7 @@ namespace VisionProject.ViewModels
 
             try
             {
-                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsGray", IsGray);
+                //Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsGray", IsGray);
                 Variables.CurrentProgramData.Parameters.BingAddOrUpdate("GrayModeIndex", GrayModeIndex);
 
                 Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueS1", ValueS1);
@@ -1328,31 +1393,144 @@ namespace VisionProject.ViewModels
 
         #endregion 二值处理
 
-        #region 判定
+        #region 处理
 
-        private int inspectIndex;
-
-        public int InspectIndex
+        private void runDispose()
         {
-            get { return inspectIndex; }
-            set { SetProperty(ref inspectIndex, value); }
+            try
+            {
+                HRegion region = regionTemp.Connection();
+
+                var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("DisposeROIRow1", 0.0);
+                var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("DisposeROIRow2", 0.0);
+                var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("DisposeROIColumn1", 0.0);
+                var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("DisposeROIColumn2", 0.0);
+                //var w = row2 - row1; var h = col2 - col1;
+                var w = row1; var h = col1;
+                if (row1 + row2 != 0)
+                    region = new HRegion(row1, col1, row2, col2).Intersection(region);
+                // 回来
+                //HTuple hTuple1 = new HTuple();
+                //HTuple hTuple2 = new HTuple();
+                //HTuple hTuple3 = new HTuple();
+                //hTuple1 = hTuple1.TupleConcat("width", "height");
+                //hTuple2 = hTuple2.TupleConcat(w, h);
+                //hTuple3 = hTuple3.TupleConcat(w + 3, h + 3);
+                //regionTemp = regionTempp.SelectShape(hTuple1, "or", hTuple2, hTuple3);
+                //region = region.Difference(regionTempp).Connection();
+
+                if (RegionFoundFeatureDatas.Count != 0)
+                {
+                    for (int i = 0; i < RegionFoundFeatureDataIndex + 1; i++)
+                    {
+                        switch (RegionFoundFeatureDatas[i].Feature)
+                        {
+                            case RegionFoundFeatures.圆形开运算:
+                                region = region.OpeningCircle(RegionFoundFeatureDatas[i].Radius);
+                                break;
+
+                            case RegionFoundFeatures.矩形开运算:
+                                region = region.OpeningRectangle1(RegionFoundFeatureDatas[i].Width, RegionFoundFeatureDatas[i].Height);
+                                break;
+
+                            case RegionFoundFeatures.圆形闭运算:
+                                region = region.ClosingCircle(RegionFoundFeatureDatas[i].Radius);
+                                break;
+
+                            case RegionFoundFeatures.矩形闭运算:
+                                region = region.ClosingRectangle1(RegionFoundFeatureDatas[i].Width, RegionFoundFeatureDatas[i].Height);
+                                break;
+
+                            case RegionFoundFeatures.圆形膨胀:
+                                region = region.DilationCircle(RegionFoundFeatureDatas[i].Radius);
+                                break;
+
+                            case RegionFoundFeatures.矩形膨胀:
+                                region = region.DilationRectangle1(RegionFoundFeatureDatas[i].Width, RegionFoundFeatureDatas[i].Height);
+                                break;
+
+                            case RegionFoundFeatures.圆形腐蚀:
+                                region = region.ErosionCircle(RegionFoundFeatureDatas[i].Radius);
+                                break;
+
+                            case RegionFoundFeatures.矩形腐蚀:
+                                region = region.ErosionRectangle1(RegionFoundFeatureDatas[i].Width, RegionFoundFeatureDatas[i].Height);
+                                break;
+
+                            case RegionFoundFeatures.填充孔洞:
+                                region = region.FillUp();
+                                break;
+
+                            case RegionFoundFeatures.形状变换:
+                                switch (RegionFoundFeatureDatas[i].TransIndex)
+                                {
+                                    case 0:
+                                        region = region.ShapeTrans("convex");
+                                        break;
+
+                                    case 1:
+                                        region = region.ShapeTrans("ellipse");
+                                        break;
+
+                                    case 2:
+                                        region = region.ShapeTrans("outer_circle");
+                                        break;
+
+                                    case 3:
+                                        region = region.ShapeTrans("inner_circle");
+                                        break;
+
+                                    case 4:
+                                        region = region.ShapeTrans("rectangle1");
+                                        break;
+
+                                    case 5:
+                                        region = region.ShapeTrans("rectangle2");
+                                        break;
+
+                                    case 6:
+                                        region = region.ShapeTrans("inner_rectangle1");
+                                        break;
+
+                                    case 7:
+                                        region = region.ShapeTrans("inner_center");
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                }
+
+                resultRegion = region;
+                Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+                Variables.ImageWindowDataForFunction.ROICtrl.AddROI(new BingLibrary.Vision.ROIRegion(resultRegion) { ROIColor = BingLibrary.Vision.HalconColors.蓝色 });
+                Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+            }
+            catch { }
+            isTestRuning = false;
         }
 
-        private DelegateCommand<string> _inspectROIOperate;
+        private DelegateCommand _disposeROIOperate;
 
-        public DelegateCommand<string> InspectROIOperate =>
-            _inspectROIOperate ?? (_inspectROIOperate = new DelegateCommand<string>(ExecuteInspectROIOperate));
+        public DelegateCommand DisposeROIOperate =>
+            _disposeROIOperate ?? (_disposeROIOperate = new DelegateCommand(ExecuteDisposeROIOperate));
 
-        private void ExecuteInspectROIOperate(string parameter)
+        private void ExecuteDisposeROIOperate()
         {
             Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.margin;
             NotDrawIng = false;
             try
             {
-                var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow" + parameter + "1", 0.0);
-                var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow" + parameter + "2", 0.0);
-                var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn" + parameter + "1", 0.0);
-                var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn" + parameter + "2", 0.0);
+                var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("DisposeROIRow1", 0.0);
+                var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("DisposeROIRow2", 0.0);
+                var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("DisposeROIColumn1", 0.0);
+                var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("DisposeROIColumn2", 0.0);
 
                 if ((row1 + row2) == 0)
                 {
@@ -1361,10 +1539,10 @@ namespace VisionProject.ViewModels
                     Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(HalconColors.橙色.ToDescription());
                     Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1(out row1, out col1, out row2, out col2);
 
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "1", row1);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "2", row2);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "1", col1);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "2", col2);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("DisposeROIRow1", row1);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("DisposeROIRow2", row2);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("DisposeROIColumn1", col1);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("DisposeROIColumn2", col2);
 
                     Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
                     Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
@@ -1375,208 +1553,866 @@ namespace VisionProject.ViewModels
                     Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(HalconColors.橙色.ToDescription());
                     Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1Mod(row1, col1, row2, col2, out row1, out col1, out row2, out col2);
 
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "1", row1);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "2", row2);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "1", col1);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "2", col2);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("DisposeROIRow1", row1);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("DisposeROIRow2", row2);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("DisposeROIColumn1", col1);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("DisposeROIColumn2", col2);
 
                     Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
                     Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
                 }
             }
-            catch { }
+            catch { Result = false; }
 
             Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.fill;
             Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
             NotDrawIng = true;
         }
 
-        private HNCCModel nCCModel = new HNCCModel();
-        private DelegateCommand _nccRegiste;
+        private DelegateCommand _regionEditSelection;
 
-        public DelegateCommand NccRegiste =>
-            _nccRegiste ?? (_nccRegiste = new DelegateCommand(ExecuteNccRegiste));
+        public DelegateCommand RegionEditSelection =>
+    _regionEditSelection ?? (_regionEditSelection = new DelegateCommand(ExecuteRegionEditSelection));
 
-        private void ExecuteNccRegiste()
+        private void ExecuteRegionEditSelection()
         {
             try
             {
-                var rst = Variables.ShowConfirm("是否注册标准检测？");
+                CircleVisibility = Visibility.Collapsed;
+                RectVisibility = Visibility.Collapsed;
+                TransVisibility = Visibility.Collapsed;
 
-                var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow01", 0.0);
-                var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow02", 0.0);
-                var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn01", 0.0);
-                var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn02", 0.0);
+                if (RegionFoundFeatureDataIndex < 0)
+                    RegionFoundFeatureDataIndex = 0;
+                if (RegionFoundFeatureDataIndex >= RegionFoundFeatureDatas.Count)
+                    RegionFoundFeatureDataIndex = RegionFoundFeatureDatas.Count - 1;
 
-                HTuple paramterValue = new HTuple();
-                HTuple paramterName = resultImage.ReduceDomain(new HRegion(row1, col1, row2, col2)).DetermineShapeModelParams(
-                   new HTuple("auto"), -0.39, 0.79, new HTuple(0.9), new HTuple(1.1), "auto",
-                   "use_polarity", new HTuple("auto"), new HTuple("auto"), new HTuple("all"), out paramterValue
-                    );
+                if (RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].Name.Contains("圆形"))
+                {
+                    CircleVisibility = Visibility.Visible;
+                }
+                else if (RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].Name.Contains("矩形"))
+                {
+                    RectVisibility = Visibility.Visible;
+                }
+                else if (RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].Name == "形状变换")
+                {
+                    TransVisibility = Visibility.Visible;
+                }
 
-                Dictionary<string, HTuple> dict = new Dictionary<string, HTuple>();
-                for (int i = 0; i < paramterName.SArr.Length; i++)
-                    dict.Add(paramterName.SArr[i], paramterValue[i]);
-
-                nCCModel = resultImage.ReduceDomain(new HRegion(row1, col1, row2, col2)).CreateNccModel(
-                       dict["num_levels"], -0.39, 0.79, dict["angle_step"], "use_polarity");
-
-                HTuple nccModelRow = new HTuple(); HTuple nccModelCol = new HTuple(); HTuple nccModelAngle = new HTuple(); HTuple nccModelScore = new HTuple();
-                resultImage.FindNccModel(nCCModel, -0.39, 0.79, 0.5, 1, 0.5, "true", 3,
-                    out nccModelRow, out nccModelCol, out nccModelAngle, out nccModelScore);
-
-                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NccModel", nCCModel);
-                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NccModelRow", nccModelRow);
-                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NccModelCol", nccModelCol);
-                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NccModelAngle", nccModelAngle);
+                RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].Radius = Radius;
+                RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].Width = Width;
+                RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].Height = Height;
+                RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].TransIndex = TransIndex;
+                runDispose();
+                //TestRun();
             }
-            catch (Exception ex)
+            catch
             {
-                boolResult = false;
-                Variables.ShowMessage("注册失败：" + ex.Message);
             }
+        }
 
-            if (!boolResult && IsSaveNG)
+        private DelegateCommand _regionSelectionChanged;
+
+        public DelegateCommand RegionSelectionChanged =>
+    _regionSelectionChanged ?? (_regionSelectionChanged = new DelegateCommand(ExecuteRegionSelectionChanged));
+
+        private void ExecuteRegionSelectionChanged()
+        {
+            try
+            {
+                CircleVisibility = Visibility.Collapsed;
+                RectVisibility = Visibility.Collapsed;
+                TransVisibility = Visibility.Collapsed;
+
+                if (RegionFoundFeatureDataIndex < 0)
+                    RegionFoundFeatureDataIndex = 0;
+                if (RegionFoundFeatureDataIndex >= RegionFoundFeatureDatas.Count)
+                    RegionFoundFeatureDataIndex = RegionFoundFeatureDatas.Count - 1;
+
+                if (RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].Name.Contains("圆形"))
+                {
+                    CircleVisibility = Visibility.Visible;
+                }
+                else if (RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].Name.Contains("矩形"))
+                {
+                    RectVisibility = Visibility.Visible;
+                }
+                else if (RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].Name == "形状变换")
+                {
+                    TransVisibility = Visibility.Visible;
+                }
+
+                Radius = RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].Radius;
+                Width = RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].Width;
+                Height = RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].Height;
+                TransIndex = RegionFoundFeatureDatas[RegionFoundFeatureDataIndex].TransIndex;
+                runDispose();// TestRun();
+            }
+            catch
+            {
+            }
+        }
+
+        private DelegateCommand<string> _regionFoundOperater;
+
+        public DelegateCommand<string> RegionFoundOperater =>
+    _regionFoundOperater ?? (_regionFoundOperater = new DelegateCommand<string>(ExecuteRegionFoundOperater));
+
+        private void ExecuteRegionFoundOperater(string parameter)
+        {
+            switch (parameter)
+            {
+                case "add":
+                    if (RegionFoundFeature == RegionFoundFeatures.圆形开运算)
+                    {
+                        RegionFoundFeatureDatas.Add(new RegionFoundFeatureData()
+                        {
+                            Feature = RegionFoundFeature,
+                            Name = RegionFoundFeature.ToDescription(),
+                            Radius = 3.5,
+                            Width = 0,
+                            Height = 0,
+                            TransIndex = 0
+                        });
+                    }
+                    else if (RegionFoundFeature == RegionFoundFeatures.圆形腐蚀)
+                    {
+                        RegionFoundFeatureDatas.Add(new RegionFoundFeatureData()
+                        {
+                            Feature = RegionFoundFeature,
+                            Name = RegionFoundFeature.ToDescription(),
+                            Radius = 3.5,
+                            Width = 0,
+                            Height = 0,
+                            TransIndex = 0
+                        });
+                    }
+                    else if (RegionFoundFeature == RegionFoundFeatures.圆形膨胀)
+                    {
+                        RegionFoundFeatureDatas.Add(new RegionFoundFeatureData()
+                        {
+                            Feature = RegionFoundFeature,
+                            Name = RegionFoundFeature.ToDescription(),
+                            Radius = 3.5,
+                            Width = 0,
+                            Height = 0,
+                            TransIndex = 0
+                        });
+                    }
+                    else if (RegionFoundFeature == RegionFoundFeatures.圆形闭运算)
+                    {
+                        RegionFoundFeatureDatas.Add(new RegionFoundFeatureData()
+                        {
+                            Feature = RegionFoundFeature,
+                            Name = RegionFoundFeature.ToDescription(),
+                            Radius = 3.5,
+                            Width = 0,
+                            Height = 0,
+                            TransIndex = 0
+                        });
+                    }
+                    else if (RegionFoundFeature == RegionFoundFeatures.填充孔洞)
+                    {
+                        RegionFoundFeatureDatas.Add(new RegionFoundFeatureData()
+                        {
+                            Feature = RegionFoundFeature,
+                            Name = RegionFoundFeature.ToDescription(),
+                            Radius = 0,
+                            Width = 0,
+                            Height = 0,
+                            TransIndex = 0
+                        });
+                    }
+                    else if (RegionFoundFeature == RegionFoundFeatures.形状变换)
+                    {
+                        RegionFoundFeatureDatas.Add(new RegionFoundFeatureData()
+                        {
+                            Feature = RegionFoundFeature,
+                            Name = RegionFoundFeature.ToDescription(),
+                            Radius = 0,
+                            Width = 3,
+                            Height = 3,
+                            TransIndex = 0
+                        });
+                    }
+                    else if (RegionFoundFeature == RegionFoundFeatures.矩形开运算)
+                    {
+                        RegionFoundFeatureDatas.Add(new RegionFoundFeatureData()
+                        {
+                            Feature = RegionFoundFeature,
+                            Name = RegionFoundFeature.ToDescription(),
+                            Radius = 0,
+                            Width = 3,
+                            Height = 3,
+                            TransIndex = 0
+                        });
+                    }
+                    else if (RegionFoundFeature == RegionFoundFeatures.矩形腐蚀)
+                    {
+                        RegionFoundFeatureDatas.Add(new RegionFoundFeatureData()
+                        {
+                            Feature = RegionFoundFeature,
+                            Name = RegionFoundFeature.ToDescription(),
+                            Radius = 0,
+                            Width = 3,
+                            Height = 3,
+                            TransIndex = 0
+                        });
+                    }
+                    else if (RegionFoundFeature == RegionFoundFeatures.矩形膨胀)
+                    {
+                        RegionFoundFeatureDatas.Add(new RegionFoundFeatureData()
+                        {
+                            Feature = RegionFoundFeature,
+                            Name = RegionFoundFeature.ToDescription(),
+                            Radius = 0,
+                            Width = 3,
+                            Height = 3,
+                            TransIndex = 0
+                        });
+                    }
+                    else if (RegionFoundFeature == RegionFoundFeatures.矩形闭运算)
+                    {
+                        RegionFoundFeatureDatas.Add(new RegionFoundFeatureData()
+                        {
+                            Feature = RegionFoundFeature,
+                            Name = RegionFoundFeature.ToDescription(),
+                            Radius = 0,
+                            Width = 3,
+                            Height = 3,
+                            TransIndex = 0
+                        });
+                    }
+                    RegionFoundFeatureDataIndex = RegionFoundFeatureDatas.Count - 1;
+                    break;
+
+                case "remove":
+                    RegionFoundFeatureDatas.RemoveAt(RegionFoundFeatureDataIndex);
+                    if (RegionFoundFeatureDatas.Count == 0)
+                    {
+                        CircleVisibility = Visibility.Collapsed;
+                        RectVisibility = Visibility.Collapsed;
+                        TransVisibility = Visibility.Collapsed;
+                    }
+                    if (RegionFoundFeatureDataIndex >= RegionFoundFeatureDatas.Count)
+                        RegionFoundFeatureDataIndex = RegionFoundFeatureDatas.Count - 1;
+                    if (RegionFoundFeatureDataIndex < 0)
+                        RegionFoundFeatureDataIndex = 0;
+                    break;
+
+                case "moveUp":
+                    var selectedIndex = RegionFoundFeatureDataIndex;
+                    var selectedItem = RegionFoundFeatureDatas[RegionFoundFeatureDataIndex];
+
+                    if (selectedItem == null || selectedIndex <= 0)
+                        return;
+                    RegionFoundFeatureDatas.RemoveAt(selectedIndex);
+                    RegionFoundFeatureDatas.Insert(selectedIndex - 1, selectedItem);
+                    RegionFoundFeatureDataIndex = selectedIndex - 1;
+                    break;
+
+                case "moveDown":
+                    selectedIndex = RegionFoundFeatureDataIndex;
+                    selectedItem = RegionFoundFeatureDatas[RegionFoundFeatureDataIndex];
+
+                    if (selectedItem == null || selectedIndex == -1 || selectedIndex == RegionFoundFeatureDatas.Count - 1)
+                        return;
+                    RegionFoundFeatureDatas.RemoveAt(selectedIndex);
+                    RegionFoundFeatureDatas.Insert(selectedIndex + 1, selectedItem);
+                    RegionFoundFeatureDataIndex = selectedIndex + 1;
+                    break;
+            }
+            runDispose();//TestRun();
+            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("RegionFoundFeatureDatas", RegionFoundFeatureDatas);
+        }
+
+        private double _radius;
+
+        public double Radius
+        {
+            get { return _radius; }
+            set { SetProperty(ref _radius, value); }
+        }
+
+        private int _width;
+
+        public int Width
+        {
+            get { return _width; }
+            set { SetProperty(ref _width, value); }
+        }
+
+        private int _height;
+
+        public int Height
+        {
+            get { return _height; }
+            set { SetProperty(ref _height, value); }
+        }
+
+        private int _transIndex;
+
+        public int TransIndex
+        {
+            get { return _transIndex; }
+            set { SetProperty(ref _transIndex, value); }
+        }
+
+        private int _regionFoundFeatureDataIndex;
+
+        public int RegionFoundFeatureDataIndex
+        {
+            get { return _regionFoundFeatureDataIndex; }
+            set { SetProperty(ref _regionFoundFeatureDataIndex, value); }
+        }
+
+        private Visibility _circleVisibility = Visibility.Collapsed;
+
+        public Visibility CircleVisibility
+        {
+            get { return _circleVisibility; }
+            set { SetProperty(ref _circleVisibility, value); }
+        }
+
+        private Visibility _rectVisibility = Visibility.Collapsed;
+
+        public Visibility RectVisibility
+        {
+            get { return _rectVisibility; }
+            set { SetProperty(ref _rectVisibility, value); }
+        }
+
+        private Visibility _transVisibility = Visibility.Collapsed;
+
+        public Visibility TransVisibility
+        {
+            get { return _transVisibility; }
+            set { SetProperty(ref _transVisibility, value); }
+        }
+
+        private RegionFoundFeatures _regionFoundFeature = RegionFoundFeatures.圆形开运算;
+
+        public RegionFoundFeatures RegionFoundFeature
+        {
+            get { return _regionFoundFeature; }
+            set { SetProperty(ref _regionFoundFeature, value); }
+        }
+
+        public class RegionFoundFeatureData
+        {
+            public string Name { set; get; } = "";
+            public RegionFoundFeatures Feature { set; get; } = RegionFoundFeatures.圆形开运算;
+            public double Radius { set; get; } = 3.5;
+            public int Width { set; get; } = 3;
+            public int Height { set; get; } = 3;
+            public int TransIndex { set; get; } = 0;
+        }
+
+        private ObservableCollection<RegionFoundFeatureData> _regionFoundFeatureDatas = new ObservableCollection<RegionFoundFeatureData>();
+
+        public ObservableCollection<RegionFoundFeatureData> RegionFoundFeatureDatas
+        {
+            get { return _regionFoundFeatureDatas; }
+            set { SetProperty(ref _regionFoundFeatureDatas, value); }
+        }
+
+        #endregion 处理
+
+        #region 提取
+
+        private DelegateCommand<string> _filterOperater;
+
+        public DelegateCommand<string> FilterOperater =>
+    _filterOperater ?? (_filterOperater = new DelegateCommand<string>(ExecuteFilterOperater));
+
+        private void ExecuteFilterOperater(string parameter)
+        {
+            switch (parameter)
+            {
+                case "add":
+                    ValueVisibility = Visibility.Visible;
+                    BlobFeatureDatas.Add(new BlobFeatureData()
+                    {
+                        Feature = BlobFeature,
+                        Name = BlobFeature.ToString(),
+                        MinValue = 0,
+                        MaxValue = 1000,
+                    });
+                    BlobFeatureDataIndex = BlobFeatureDatas.Count - 1;
+                    break;
+
+                case "remove":
+                    BlobFeatureDatas.RemoveAt(BlobFeatureDataIndex);
+                    if (BlobFeatureDatas.Count == 0)
+                    {
+                        ValueVisibility = Visibility.Collapsed;
+                    }
+                    if (BlobFeatureDataIndex >= BlobFeatureDatas.Count)
+                        BlobFeatureDataIndex = BlobFeatureDatas.Count - 1;
+                    if (BlobFeatureDataIndex < 0)
+                        BlobFeatureDataIndex = 0;
+                    break;
+            }
+            runExtract();
+            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("BlobFeatureDatas", BlobFeatureDatas);
+        }
+
+        private DelegateCommand _selectionChanged;
+
+        public DelegateCommand SelectionChanged =>
+    _selectionChanged ?? (_selectionChanged = new DelegateCommand(ExecuteSelectionChanged));
+
+        private void ExecuteSelectionChanged()
+        {
+            try
+            {
+                if (BlobFeatureDatas.Count != 0)
+                    ValueVisibility = Visibility.Visible;
+                if (BlobFeatureDataIndex < 0)
+                    BlobFeatureDataIndex = 0;
+                if (BlobFeatureDataIndex >= BlobFeatureDatas.Count)
+                    BlobFeatureDataIndex = BlobFeatureDatas.Count - 1;
+
+                MinValue = BlobFeatureDatas[BlobFeatureDataIndex].MinValue;
+                MaxValue = BlobFeatureDatas[BlobFeatureDataIndex].MaxValue;
+
+                runExtract();
+            }
+            catch
+            {
+            }
+        }
+
+        private DelegateCommand _testRunExtract;
+
+        public DelegateCommand TestRunExtract =>
+    _testRunExtract ?? (_testRunExtract = new DelegateCommand(ExecuteTestRunExtract));
+
+        private void ExecuteTestRunExtract()
+        {
+            try
+            {
+                runExtract();
+            }
+            catch { }
+        }
+
+        private DelegateCommand _editSelection;
+
+        public DelegateCommand EditSelection =>
+    _editSelection ?? (_editSelection = new DelegateCommand(ExecuteEditSelection));
+
+        private void ExecuteEditSelection()
+        {
+            try
+            {
+                if (BlobFeatureDataIndex < 0)
+                    BlobFeatureDataIndex = 0;
+                if (BlobFeatureDataIndex >= BlobFeatureDatas.Count)
+                    BlobFeatureDataIndex = BlobFeatureDatas.Count - 1;
+
+                BlobFeatureDatas[BlobFeatureDataIndex].MinValue = MinValue;
+                BlobFeatureDatas[BlobFeatureDataIndex].MaxValue = MaxValue;
+
+                runExtract();
+            }
+            catch
+            {
+            }
+        }
+
+        private bool isTestRuning = false;
+
+        private async void runExtract()
+        {
+            if (!isInitlized)
+                return;
+            await Task.Delay(30);
+            if (isTestRuning)
+            {
+                return;
+            }
+            else
+            {
+                isTestRuning = true;
+            }
+            try
+            {
+                Dictionary<string, List<double>> blobRess = new Dictionary<string, List<double>>();
+                HRegion region = regionTemp.Connection();
+                HRegion regions = new HRegion(region);
+
+                regions.GenEmptyRegion();
+                if (BlobFeatureDatas.Count == 0)
+                    regions = regions.ConcatObj(region);
+                else
+                {
+                    HTuple hNames = new HTuple();
+                    HTuple hMins = new HTuple();
+                    HTuple hMaxs = new HTuple();
+                    double min = -1, max = -1;
+                    for (int i = 0; i < BlobFeatureDatas.Count; i++)
+                    {
+                        if (i == BlobFeatureDataIndex)
+                        {
+                            if (FilterModeIndex == 2 || FilterModeIndex == 3)
+                            {
+                                continue;
+                            }
+                        }
+                        hNames = hNames.TupleConcat(BlobFeatureDatas[i].Feature.ToDescription());
+                        hMins = hMins.TupleConcat(BlobFeatureDatas[i].MinValue);
+                        hMaxs = hMaxs.TupleConcat(BlobFeatureDatas[i].MaxValue);
+                    }
+
+                    if (FilterModeIndex == 0)
+                    {
+                        HTuple featureName = new HTuple(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
+                        HTuple featureValue = region.RegionFeatures(featureName);
+                        min = featureValue.TupleMin();
+                        max = featureValue.TupleMax();
+
+                        regions = region.SelectShape(hNames, "or", hMins, hMaxs);
+                    }
+                    else if (FilterModeIndex == 1)
+                    {
+                        HTuple featureName = new HTuple(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
+                        HTuple featureValue = region.RegionFeatures(featureName);
+                        min = featureValue.TupleMin();
+                        max = featureValue.TupleMax();
+                        regions = region.SelectShape(hNames, "or", hMins, hMaxs);
+                        regions = region.Difference(regions);
+                    }
+                    else if (FilterModeIndex == 2)
+                    {
+                        HTuple featureName = new HTuple(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
+                        HTuple featureValue = new HTuple();
+                        if (BlobFeatureDatas.Count != 1)
+                        {
+                            regions = region.SelectShape(hNames, "and", hMins, hMaxs).Connection();
+                            featureValue = regions.RegionFeatures(featureName);
+                        }
+                        else featureValue = region.RegionFeatures(featureName);
+                        min = featureValue.TupleMin();
+                        max = featureValue.TupleMax();
+
+                        hNames = hNames.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
+                        hMins = hMins.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].MinValue);
+                        hMaxs = hMaxs.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].MaxValue);
+                        regions = region.SelectShape(hNames, "and", hMins, hMaxs);
+                    }
+                    else if (FilterModeIndex == 3)
+                    {
+                        HTuple featureName = new HTuple(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
+                        HTuple featureValue = new HTuple();
+                        if (BlobFeatureDatas.Count != 1)
+                        {
+                            regions = region.SelectShape(hNames, "and", hMins, hMaxs).Connection();
+                            featureValue = regions.RegionFeatures(featureName);
+                        }
+                        else featureValue = region.RegionFeatures(featureName);
+                        min = featureValue.TupleMin();
+                        max = featureValue.TupleMax();
+
+                        hNames = hNames.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
+                        hMins = hMins.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].MinValue);
+                        hMaxs = hMaxs.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].MaxValue);
+                        regions = region.SelectShape(hNames, "and", hMins, hMaxs);
+                    }
+                    resultRegion = regions;
+                    HTuple unique = Unique(hNames);
+                    for (int i = 0; i < unique.Length; i++)
+                    {
+                        string temp = unique[i];
+                        HTuple featureResult = regions.RegionFeatures(new HTuple(temp));
+                        {
+                            //blobRess.Add(new BlobRes()  { FeatureName = unique[i], Values = ConvertHTupleToList(featureResult) });
+                            blobRess.Add(unique[i], ConvertHTupleToList(featureResult));
+                        }
+                    }
+
+                    num = regions.Connection().CountObj();
+
+                    Text = "特征参数最小为：" + Math.Round(min).ToString() + " , 最大为： " + Math.Round(max).ToString();
+                }
+            }
+            catch { }
+            isTestRuning = false;
+            //Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(resultImage.CopyImage());///因为被释放掉了
+            Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+            Variables.ImageWindowDataForFunction.ROICtrl.AddROI(new BingLibrary.Vision.ROIRegion(resultRegion) { ROIColor = BingLibrary.Vision.HalconColors.蓝色 });
+            Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+
+            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("FilterModeIndex", FilterModeIndex);
+            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("BlobFeatureDatas", BlobFeatureDatas);
+            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("BlobFeatureDataIndex", BlobFeatureDataIndex);
+            //Variables.CurrentProgramData.Parameters.BingAddOrUpdate("resultRegion", resultRegion);
+        }
+
+        private int num = 0;
+
+        public static List<double> ConvertHTupleToList(HTuple htuple)
+        {
+            List<double> list = new List<double>();
+            for (int i = 0; i < htuple.Length; i++)
+            {
+                list.Add(htuple[i]);
+            }
+            return list;
+        }
+
+        public static HTuple Unique(HTuple htuple)
+        {
+            HTuple tuple = new HTuple();
+            HashSet<string> seen = new HashSet<string>();
+            for (int i = 0; i < htuple.Length; i++)
+            {
+                string item = htuple[i];
+                if (!seen.Contains(item))
+                {
+                    seen.Add(item);
+                    tuple = tuple.TupleConcat(item);
+                }
+            }
+            return tuple;
+        }
+
+        private int _filterModeIndex = 0;
+
+        public int FilterModeIndex
+        {
+            get { return _filterModeIndex; }
+            set { SetProperty(ref _filterModeIndex, value); }
+        }
+
+        public class BlobFeatureData
+        {
+            public string Name { set; get; } = "";
+            public BlobFeatures Feature { set; get; } = BlobFeatures.面积;
+            public double MinValue { set; get; } = 1.0;
+            public double MaxValue { set; get; } = 1000.0;
+        }
+
+        public ObservableCollection<BlobFeatureData> _blobFeatureDatas = new ObservableCollection<BlobFeatureData>();
+
+        public ObservableCollection<BlobFeatureData> BlobFeatureDatas
+        {
+            get { return _blobFeatureDatas; }
+            set { SetProperty(ref _blobFeatureDatas, value); }
+        }
+
+        private BlobFeatures _blobFeature = BlobFeatures.面积;
+
+        public BlobFeatures BlobFeature
+        {
+            get { return _blobFeature; }
+            set { SetProperty(ref _blobFeature, value); }
+        }
+
+        private int _blobFeatureDataIndex = 0;
+
+        public int BlobFeatureDataIndex
+        {
+            get { return _blobFeatureDataIndex; }
+            set { SetProperty(ref _blobFeatureDataIndex, value); }
+        }
+
+        private double _minValue = 1;
+
+        public double MinValue
+        {
+            get { return Math.Round(_minValue, 2); }
+            set
+            {
+                if (value < 0) _minValue = 0;
+                else if (value > _maxValue)
+                    _minValue = _maxValue;
+                else _minValue = value;
+                RaisePropertyChanged(nameof(MinValue));
+            }
+        }
+
+        private double _maxValue = 1000;
+
+        public double MaxValue
+        {
+            get { return Math.Round(_maxValue, 2); }
+            set
+            {
+                if (value < 0) { _maxValue = 0; }
+                else if (value < _minValue)
+                    _maxValue = _minValue;
+                else { _maxValue = value; }
+                RaisePropertyChanged(nameof(MaxValue));
+            }
+        }
+
+        private string _text;
+
+        public string Text
+        {
+            get { return _text; }
+            set { SetProperty(ref _text, value); }
+        }
+
+        private Visibility _valueVisibility = Visibility.Collapsed;
+
+        public Visibility ValueVisibility
+        {
+            get { return _valueVisibility; }
+            set { SetProperty(ref _valueVisibility, value); }
+        }
+
+        private string _name;
+
+        public string Name
+        {
+            get { return _name; }
+            set { SetProperty(ref _name, value); }
+        }
+
+        #endregion 提取
+
+        #region 判定
+
+        private int _minNum;
+
+        public int MinNum
+        {
+            get { return _minNum; }
+            set
+            {
+                if (value < 0) { _minNum = 0; }
+                else if (value > _maxNum)
+                    _minNum = _maxNum;
+                else { _minNum = value; }
+                SetProperty(ref _minNum, value);
+            }
+        }
+
+        private int _maxNum;
+
+        public int MaxNum
+        {
+            get { return _maxNum; }
+            set
+            {
+                if (value < 0) { _maxNum = 0; }
+                else if (value < _minNum)
+                    _maxNum = _minNum;
+                else { _maxNum = value; }
+                SetProperty(ref _maxNum, value);
+            }
+        }
+
+        private DelegateCommand _inspectROIOperate;
+
+        public DelegateCommand InspectROIOperate =>
+            _inspectROIOperate ?? (_inspectROIOperate = new DelegateCommand(ExecuteInspectROIOperate));
+
+        private void ExecuteInspectROIOperate()
+        {
+            Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.margin;
+            NotDrawIng = false;
+            try
+            {
+                var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow1", 0.0);
+                var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow2", 0.0);
+                var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn1", 0.0);
+                var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn2", 0.0);
+
+                if ((row1 + row2) == 0)
+                {
+                    Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = true;
+
+                    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(HalconColors.橙色.ToDescription());
+                    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1(out row1, out col1, out row2, out col2);
+
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow1", row1);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow2", row2);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn1", col1);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn2", col2);
+
+                    Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                    Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
+                }
+                else
+                {
+                    Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = true;
+                    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(HalconColors.橙色.ToDescription());
+                    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1Mod(row1, col1, row2, col2, out row1, out col1, out row2, out col2);
+
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow1", row1);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow2", row2);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn1", col1);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn2", col2);
+
+                    Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                    Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
+                }
+            }
+            catch { Result = false; }
+
+            Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.fill;
+            Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+            NotDrawIng = true;
+        }
+
+        private DelegateCommand _testRunJudge;
+
+        public DelegateCommand TestRunJudge =>
+            _testRunJudge ?? (_testRunJudge = new DelegateCommand(ExecuteTestRunJudge));
+
+        private void ExecuteTestRunJudge()
+        {
+            try
+            {
+                var row11 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow1", 0.0);
+                var row12 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow2", 0.0);
+                var col11 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn1", 0.0);
+                var col12 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn12", 0.0);
+
+                var region = new HRegion(row11, col11, row12, col12).Intersection(resultRegion);
+                if (row11 + row12 == 0)
+                {
+                    region = resultRegion;
+                }
+
+                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
+                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
+                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DispRectangle1(row11, col11, row12, col12);
+                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("fill");
+
+                num = region.Connection().CountObj();
+                if (num < MinNum || num > MaxNum)
+                {
+                    Result = false;
+                }
+                else { Result = true; }
+            }
+            catch { Result = false; }
+
+            if (!Result && IsSaveNG)
             {
                 try
                 {
-                    //截屏保存
                     HImage hImage = Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage();
                     if (!Directory.Exists(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd")))
                         Directory.CreateDirectory(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd"));
                     hImage.WriteImage("bmp", new HTuple(0), new HTuple(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd") + "\\" + DateTime.Now.ToString("HH-mm-ss-ffff") + ".bmp"));
 
-                    //Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindow("postscript", path);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("MinNum", MinNum);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("MaxNum", MaxNum);
+                    // Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindow("postscript", path);
                 }
                 catch { }
             }
         }
 
-        public bool boolResult = true;
-        private DelegateCommand<string> _testRun;
-
-        public DelegateCommand<string> TestRun =>
-            _testRun ?? (_testRun = new DelegateCommand<string>(ExecuteTestRun));
-
-        private void ExecuteTestRun(string parameter)
-        {
-            try
-            {
-                switch (parameter)
-                {
-                    case "0":
-
-                        var nccModel = (HNCCModel)Variables.CurrentProgramData.Parameters.BingGetOrAdd("NccModel", null);
-                        HTuple nccModelRow = new HTuple(); HTuple nccModelCol = new HTuple(); HTuple nccModelAngle = new HTuple(); HTuple nccModelScore = new HTuple();
-                        resultImage.FindNccModel(nccModel, -0.39, 0.79, 0.5, 1, 0.5, "true", 3,
-                            out nccModelRow, out nccModelCol, out nccModelAngle, out nccModelScore);
-
-                        var row01 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow01", 0.0);
-                        var row02 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow02", 0.0);
-                        var col01 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn01", 0.0);
-                        var col02 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn02", 0.0);
-
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DispRectangle1(row01, col01, row02, col02);
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("fill");
-
-                        CurrentNCCScore = nccModelScore.D.ToString("f3");
-                        break;
-
-                    case "1":
-
-                        var row11 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow11", 0.0);
-                        var row12 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow12", 0.0);
-                        var col11 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn11", 0.0);
-                        var col12 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn12", 0.0);
-                        var region = new HRegion(row11, col11, row12, col12).Intersection(resultRegion);
-
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DispRectangle1(row11, col11, row12, col12);
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("fill");
-                        CurrentArea = region.Area.D.ToString();
-
-                        break;
-                }
-            }
-            catch { }
-        }
-
-        private DelegateCommand<string> _save;
-
-        public DelegateCommand<string> Save =>
-            _save ?? (_save = new DelegateCommand<string>(ExecuteSave));
-
-        private void ExecuteSave(string parameter)
-        {
-            switch (parameter)
-            {
-                case "0":
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NCCScore", NCCScore);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectIndex", InspectIndex);
-
-                    break;
-
-                case "1":
-
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NCCScore", ResultScoreMin);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NCCScore", ResultScoreMax);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectIndex", InspectIndex);
-
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        private string _resultScoreMin;
-
-        public string ResultScoreMin
-        {
-            get { return _resultScoreMin; }
-            set { SetProperty(ref _resultScoreMin, value); }
-        }
-
-        private string _resultScoreMax;
-
-        public string ResultScoreMax
-        {
-            get { return _resultScoreMax; }
-            set { SetProperty(ref _resultScoreMax, value); }
-        }
-
-        private string _nCCScore;
-
-        public string NCCScore
-        {
-            get { return _nCCScore; }
-            set { SetProperty(ref _nCCScore, value); }
-        }
-
-        private string currentNCCScore;
-
-        public string CurrentNCCScore
-        {
-            get { return currentNCCScore; }
-            set { SetProperty(ref currentNCCScore, value); }
-        }
-
-        private string currentArea;
-
-        public string CurrentArea
-        {
-            get { return currentArea; }
-            set { SetProperty(ref currentArea, value); }
-        }
-
-        //
-
         #endregion 判定
 
-        public string Title => "图像比对";
+        public string Title => "Blob分析";
 
         public event Action<IDialogResult> RequestClose;
 
@@ -1605,7 +2441,7 @@ namespace VisionProject.ViewModels
             ContrastValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ContrastValue", 128.0);
             GammaValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("GammaValue", 1.0);
 
-            IsGray = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsGray", false);
+            //IsGray = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsGray", false);
             IsSaveNG = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsSaveNG", false);
 
             GrayModeIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("GrayModeIndex", 0).ToString());
@@ -1646,17 +2482,15 @@ namespace VisionProject.ViewModels
             IsReverse2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse12", false);
             IsReverse3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse13", false);
             IsReverse4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse14", false);
-            //if ((ValueE1 + ValueE2 + ValueE3 + ValueE4) == 0)
-            //{
-            //    ExecuteResetGray();
-            //}
-            try
-            {
-                NCCScore = (Variables.CurrentProgramData.Parameters.BingGetOrAdd("NCCScore", 100).ToString());
-                ResultScoreMin = (Variables.CurrentProgramData.Parameters.BingGetOrAdd("ResultScoreMin", 100).ToString());
-                ResultScoreMax = (Variables.CurrentProgramData.Parameters.BingGetOrAdd("ResultScoreMax", 100).ToString());
-            }
-            catch { }
+
+            FilterModeIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("FilterModeIndex", 0).ToString());
+
+            RegionFoundFeatureDatas = (ObservableCollection<RegionFoundFeatureData>)Variables.CurrentProgramData.Parameters.BingGetOrAdd("RegionFoundFeatureDatas", new ObservableCollection<RegionFoundFeatureData>());
+            //RegionFoundFeatureDataIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("RegionFoundFeatureDataIndex", 0).ToString());
+            ExecuteRegionSelectionChanged();
+            BlobFeatureDatas = (ObservableCollection<BlobFeatureData>)Variables.CurrentProgramData.Parameters.BingGetOrAdd("BlobFeatureDatas", new ObservableCollection<BlobFeatureData>());
+            BlobFeatureDataIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("BlobFeatureDataIndex", 0).ToString());
+            ExecuteSelectionChanged();
             try
             {
                 if (!originalImage.IsInitialized())
@@ -1673,8 +2507,6 @@ namespace VisionProject.ViewModels
                 Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
             }
             catch { }
-
-            InspectIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectIndex", 0).ToString());
 
             await Task.Delay(200);
             isInitlized = true;
@@ -1694,5 +2526,85 @@ namespace VisionProject.ViewModels
         {
             return true;
         }
+    }
+
+    public enum RegionFoundFeatures
+    {
+        圆形开运算 = 0,
+
+        矩形开运算 = 1,
+
+        圆形闭运算 = 2,
+
+        矩形闭运算 = 3,
+
+        圆形膨胀 = 4,
+
+        矩形膨胀 = 5,
+
+        圆形腐蚀 = 6,
+
+        矩形腐蚀 = 7,
+
+        填充孔洞 = 8,
+
+        形状变换 = 9,
+    }
+
+    public enum BlobFeatures
+    {
+        [Description("area")]
+        面积 = 0,
+
+        [Description("row")]
+        行 = 1,
+
+        [Description("column")]
+        列 = 2,
+
+        [Description("width")]
+        宽度 = 3,
+
+        [Description("height")]
+        高度 = 4,
+
+        [Description("ratio")]
+        高宽比 = 5,
+
+        [Description("circularity")]
+        圆度 = 6,
+
+        [Description("rectangularity")]
+        矩形度 = 7,
+
+        [Description("compactness")]
+        紧密度 = 8,
+
+        [Description("ra")]
+        等效椭圆长轴半径 = 9,
+
+        [Description("rb")]
+        等效椭圆短轴半径 = 10,
+
+        [Description("phi")]
+        等效椭圆角度 = 11,
+
+        [Description("anisometry")]
+        等效椭圆长短轴比 = 12,
+
+        [Description("outer_radius")]
+        最小外接圆半径 = 13,
+
+        [Description("inner_radius")]
+        最大内接圆半径 = 14,
+
+        [Description("inner_width")]
+        最大内接矩形宽度 = 15,
+
+        [Description("inner_height")]
+        最大内接矩形高度 = 16,
+
+        [Description("orientation")]
+        区域角度 = 17,
     }
 }

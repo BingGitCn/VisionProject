@@ -6,7 +6,8 @@
     xmlns:prism="http://prismlibrary.com/"
     Width="480"
     Height="160"
-    prism:ViewModelLocator.AutoWireViewModel="True">
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    FontFamily="pack://application:,,,/VisionProject;component/fonts/#iconfont,pack://application:,,,/VisionProject;component/fonts/#仓耳今楷03 W04">
     <prism:Dialog.WindowStyle>
         <Style TargetType="Window">
             <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />

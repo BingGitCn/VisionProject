@@ -60,7 +60,7 @@
             <Popup
                 x:Name="Pop"
                 Width="150"
-                Height="80"
+                Height="100"
                 AllowsTransparency="True"
                 Placement="Mouse"
                 PopupAnimation="None"
@@ -82,6 +82,11 @@
                             Foreground="AliceBlue" />
                         <TextBlock
                             x:Name="hd"
+                            Margin="3"
+                            FontSize="11"
+                            Foreground="AliceBlue" />
+                        <TextBlock
+                            x:Name="hsv"
                             Margin="3"
                             FontSize="11"
                             Foreground="AliceBlue" />

@@ -91,6 +91,8 @@ namespace VisionProject.ViewModels
         public bool IsAutoHome { set; get; } = false;
         public int AutoHomeIndex { set; get; }
 
+        public bool UseMES { set; get; } = true;
+
         public int UserIndex { set; get; }
 
         public int HardDrive { set; get; }

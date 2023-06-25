@@ -1,15 +1,18 @@
 ﻿<UserControl
-    x:Class="VisionProject.Views.Function_Match"
+    x:Class="VisionProject.Views.Function_Blob"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:bingVision="clr-namespace:BingLibrary.Vision;assembly=BingLibrary.Vision"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:VisionProject.Views"
     xmlns:prism="http://prismlibrary.com/"
+    xmlns:remote="clr-namespace:VisionProject.ViewModels"
     Width="1080"
     Height="690"
     prism:ViewModelLocator.AutoWireViewModel="True"
-    FontFamily="pack://application:,,,/VisionProject;component/fonts/#iconfont,pack://application:,,,/VisionProject;component/fonts/#仓耳今楷03 W04">
+    FontFamily="pack://application:,,,/VisionProject;component/fonts/#iconfont,pack://application:,,,/VisionProject;component/fonts/#仓耳今楷03 W04"
+    MouseDown="UserControl_MouseDown">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -79,6 +82,7 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </CheckBox>
+
                         <FlowDocumentScrollViewer
                             Height="360"
                             Margin="5"
@@ -115,7 +119,9 @@
                                 </Section>
                             </FlowDocument>
                         </FlowDocumentScrollViewer>
+
                     </StackPanel>
+                    
                 </TabItem>
                 <TabItem Header="补正">
 
@@ -274,6 +280,7 @@
                                 Content="矫正测试"
                                 Style="{StaticResource ButtonPrimary}" />
                         </StackPanel>
+
                         <FlowDocumentScrollViewer
                             Height="360"
                             Margin="5"
@@ -334,12 +341,15 @@
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="调节">
-
                     <StackPanel Orientation="Vertical">
-
                         <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="17*" />
+                                <ColumnDefinition Width="13*" />
+                            </Grid.ColumnDefinitions>
                             <CheckBox
-                                Margin="5"
+                                Grid.ColumnSpan="2"
+                                Margin="5,0,5,0"
                                 Content="启用"
                                 FontWeight="Bold"
                                 IsChecked="{Binding IsPreEnhance, UpdateSourceTrigger=PropertyChanged}">
@@ -353,9 +363,10 @@
                                 </i:Interaction.Triggers>
                             </CheckBox>
                             <Button
+                                Grid.Column="1"
                                 Width="80"
-                                Margin="5"
-                                HorizontalAlignment="Right"
+                                Margin="71,0,0,0"
+                                HorizontalAlignment="Left"
                                 Command="{Binding ResetPreEnhance}"
                                 Content="重  置"
                                 Style="{StaticResource ButtonDashed}" />
@@ -439,24 +450,15 @@
                 <TabItem Header="过滤">
                     <StackPanel Orientation="Vertical">
                         <Grid>
-                            <CheckBox
-                                Margin="5"
-                                Content="启用"
-                                FontWeight="Bold"
-                                IsChecked="{Binding IsGray, UpdateSourceTrigger=PropertyChanged}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="Checked">
-                                        <i:InvokeCommandAction Command="{Binding GrayValueChanged}" />
-                                    </i:EventTrigger>
-                                    <i:EventTrigger EventName="Unchecked">
-                                        <i:InvokeCommandAction Command="{Binding GrayValueChanged}" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </CheckBox>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="104*" />
+                                <ColumnDefinition Width="257*" />
+                            </Grid.ColumnDefinitions>
                             <Button
+                                Grid.Column="1"
                                 Width="80"
-                                Margin="5"
-                                HorizontalAlignment="Right"
+                                Margin="172,0,0,0"
+                                HorizontalAlignment="Left"
                                 Command="{Binding ResetGray}"
                                 Content="重  置"
                                 Style="{StaticResource ButtonDashed}" />
@@ -676,124 +678,308 @@
                         </DockPanel>
                     </StackPanel>
                 </TabItem>
-                <TabItem Header="判定" PreviewMouseUp="TabItem_PreviewMouseUp">
+                <TabItem Header="处理">
                     <StackPanel Orientation="Vertical">
                         <hc:ComboBox
-                            x:Name="cb"
-                            Margin="5"
-                            hc:InfoElement.Title="检测方法"
+                            hc:InfoElement.Title="区域操作"
                             hc:InfoElement.TitlePlacement="Left"
-                            hc:InfoElement.TitleWidth="100"
-                            DropDownClosed="cb_DropDownClosed"
-                            SelectedIndex="{Binding InspectIndex}"
-                            Style="{StaticResource ComboBoxExtend}">
-
-                            <ComboBoxItem Content="相似度" IsSelected="True" />
-                            <ComboBoxItem Content="颜色占比" />
+                            hc:InfoElement.TitleWidth="80"
+                            Margin="5"
+                            ItemsSource="{Binding Source={local:EnumBindingSource {x:Type remote:RegionFoundFeatures}}}"
+                            SelectedItem="{Binding RegionFoundFeature, UpdateSourceTrigger=PropertyChanged}" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button
+                                Width="150"
+                                Margin="5"
+                                Command="{Binding DisposeROIOperate}"
+                                Content="绘制检测框"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="30"
+                                Height="30"
+                                Margin="5"
+                                Command="{Binding RegionFoundOperater}"
+                                CommandParameter="add"
+                                Content="+"
+                                Style="{StaticResource ButtonPrimary}"/>
+                            <Button
+                                    Width="30"
+                                    Height="30"
+                                    Margin="5"
+                                    Command="{Binding RegionFoundOperater}"
+                                    CommandParameter="remove"
+                                    Content="-"
+                                    Style="{StaticResource ButtonPrimary}" />
+                            <Button Content="上移" Margin="5" Command="{Binding RegionFoundOperater}"
+                                CommandParameter="moveUp"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button Content="下移" Margin="5" Command="{Binding RegionFoundOperater}"
+                                CommandParameter="moveDown"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
+                        <DataGrid
+                                Height="250"
+                                Margin="5"
+                                hc:DataGridAttach.ShowRowNumber="False"
+                                AutoGenerateColumns="False"
+                                HeadersVisibility="None"
+                                IsReadOnly="True"
+                                ItemsSource="{Binding RegionFoundFeatureDatas}"
+                                RowHeaderWidth="0"
+                                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                                SelectedIndex="{Binding RegionFoundFeatureDataIndex}"
+                                SelectionMode="Single">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding RegionSelectionChanged}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="名称">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                    Width="200"
+                                                    VerticalAlignment="Center"
+                                                    Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <TextBox Visibility="{Binding CircleVisibility}"
+                                Grid.Column="0"
+                                Margin="5"
+                                hc:InfoElement.Title="半径"
+                                hc:InfoElement.TitlePlacement="Left"
+                                hc:InfoElement.TitleWidth="80"
+                                Style="{StaticResource TextBoxExtend}"
+                                Text="{Binding Radius}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="LostFocus">
+                                    <i:InvokeCommandAction Command="{Binding RegionEditSelection}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                        <TextBox Visibility="{Binding RectVisibility}"
+                                Grid.Column="0"
+                                Margin="5"
+                                hc:InfoElement.Title="宽度"
+                                hc:InfoElement.TitlePlacement="Left"
+                                hc:InfoElement.TitleWidth="80"
+                                Style="{StaticResource TextBoxExtend}"
+                                Text="{Binding Width}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="LostFocus">
+                                    <i:InvokeCommandAction Command="{Binding RegionEditSelection}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                        <TextBox Visibility="{Binding RectVisibility}"
+                                Grid.Column="0"
+                                Margin="5"
+                                hc:InfoElement.Title="高度"
+                                hc:InfoElement.TitlePlacement="Left"
+                                hc:InfoElement.TitleWidth="80"
+                                Style="{StaticResource TextBoxExtend}"
+                                Text="{Binding Height}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="LostFocus">
+                                    <i:InvokeCommandAction Command="{Binding RegionEditSelection}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                        <hc:ComboBox
+                                Visibility="{Binding TransVisibility}"
+                                Grid.Column="0"
+                                Margin="5"
+                                hc:InfoElement.Title="模式"
+                                hc:InfoElement.TitlePlacement="Left"
+                                hc:InfoElement.TitleWidth="80"
+                                SelectedIndex="{Binding TransIndex}"
+                                Style="{StaticResource ComboBoxExtend}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="DropDownClosed">
+                                    <i:InvokeCommandAction Command="{Binding RegionEditSelection}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <ComboBoxItem Content="凸包变换" />
+                            <ComboBoxItem Content="椭圆变换" />
+                            <ComboBoxItem Content="最大圆变换" />
+                            <ComboBoxItem Content="最小圆变换" />
+                            <ComboBoxItem Content="矩形变换Ⅰ" />
+                            <ComboBoxItem Content="矩形变换Ⅱ" />
+                            <ComboBoxItem Content="矩形变换Ⅲ" />
+                            <ComboBoxItem Content="中心变换" />
                         </hc:ComboBox>
-                        <Grid x:Name="g1">
-                            <StackPanel Orientation="Vertical">
-                                <StackPanel Orientation="Horizontal">
-                                    <Button
-                                        Width="170"
-                                        Margin="5"
-                                        Command="{Binding InspectROIOperate}"
-                                        CommandParameter="0"
-                                        Content="绘制检测框"
-                                        Style="{StaticResource ButtonPrimary}" />
-                                    <Button
-                                        Width="170"
-                                        Margin="5"
-                                        Command="{Binding NccRegiste}"
-                                        Content="注册标准检测"
-                                        Style="{StaticResource ButtonPrimary}" />
-                                </StackPanel>
-                                <hc:TextBox
-                                    Margin="5"
-                                    hc:InfoElement.Title="设定相似度阈值"
-                                    hc:InfoElement.TitlePlacement="Left"
-                                    hc:InfoElement.TitleWidth="100"
-                                    Style="{StaticResource TextBoxExtend}"
-                                    Text="{Binding NCCScore}" />
-                                <hc:TextBox
-                                    Margin="5"
-                                    hc:InfoElement.Title="当前相似度阈值"
-                                    hc:InfoElement.TitlePlacement="Left"
-                                    hc:InfoElement.TitleWidth="100"
-                                    IsReadOnly="True"
-                                    Style="{StaticResource TextBoxExtend}"
-                                    Text="{Binding CurrentNCCScore}" />
+                    </StackPanel>
 
-                                <StackPanel Orientation="Horizontal">
-                                    <Button
-                                        Width="170"
-                                        Margin="5"
-                                        Command="{Binding TestRun}"
-                                        CommandParameter="0"
-                                        Content="测试运行"
-                                        Style="{StaticResource ButtonPrimary}" />
-                                    <Button
-                                        Width="170"
-                                        Margin="5"
-                                        Command="{Binding Save}"
-                                        CommandParameter="0"
-                                        Content="保存参数"
-                                        Style="{StaticResource ButtonPrimary}" />
-                                </StackPanel>
-                            </StackPanel>
-                        </Grid>
-                        <Grid x:Name="g2">
-                            <StackPanel Orientation="Vertical">
-                                <StackPanel Orientation="Horizontal">
-                                    <Button
-                                        Width="170"
-                                        Margin="5"
-                                        Command="{Binding InspectROIOperate}"
-                                        CommandParameter="1"
-                                        Content="绘制检测框"
-                                        Style="{StaticResource ButtonPrimary}" />
-                                </StackPanel>
-                                <hc:TextBox
-                                    Margin="5"
-                                    hc:InfoElement.Title="设定面积(Min)"
-                                    hc:InfoElement.TitlePlacement="Left"
-                                    hc:InfoElement.TitleWidth="100"
-                                    Style="{StaticResource TextBoxExtend}"
-                                    Text="{Binding ResultScoreMin}" />
-                                <hc:TextBox
-                                    Margin="5"
-                                    hc:InfoElement.Title="设定面积(Max)"
-                                    hc:InfoElement.TitlePlacement="Left"
-                                    hc:InfoElement.TitleWidth="100"
-                                    Style="{StaticResource TextBoxExtend}"
-                                    Text="{Binding ResultScoreMax}" />
-                                <hc:TextBox
-                                    Margin="5"
-                                    hc:InfoElement.Title="当前面积"
-                                    hc:InfoElement.TitlePlacement="Left"
-                                    hc:InfoElement.TitleWidth="100"
-                                    IsReadOnly="True"
-                                    Style="{StaticResource TextBoxExtend}"
-                                    Text="{Binding CurrentArea}" />
 
-                                <StackPanel Orientation="Horizontal">
-                                    <Button
-                                        Width="170"
-                                        Margin="5"
-                                        Command="{Binding TestRun}"
-                                        CommandParameter="1"
-                                        Content="测试运行"
-                                        Style="{StaticResource ButtonPrimary}" />
-                                    <Button
-                                        Width="170"
-                                        Margin="5"
-                                        Command="{Binding Save}"
-                                        CommandParameter="1"
-                                        Content="保存参数"
-                                        Style="{StaticResource ButtonPrimary}" />
-                                </StackPanel>
-                            </StackPanel>
+                </TabItem>
+                <TabItem Header="提取">
+                    <StackPanel Orientation="Vertical">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="158*" />
+                                <ColumnDefinition Width="43*" />
+                                <ColumnDefinition Width="34*" />
+                                <ColumnDefinition Width="9*" />
+                                <ColumnDefinition Width="116*" />
+                            </Grid.ColumnDefinitions>
                         </Grid>
+                        <hc:ComboBox
+                            Margin="30,2,5,2"
+                            hc:InfoElement.Title="方式"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="80"
+                            SelectedIndex="{Binding FilterModeIndex}"
+                            Style="{StaticResource ComboBoxExtend}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="DropDownClosed">
+                                    <i:InvokeCommandAction Command="{Binding TestRunExtract}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <ComboBoxItem Content="保留满足任意条件的区域" />
+                            <ComboBoxItem Content="移除满足任意条件的区域" />
+                            <ComboBoxItem Content="保留满足所有条件的区域" />
+                            <ComboBoxItem Content="移除满足所有条件的区域" />
+                        </hc:ComboBox>
+                        <StackPanel Orientation="Horizontal">
+                            <hc:ComboBox
+                                Width="160"
+                                Margin="30,2,5,2"
+                                ItemsSource="{Binding Source={local:EnumBindingSource {x:Type remote:BlobFeatures}}}"
+                                SelectedItem="{Binding BlobFeature, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button
+                                Width="30"
+                                Height="30"
+                                Margin="5"
+                                Command="{Binding FilterOperater}"
+                                CommandParameter="add"
+                                Content="+"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="30"
+                                Height="30"
+                                Margin="5"
+                                Command="{Binding FilterOperater}"
+                                CommandParameter="remove"
+                                Content="-"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
+                        <DataGrid
+                            Height="250"
+                            Margin="30,2,5,2"
+                            hc:DataGridAttach.ShowRowNumber="False"
+                            AutoGenerateColumns="False"
+                            HeadersVisibility="None"
+                            IsReadOnly="True"
+                            ItemsSource="{Binding BlobFeatureDatas}"
+                            RowHeaderWidth="0"
+                            ScrollViewer.VerticalScrollBarVisibility="Visible"
+                            SelectedIndex="{Binding BlobFeatureDataIndex}"
+                            SelectionMode="Single">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SelectionChanged}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="名称">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Width="200"
+                                                VerticalAlignment="Center"
+                                                Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <TextBlock
+                            Margin="5"
+                            Text="{Binding Text}"
+                            Visibility="{Binding ValueVisibility}" />
+                        <TextBox
+                            Grid.Column="0"
+                            Margin="30,2,5,2"
+                            hc:InfoElement.Title="最小值"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="80"
+                            Style="{StaticResource TextBoxExtend}"
+                            Text="{Binding MinValue, UpdateSourceTrigger=PropertyChanged}"
+                            Visibility="{Binding ValueVisibility}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="LostFocus">
+                                    <i:InvokeCommandAction Command="{Binding EditSelection}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                        <TextBox
+                            Grid.Column="0"
+                            Margin="30,2,5,2"
+                            hc:InfoElement.Title="最大值"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="80"
+                            Style="{StaticResource TextBoxExtend}"
+                            Text="{Binding MaxValue,Mode=TwoWay}"
+                            Visibility="{Binding ValueVisibility}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="LostFocus">
+                                    <i:InvokeCommandAction Command="{Binding EditSelection}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="判定">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Margin="5,5,5,0" Text="Blob个数判断" />
+                        <TextBox
+                            Grid.Column="0"
+                            Margin="30,2,5,2"
+                            hc:InfoElement.Title="最小区域数"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="80"
+                            Style="{StaticResource TextBoxExtend}"
+                            Text="{Binding MinNum}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="LostFocus">
+                                    <i:InvokeCommandAction Command="{Binding TestRunCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                        <TextBox
+                            Grid.Column="0"
+                            Margin="30,2,5,2"
+                            hc:InfoElement.Title="最大区域数"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="80"
+                            Style="{StaticResource TextBoxExtend}"
+                            Text="{Binding MaxNum}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="LostFocus">
+                                    <i:InvokeCommandAction Command="{Binding TestRunJudge}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                Command="{Binding InspectROIOperate}"
+                                Content="绘制检测框"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                Command="{Binding Save}"
+                                Content="保存参数"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
                     </StackPanel>
                 </TabItem>
             </TabControl>

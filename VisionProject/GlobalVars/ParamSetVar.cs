@@ -46,7 +46,10 @@ namespace VisionProject.GlobalVars
         
 
     }
+    public class result
+    {
 
+    }
     public enum paramSetType
     {
         Bool = 0,

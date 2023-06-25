@@ -59,6 +59,14 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _hardWareStatus, value); }
         }
 
+        private ShowStatus _mesStatus = new ShowStatus();
+
+        public ShowStatus MesStatus
+        {
+            get { return _mesStatus; }
+            set { SetProperty(ref _mesStatus, value); }
+        }
+
         #endregion 底部状态显示ConnectStatus
 
         #region 底部Status

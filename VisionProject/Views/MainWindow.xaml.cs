@@ -39,6 +39,7 @@ namespace VisionProject.Views
             ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
             //给图像控件windowdata全局
             Variables.WindowData1 = ImageWindow1.windowData;
+            Variables.WindowData2 = ImageWindow2.windowData;
 
             //regionManager.RegisterViewWithRegion(GlobalPrism.RegionNames.StatusRegionName, typeof(Status));
             //GlobalVars.Variables.ImageWindowData = imageWin.windowData;

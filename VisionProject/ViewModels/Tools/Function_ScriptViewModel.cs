@@ -51,7 +51,6 @@ namespace VisionProject.ViewModels
         #endregion 窗口相关
 
         private ObservableCollection<string> _engineNames;
-
         public ObservableCollection<string> EngineNames
         {
             get { return _engineNames; }
@@ -59,7 +58,6 @@ namespace VisionProject.ViewModels
         }
 
         private int _engineIndex;
-
         /// <summary>
         /// 引擎索引
         /// </summary>
@@ -145,13 +143,11 @@ namespace VisionProject.ViewModels
         {
             Variables.CurrentProgramData.Parameters.BingAddOrUpdate("EngineIndex", EngineIndex);
             Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ScriptName", ScriptName);
-
             Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ParamDict", paramDict);
             return true;
         }
 
         private DelegateCommand _selectedEngine;
-
         public DelegateCommand SelectedEngine =>
             _selectedEngine ?? (_selectedEngine = new DelegateCommand(ExecuteSelectedEngine));
 
@@ -177,7 +173,6 @@ namespace VisionProject.ViewModels
         }
 
         private DelegateCommand _selectedScript;
-
         public DelegateCommand SelectedScript =>
             _selectedScript ?? (_selectedScript = new DelegateCommand(ExecuteSelectedScript));
 
