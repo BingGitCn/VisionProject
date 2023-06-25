@@ -40,6 +40,6 @@ namespace VisionProject.GlobalVars
         [Description("图像比对")] 图像比对,
         [Description("Blob分析")] Blob分析,
         [Description("条码识别")] 条码识别,
-        [Description("视觉脚本")] 视觉脚本,
+        [Description("视觉脚本")] 视觉脚本
     }
 }
