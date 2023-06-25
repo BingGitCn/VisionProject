@@ -88,6 +88,7 @@ namespace VisionProject.ViewModels
                         CreateDate = Variables.CurrentProject.CreateDate;
                         LastDate = Variables.CurrentProject.LastDate;
                         ProjectPath = SelectProjectName.Path;
+
                         Log.Info("打开了项目 " + ProjectName);
 
                         ProgramsName.Clear();
