@@ -26,25 +26,24 @@
     </UserControl.Resources>
     <Grid>
         <StackPanel Orientation="Vertical">
-            <ComboBox
+            <ComboBox Visibility="Hidden"
                 Margin="5"
                 hc:InfoElement.Title="产品选择："
                 hc:InfoElement.TitlePlacement="Left"
                 hc:InfoElement.TitleWidth="110"
                 ItemsSource="{Binding Programs}"
                 SelectedIndex="{Binding ProgramIndex, Mode=TwoWay}"
-                Style="{StaticResource ComboBoxExtend}" >
+                Style="{StaticResource ComboBoxExtend}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectionChanged">
                         <i:InvokeCommandAction Command="{Binding SelectionChanged}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                
             </ComboBox>
-            <StackPanel Orientation="Horizontal" Margin="5">
-                <TextBlock Text="推荐行坐标为：    "/>
+            <StackPanel Orientation="Horizontal" Margin="5" Visibility="Hidden">
+                <TextBlock Text="推荐行坐标为：    " />
                 <TextBlock Width="150" Text="{Binding RowDefault}" />
-                <TextBlock Text="推荐列坐标为：    "/>
+                <TextBlock Text="推荐列坐标为：    " />
                 <TextBlock Width="150" Text="{Binding ColDefault}" />
             </StackPanel>
             <TextBox
@@ -54,7 +53,7 @@
                 hc:InfoElement.TitlePlacement="Left"
                 hc:InfoElement.TitleWidth="110"
                 Style="{StaticResource TextBoxExtend}"
-                Text="{Binding RowInput}" >
+                Text="{Binding RowInput}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="LostFocus">
                         <i:InvokeCommandAction Command="{Binding ValueEdit}" />

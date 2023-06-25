@@ -1,21 +1,11 @@
-﻿using Prism.Commands;
+﻿using BingLibrary.Extension;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using HalconDotNet;
-using BingLibrary.Extension;
 using System.Collections.ObjectModel;
-using System.Text;
 using VisionProject.GlobalVars;
-using BingLibrary.Vision;
-using VisionProject.Views.Tools;
-using HandyControl.Tools.Extension;
-using MySqlX.XDevAPI.Common;
-using System.Windows.Forms;
-using System.ComponentModel;
 
 namespace VisionProject.ViewModels
 {

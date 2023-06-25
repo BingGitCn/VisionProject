@@ -1,29 +1,17 @@
-﻿using BingLibrary.Communication.Net;
-using BingLibrary.Extension;
+﻿using BingLibrary.Extension;
 using BingLibrary.Vision;
 using HalconDotNet;
-using HandyControl.Controls;
-using ImageResizer.ExtensionMethods;
-using MySqlX.XDevAPI.Common;
-using MySqlX.XDevAPI.Relational;
 using Prism.Commands;
 using Prism.Mvvm;
-using Prism.Regions;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using VisionProject.GlobalVars;
-using static VisionProject.ViewModels.Function_BlobViewModel;
 
 namespace VisionProject.ViewModels
 {

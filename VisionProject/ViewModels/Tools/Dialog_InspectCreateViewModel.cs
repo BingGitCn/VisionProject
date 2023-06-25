@@ -1,12 +1,9 @@
-﻿using BingLibrary.Extension;
-using OfficeOpenXml.ConditionalFormatting.Contracts;
-using Prism.Commands;
+﻿using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels

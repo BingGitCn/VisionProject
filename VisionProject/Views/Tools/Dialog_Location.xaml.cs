@@ -12,6 +12,7 @@ namespace VisionProject.Views
         {
             InitializeComponent();
         }
+
         private void UserControl_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             TextBox textBox = Keyboard.FocusedElement as TextBox;

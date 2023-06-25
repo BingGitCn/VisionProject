@@ -119,9 +119,7 @@
                                 </Section>
                             </FlowDocument>
                         </FlowDocumentScrollViewer>
-
                     </StackPanel>
-                    
                 </TabItem>
                 <TabItem Header="补正">
 
@@ -701,7 +699,7 @@
                                 Command="{Binding RegionFoundOperater}"
                                 CommandParameter="add"
                                 Content="+"
-                                Style="{StaticResource ButtonPrimary}"/>
+                                Style="{StaticResource ButtonPrimary}" />
                             <Button
                                     Width="30"
                                     Height="30"
@@ -813,8 +811,6 @@
                             <ComboBoxItem Content="中心变换" />
                         </hc:ComboBox>
                     </StackPanel>
-
-
                 </TabItem>
                 <TabItem Header="提取">
                     <StackPanel Orientation="Vertical">

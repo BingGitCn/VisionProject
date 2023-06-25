@@ -4,13 +4,10 @@ using HalconDotNet;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
 using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels

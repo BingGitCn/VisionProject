@@ -38,9 +38,7 @@ namespace BingLibrary.Vision
             WindowCtrl.SetROIController(ROICtrl);
             WindowCtrl.SetMessageController(MessageCtrl);
             WindowCtrl.SetDispObjectController(DispObjectCtrl);
-
         }
-
 
         //public HWndCtrl HCtrl { set; get; }
         ///// <summary>
@@ -53,6 +51,5 @@ namespace BingLibrary.Vision
         //    HCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
         //    HalconAPI.CancelDraw();
         //}
-
     }
 }

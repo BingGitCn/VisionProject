@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VisionProject.GlobalVars
+﻿namespace VisionProject.GlobalVars
 {
     public class ParamSetVar
     {
         //属性
         private string _name;
+
         public string Name
-                {
+        {
             get { return _name; }
-            set {  _name= value; }
+            set { _name = value; }
         }
+
         public paramSetType _type = paramSetType.Bool;
+
         public paramSetType Type
         {
             get { return _type; }
@@ -23,14 +20,15 @@ namespace VisionProject.GlobalVars
         }
 
         private int _selectedIndex = 0;
+
         public int SelectedIndex
         {
             get { return _selectedIndex; }
             set { _selectedIndex = value; }
         }
 
-
         public string _value = true.ToString();
+
         public string Value
         {
             get { return _value; }
@@ -38,18 +36,18 @@ namespace VisionProject.GlobalVars
         }
 
         public string _mark = "";
+
         public string Mark
         {
             get { return _mark; }
             set { _mark = value; }
         }
-        
-
     }
+
     public class result
     {
-
     }
+
     public enum paramSetType
     {
         Bool = 0,
@@ -57,6 +55,4 @@ namespace VisionProject.GlobalVars
         Double = 2,
         Int = 3,
     }
-
-
 }

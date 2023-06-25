@@ -1,21 +1,14 @@
-﻿using Prism.Commands;
+﻿using BingLibrary.Extension;
+using BingLibrary.Vision;
+using HalconDotNet;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using HalconDotNet;
-using BingLibrary.Extension;
 using System.Collections.ObjectModel;
-using System.Text;
+using System.Threading.Tasks;
 using VisionProject.GlobalVars;
-using BingLibrary.Vision;
-using VisionProject.Views.Tools;
-using HandyControl.Tools.Extension;
-using DryIoc;
-using Prism.Ioc;
-using ImTools;
 
 namespace VisionProject.ViewModels
 {
@@ -51,6 +44,7 @@ namespace VisionProject.ViewModels
         #endregion 窗口相关
 
         private ObservableCollection<string> _engineNames;
+
         public ObservableCollection<string> EngineNames
         {
             get { return _engineNames; }
@@ -58,6 +52,7 @@ namespace VisionProject.ViewModels
         }
 
         private int _engineIndex;
+
         /// <summary>
         /// 引擎索引
         /// </summary>
@@ -148,6 +143,7 @@ namespace VisionProject.ViewModels
         }
 
         private DelegateCommand _selectedEngine;
+
         public DelegateCommand SelectedEngine =>
             _selectedEngine ?? (_selectedEngine = new DelegateCommand(ExecuteSelectedEngine));
 
@@ -173,6 +169,7 @@ namespace VisionProject.ViewModels
         }
 
         private DelegateCommand _selectedScript;
+
         public DelegateCommand SelectedScript =>
             _selectedScript ?? (_selectedScript = new DelegateCommand(ExecuteSelectedScript));
 

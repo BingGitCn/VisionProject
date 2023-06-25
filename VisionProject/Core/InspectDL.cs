@@ -1,5 +1,4 @@
-﻿using VisionProject.Core;
-using HalconDotNet;
+﻿using HalconDotNet;
 using System;
 using System.Collections.ObjectModel;
 
@@ -15,7 +14,6 @@ namespace VisionProject.Core
         private HTuple hv_DLModelHandle = new HTuple();
         private InspectCY tcy = new InspectCY();
         private InspectSM tsm = new InspectSM();
-
 
         /// <summary>
         /// 加载模型，自动识别模型类型
@@ -40,8 +38,6 @@ namespace VisionProject.Core
                     HOperatorSet.SetSystem("cudnn_deterministic", "true");
                 }
 
-
-
                 return new BoolResult() { IsActionOK = true };
             }
             catch (Exception ex)
@@ -56,7 +52,7 @@ namespace VisionProject.Core
         /// <param name="image">输入检测图像</param>
         /// <param name="ignoreLabels">在结果中忽略的标注类型，0是背景不必设置，1一般为“正常”，new int[1]{1}</param>
         /// <returns>输出结果</returns>
-        public ObservableCollection<ResultPackage> ApplyModel(out string type,HImage image, int[] ignoreLabels, bool isHighAccuracy = false)
+        public ObservableCollection<ResultPackage> ApplyModel(out string type, HImage image, int[] ignoreLabels, bool isHighAccuracy = false)
         {
             type = "";
             //new int[1] { 1 }

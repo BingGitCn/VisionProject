@@ -1,17 +1,12 @@
 ﻿using BingLibrary.Extension;
 using BingLibrary.Vision;
 using HalconDotNet;
-using MySqlX.XDevAPI.Common;
-using Org.BouncyCastle.Math.EC;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
 using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels

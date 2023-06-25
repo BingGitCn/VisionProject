@@ -1,7 +1,6 @@
 ﻿using BingLibrary.Extension;
 using BingLibrary.Tools;
 using HalconDotNet;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +8,6 @@ using System.Threading.Tasks;
 using VisionProject.GlobalVars;
 using VisionProject.RunTools;
 using Log = BingLibrary.Logs.LogOpreate;
-using Prism;
 
 namespace VisionProject.ViewModels
 {
@@ -43,7 +41,8 @@ namespace VisionProject.ViewModels
             //初始化引擎，可选
             initEngine();
 
-            //run(new HImage());//需要换
+            //显示每次拍照的拼图
+            showImage();
 
             Variables.AutoHomeEventArgs.Subscribe(autoHome);
         }
@@ -171,6 +170,9 @@ namespace VisionProject.ViewModels
         private bool run1Done = false;
         private bool run2Done = false;
 
+        // 1 是左右拍同一产品，2 是左右拍不同产品
+        private int CameraMode = 1;
+
         private async void run()
         {
             int step1 = 0;
@@ -219,11 +221,11 @@ namespace VisionProject.ViewModels
                             if (position1 == 0)
                             {
                                 // 1 是左右拍同一产品，2 是左右拍不同产品
-                                var mode = Variables.HCPLC0.ReadD(352, 1)[0];
-                                initTotalImage(mode);
+                                CameraMode = Variables.HCPLC0.ReadD(352, 1)[0];
+                                initTotalImage(CameraMode);
                             }
 
-                            await imageQueues.Enqueue(new ImageQueue() { CameraIndex = 1, PositionIndex = position1, HImage = Cam1Image.CopyImage() }, imageQueues.tokenNone);
+                            await imageQueues.Enqueue(new ImageQueue() { CameraIndex = 1, PositionIndex = position1, Image = Cam1Image.CopyImage() }, imageQueues.tokenNone);
 
                             run1(position1, Cam1Image.CopyImage(), Variables.CurrentProject.Programs.ElementAt(0).Value[position1]);
                             Variables.HCPLC0.WriteM(2551, new bool[] { false });//拍照完成信号，同时去处理
@@ -237,11 +239,40 @@ namespace VisionProject.ViewModels
                         {
                             run1Done = false;
 
-                            foreach (var rst in run1Results)
+                            //todo 根据结果做对应处理
+                            if (CameraMode == 1 || CameraMode == 2)
                             {
-                                //todo 根据结果做对应处理
+                                // undone 这里需要注意，约定1，空穴检测，2. 扫码，ng方式不一样
+                                if (position1 == 0)
+                                {
+                                    //空穴
+                                    if (!run1Results[0].BoolResult)
+                                    {
+                                        Variables.HCPLC0.WriteM(2568, new bool[] { true });
+                                    }
+                                    if (run1Results[1].IdentifyResult.Length < 15)
+                                    {
+                                        //扫码失败
+                                        Variables.HCPLC0.WriteM(2557, new bool[] { true });
+                                    }
+                                    else
+                                    {
+                                        //扫码成功
+                                        Variables.HCPLC0.WriteM(2556, new bool[] { true });
+                                    }
+
+                                    // todo mse处理，如果mes启用的话
+                                }
+                                else
+                                {
+                                    foreach (var rst in run1Results)
+                                    {
+                                        //todo 处理，相关信息可能需要存储到表格
+                                    }
+                                }
                             }
 
+                            //全部拍完成信号
                             bool grabDone1 = Variables.HCPLC0.ReadM(2511, 1)[0];
                             if (grabDone1)
                             {
@@ -276,7 +307,7 @@ namespace VisionProject.ViewModels
         {
             public int CameraIndex { set; get; }
             public int PositionIndex { set; get; }
-            public HImage HImage { set; get; }
+            public HImage Image { set; get; }
         }
 
         private AsyncQueue<ImageQueue> imageQueues = new AsyncQueue<ImageQueue>();
@@ -356,11 +387,58 @@ namespace VisionProject.ViewModels
         //拼图和显示
         private async void showImage()
         {
+            HRegion rect = new HRegion(new HTuple(0), 0, Variables.ImageWidth - 1, Variables.ImageHeight - 1);
+            HTuple rows = new HTuple(), columns = new HTuple();
+            rect.GetRegionPoints(out rows, out columns);
+
             while (true)
             {
                 await Task.Delay(10);
-                var imageQueue = await imageQueues.Dequeue(imageQueues.tokenNone);
-                //todo 拼图
+
+                if (imageQueues.Count() > 0)
+                {
+                    var imageQueue = await imageQueues.Dequeue(imageQueues.tokenNone);
+                    int rowCount = 0; int columnCount = 0;
+
+                    if (CameraMode == 1)
+                    {
+                        var grayVals = imageQueue.Image.GetGrayval(rows, columns);
+                        if (imageQueue.CameraIndex == 1)
+                        {
+                            rowCount = Variables.CurrentProject.Programs.ElementAt(0).Value[imageQueue.PositionIndex].ProductConfigSet.RowInput;
+                            columnCount = Variables.CurrentProject.Programs.ElementAt(0).Value[imageQueue.PositionIndex].ProductConfigSet.ColInput;
+                        }
+                        else if (imageQueue.CameraIndex == 2)
+                        {
+                            rowCount = Variables.CurrentProject.Programs.ElementAt(1).Value[imageQueue.PositionIndex].ProductConfigSet.RowInput;
+                            columnCount = Variables.CurrentProject.Programs.ElementAt(1).Value[imageQueue.PositionIndex].ProductConfigSet.ColInput;
+                        }
+
+                        TotalImageLeft.SetGrayval(new HTuple(Variables.ImageHeight * (rowCount - 1)) + rows, new HTuple(Variables.ImageWidth * (columnCount - 1)) + columns, grayVals);
+
+                        Variables.WindowData1.WindowCtrl.ShowImageToWindow(TotalImageLeft.CopyImage());
+                        Variables.WindowData2.WindowCtrl.ShowImageToWindow(TotalImageLeft.CopyImage());
+                    }
+                    else if (CameraMode == 2)
+                    {
+                        var grayVals = imageQueue.Image.GetGrayval(rows, columns);
+                        if (imageQueue.CameraIndex == 1)
+                        {
+                            rowCount = Variables.CurrentProject.Programs.ElementAt(0).Value[imageQueue.PositionIndex].ProductConfigSet.RowInput;
+                            columnCount = Variables.CurrentProject.Programs.ElementAt(0).Value[imageQueue.PositionIndex].ProductConfigSet.ColInput;
+                            TotalImageLeft.SetGrayval(new HTuple(Variables.ImageHeight * (rowCount - 1)) + rows, new HTuple(Variables.ImageWidth * (columnCount - 1)) + columns, grayVals);
+                            Variables.WindowData1.WindowCtrl.ShowImageToWindow(TotalImageLeft.CopyImage());
+                        }
+                        else if (imageQueue.CameraIndex == 2)
+                        {
+                            rowCount = Variables.CurrentProject.Programs.ElementAt(1).Value[imageQueue.PositionIndex].ProductConfigSet.RowInput;
+                            columnCount = Variables.CurrentProject.Programs.ElementAt(1).Value[imageQueue.PositionIndex].ProductConfigSet.ColInput;
+                            TotalImageRight.SetGrayval(new HTuple(Variables.ImageHeight * (rowCount - 1)) + rows, new HTuple(Variables.ImageWidth * (columnCount - 1)) + columns, grayVals);
+                            Variables.WindowData2.WindowCtrl.ShowImageToWindow(TotalImageRight.CopyImage());
+                        }
+                    }
+                    imageQueue.Image?.Dispose();
+                }
             }
         }
 

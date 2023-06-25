@@ -1,22 +1,9 @@
-﻿using HalconDotNet;
+﻿using BingLibrary.Extension;
+using HalconDotNet;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using VisionProject.GlobalVars;
-using BingLibrary.Communication.Net;
-using BingLibrary.Extension;
-using BingLibrary.Vision;
-using HandyControl.Controls;
-using MySqlX.XDevAPI.Relational;
-using static VisionProject.ViewModels.Function_MatchViewModel;
-using VisionProject.ViewModels;
-using System.Collections.ObjectModel;
-using Google.Protobuf.WellKnownTypes;
-using MySqlX.XDevAPI.Common;
 using System.IO;
+using VisionProject.GlobalVars;
+using VisionProject.ViewModels;
 
 namespace VisionProject.RunTools
 {
@@ -26,6 +13,7 @@ namespace VisionProject.RunTools
         public static RunResult Run(HImage image, ProgramData programData)
         {
             #region 参数获得
+
             var row1 = (double)programData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
             var row2 = (double)programData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
             var col1 = (double)programData.Parameters.BingGetOrAdd("ROIColumn1", 0.0);
@@ -58,8 +46,6 @@ namespace VisionProject.RunTools
             var IsReverse3 = (bool)programData.Parameters.BingGetOrAdd("IsReverse13", false);
             var IsReverse4 = (bool)programData.Parameters.BingGetOrAdd("IsReverse14", false);
 
-            
-
             var InspectROIRow1 = (double)programData.Parameters.BingGetOrAdd("InspectROIRow1", 0.0);
             var InspectROIRow2 = (double)programData.Parameters.BingGetOrAdd("InspectROIRow2", 0.0);
             var InspectROIColumn1 = (double)programData.Parameters.BingGetOrAdd("InspectROIColumn1", 0.0);
@@ -70,7 +56,8 @@ namespace VisionProject.RunTools
             var MinNum = (double)programData.Parameters.BingGetOrAdd("MinNum", 0.0);
             var MaxNum = (double)programData.Parameters.BingGetOrAdd("MaxNum", 0.0);
             var InspectIndex = int.Parse(programData.Parameters.BingGetOrAdd("InspectIndex", 0).ToString());
-            #endregion
+
+            #endregion 参数获得
 
             // 照片传进来
             HImage modelImage = new HImage();
@@ -92,8 +79,9 @@ namespace VisionProject.RunTools
                 {
                     try
                     {
-                        modelImage = image.CopyImage();
-                        modelImage = modelImage.AddImage(modelImage, 0.5, TransBrightnessValue - 128);
+                        //modelImage = image.CopyImage();
+                        //modelImage = modelImage.AddImage(modelImage, 0.5, TransBrightnessValue - 128);
+
                         if (ContrastValue >= 128)
                         {
                             double max = 383.0 - TransContrastValue;
@@ -115,7 +103,6 @@ namespace VisionProject.RunTools
                         modelImage = modelImage.GammaImage(TransGammaValue, 0, 0, 255.0, "true");
                     }
                     catch { modelImage = image.CopyImage(); }
-
                 }
 
                 HTuple modelScore = new HTuple();
@@ -135,9 +122,6 @@ namespace VisionProject.RunTools
 
                 hHomMat2D.VectorAngleToRigid(row, col, angle, modelRow, modelCol, modelAngle);
                 image = image.AffineTransImage(hHomMat2D, "constant", "false");
-
-
-
             }
             catch { }
 
@@ -175,7 +159,6 @@ namespace VisionProject.RunTools
                 }
             }
 
-
             //过滤（二值化）
             try
             {
@@ -186,7 +169,6 @@ namespace VisionProject.RunTools
                     {
                         if (image.CountChannels() == 1)
                         {
-
                             if (!IsReverse4)
                             {
                                 resultRegion = image.Threshold((double)ValueS4, (double)ValueE4);
@@ -412,7 +394,7 @@ namespace VisionProject.RunTools
                         //Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DispRectangle1(row11, col11, row12, col12);
                         //Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("fill");
                         var CurrentArea = region.Area;
-                        if (CurrentArea< ResultScoreMin || CurrentArea> ResultScoreMax)
+                        if (CurrentArea < ResultScoreMin || CurrentArea > ResultScoreMax)
                             resultBool = false;
                         else { resultBool = true; }
                         break;

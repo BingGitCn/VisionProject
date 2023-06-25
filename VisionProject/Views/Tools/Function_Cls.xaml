@@ -28,16 +28,16 @@
                 </i:Interaction.Triggers>
                 <TabItem Header="主页">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock Margin="5" Text="参数设置"/>
-                        <hc:ComboBox 
+                        <TextBlock Margin="5" Text="参数设置" />
+                        <hc:ComboBox
                             Margin="5"
                             hc:InfoElement.Title="选择模型"
                             hc:InfoElement.TitlePlacement="Left"
                             hc:InfoElement.TitleWidth="80"
                             ItemsSource="{Binding PassData}"
-                            Style="{StaticResource ComboBoxExtend}"/>
+                            Style="{StaticResource ComboBoxExtend}" />
                         <StackPanel Orientation="Horizontal">
-                            
+
                             <Button
                                 Width="170"
                                 Margin="5"
@@ -55,20 +55,18 @@
                                 Style="{StaticResource ButtonPrimary}" />
                         </StackPanel>
 
-                        <TextBlock Margin="5" Text="判定"/>
-                        <hc:ComboBox 
+                        <TextBlock Margin="5" Text="判定" />
+                        <hc:ComboBox
                             Margin="5"
                             hc:InfoElement.Title="选择OK类别"
                             hc:InfoElement.TitlePlacement="Left"
                             hc:InfoElement.TitleWidth="80"
                             ItemsSource="{Binding PassData}"
                             Style="{StaticResource ComboBoxExtend}">
-                            
                         </hc:ComboBox>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="选择OK阈值" Margin="5" Width="70"/>
+                            <TextBlock Text="选择OK阈值" Margin="5" Width="70" />
                             <hc:PreviewSlider Name="PreviewSliderHorizontal" Width="225" Value="0.60" Maximum="1">
-                                
                             </hc:PreviewSlider>
                             <TextBox Width="50" Text="{Binding ElementName=Channel1Slider, Path=ValueEnd}" />
                         </StackPanel>

@@ -1,22 +1,12 @@
-﻿using HalconDotNet;
+﻿using BingLibrary.Extension;
+using HalconDotNet;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using VisionProject.GlobalVars;
-using BingLibrary.Communication.Net;
-using BingLibrary.Extension;
-using BingLibrary.Vision;
-using HandyControl.Controls;
-using MySqlX.XDevAPI.Relational;
-using static VisionProject.ViewModels.Function_BlobViewModel;
-using VisionProject.ViewModels;
 using System.Collections.ObjectModel;
-using Google.Protobuf.WellKnownTypes;
-using MySqlX.XDevAPI.Common;
 using System.IO;
+using VisionProject.GlobalVars;
+using VisionProject.ViewModels;
+using static VisionProject.ViewModels.Function_BlobViewModel;
 
 namespace VisionProject.RunTools
 {
@@ -26,6 +16,7 @@ namespace VisionProject.RunTools
         public static RunResult Run(HImage image, ProgramData programData)
         {
             #region 参数获得
+
             var row1 = (double)programData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
             var row2 = (double)programData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
             var col1 = (double)programData.Parameters.BingGetOrAdd("ROIColumn1", 0.0);
@@ -73,7 +64,8 @@ namespace VisionProject.RunTools
             var InspectROIColumn12 = (double)programData.Parameters.BingGetOrAdd("InspectROIColumn12", 0.0);
             var MinNum = (double)programData.Parameters.BingGetOrAdd("MinNum", 0.0);
             var MaxNum = (double)programData.Parameters.BingGetOrAdd("MaxNum", 0.0);
-            #endregion
+
+            #endregion 参数获得
 
             // 照片传进来
             HImage modelImage = new HImage();
@@ -119,7 +111,6 @@ namespace VisionProject.RunTools
                         modelImage = modelImage.GammaImage(TransGammaValue, 0, 0, 255.0, "true");
                     }
                     catch { modelImage = image.CopyImage(); }
-
                 }
 
                 HTuple modelScore = new HTuple();
@@ -139,7 +130,6 @@ namespace VisionProject.RunTools
 
                 hHomMat2D.VectorAngleToRigid(row, col, angle, modelRow, modelCol, modelAngle);
                 image = image.AffineTransImage(hHomMat2D, "constant", "false");
-
             }
             catch { }
 
@@ -177,7 +167,6 @@ namespace VisionProject.RunTools
                 }
             }
 
-
             //过滤（二值化）
             try
             {
@@ -188,7 +177,6 @@ namespace VisionProject.RunTools
                     {
                         if (image.CountChannels() == 1)
                         {
-
                             if (!IsReverse4)
                             {
                                 resultRegion = image.Threshold((double)ValueS4, (double)ValueE4);
@@ -598,6 +586,7 @@ namespace VisionProject.RunTools
             RunResult runResult = new RunResult();
             if (resultBool == false && IsSaveNG)
             {
+                // todo 这里不是ImageWindowDataForFunction窗口，正常运行是不会显示到该窗口
                 HImage hImage = Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage();
                 if (!Directory.Exists(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd")))
                     Directory.CreateDirectory(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd"));
@@ -616,6 +605,5 @@ namespace VisionProject.RunTools
                 return runResult;
             }
         }
-
     }
 }

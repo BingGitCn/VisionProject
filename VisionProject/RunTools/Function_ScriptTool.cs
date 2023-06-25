@@ -1,24 +1,10 @@
-﻿using HalconDotNet;
+﻿using BingLibrary.Extension;
+using HalconDotNet;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using VisionProject.GlobalVars;
-using BingLibrary.Communication.Net;
-using BingLibrary.Extension;
-using BingLibrary.Vision;
-using HandyControl.Controls;
-using MySqlX.XDevAPI.Relational;
-using static VisionProject.ViewModels.Function_ScriptViewModel;
-using VisionProject.ViewModels;
-using System.Collections.ObjectModel;
-using Google.Protobuf.WellKnownTypes;
-using MySqlX.XDevAPI.Common;
 using System.IO;
-using System.Runtime.CompilerServices;
-using VisionProject.Core;
+using VisionProject.GlobalVars;
+using VisionProject.ViewModels;
 
 namespace VisionProject.RunTools
 {
@@ -28,6 +14,7 @@ namespace VisionProject.RunTools
         public static RunResult Run(HImage image, ProgramData programData)
         {
             #region 参数获得
+
             var row1 = (double)programData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
             var row2 = (double)programData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
             var col1 = (double)programData.Parameters.BingGetOrAdd("ROIColumn1", 0.0);
@@ -40,8 +27,7 @@ namespace VisionProject.RunTools
 
             var ScriptName = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ScriptName", "").ToString();
 
-
-            #endregion
+            #endregion 参数获得
 
             // 照片传进来
             bool resultBool = true;

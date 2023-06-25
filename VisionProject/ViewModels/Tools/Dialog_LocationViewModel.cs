@@ -1,7 +1,4 @@
-﻿using BingLibrary.Extension;
-using ImTools;
-using OfficeOpenXml.ConditionalFormatting.Contracts;
-using Prism.Commands;
+﻿using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
@@ -149,6 +146,7 @@ namespace VisionProject.ViewModels
                 // 直接获取
                 Variables.CurrentConfigSet.RowInput = RowInput;
                 Variables.CurrentConfigSet.ColInput = ColInput;
+                RequestClose?.Invoke(new DialogResult(ButtonResult.Yes));
             }
             catch { }
         }
@@ -162,6 +160,8 @@ namespace VisionProject.ViewModels
         {
             try
             {
+                // 这里不做处理
+                return;
                 Variables.CurrentConfigSet.RowInput = RowInput;
                 Variables.CurrentConfigSet.ColInput = ColInput;
             }

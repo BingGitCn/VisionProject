@@ -40,6 +40,7 @@ namespace VisionProject.Views
             //    g2.Visibility = System.Windows.Visibility.Visible;
             //}
         }
+
         private void UserControl_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             TextBox textBox = Keyboard.FocusedElement as TextBox;
@@ -50,6 +51,7 @@ namespace VisionProject.Views
             }
         }
     }
+
     public class EnumBindingSourceExtension : MarkupExtension
     {
         private Type _enumType;

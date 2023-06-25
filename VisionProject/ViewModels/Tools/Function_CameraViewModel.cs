@@ -1,5 +1,4 @@
-﻿using BingLibrary.Communication;
-using BingLibrary.Extension;
+﻿using BingLibrary.Extension;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;

@@ -1,17 +1,11 @@
 ﻿using BingLibrary.Extension;
 using BingLibrary.Vision;
 using HalconDotNet;
-using MySqlX.XDevAPI.Common;
-using Org.BouncyCastle.Math.EC;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
 using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
@@ -54,8 +48,8 @@ namespace VisionProject.ViewModels
 
         private HImage image = new HImage();
 
-
         private bool _isSaveNG;
+
         public bool IsSaveNG
         {
             get { return _isSaveNG; }
@@ -66,6 +60,7 @@ namespace VisionProject.ViewModels
 
         public DelegateCommand<string> ImageOperate =>
             _imageOperate ?? (_imageOperate = new DelegateCommand<string>(ExecuteImageOperate));
+
         private void ExecuteImageOperate(string parameter)
         {
             Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.margin;
@@ -75,25 +70,24 @@ namespace VisionProject.ViewModels
                     try
                     {
                         var rst = openImageDialog();
-                        
+
                         if (rst != "")
                         {
                             image = new HImage(rst);
                             Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
                             Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(image.CopyImage());
                             Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
-                            
+
                             Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
                         }
                     }
                     catch { }
                     break;
+
                 case "":
                     break;
-
             }
         }
-
 
         private string openImageDialog()
         {
@@ -118,12 +112,13 @@ namespace VisionProject.ViewModels
 
         public DelegateCommand IsSaveNGChanged =>
             _isSaveNGChanged ?? (_isSaveNGChanged = new DelegateCommand(ExecuteIsSaveNGChanged));
+
         private void ExecuteIsSaveNGChanged()
         {
             Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsSaveNG", IsSaveNG);
         }
-        #endregion 图像选择
 
+        #endregion 图像选择
 
         public string Title => "条码识别";
 

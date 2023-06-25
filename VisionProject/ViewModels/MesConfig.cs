@@ -1,7 +1,5 @@
 ﻿using BingLibrary.FileOpreate;
 using Prism.Commands;
-using Prism.Services.Dialogs;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using VisionProject.GlobalVars;
 using Log = BingLibrary.Logs.LogOpreate;

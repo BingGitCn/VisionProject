@@ -4357,11 +4357,7 @@ namespace VisionProject.Core
                         hv_RessultClassIDs[Classj] = hv_ClassIDs[i];
                         Classj++;
                     }
-
-
-
                 }
-
 
                 //HOperatorSet.TupleRemove(hv_ClassIDs, 0, out hv_RessultClassIDs);
                 ////HOperatorSet.TupleRemove(hv_RessultClassIDs, 0, out hv_RessultClassIDs);
@@ -4393,9 +4389,7 @@ namespace VisionProject.Core
                 }
                 catch { }
 
-
                 HOperatorSet.ZoomImageFactor(ho_Image, out ho_Image, resizeFactor, resizeFactor, "constant");
-
 
                 HOperatorSet.GetImageSize(ho_Image, out hv_Width, out hv_Height);
                 hv_overRate.Dispose();
@@ -4428,7 +4422,6 @@ namespace VisionProject.Core
                             if ((hv_Width - column - hv_Size) < 0)
                                 column = hv_Width - hv_Size;
                         }
-
 
                         using (HDevDisposeHelper dh = new HDevDisposeHelper())
                         {
@@ -4469,12 +4462,8 @@ namespace VisionProject.Core
                                 hv_count = ExpTmpLocalVar_count;
                             }
                         }
-
-
                     }
                 }
-
-
 
                 hv_ResultCount.Dispose();
                 hv_ResultCount = 0;
@@ -4513,7 +4502,6 @@ namespace VisionProject.Core
                 double realAccuracySize = hv_Size.D / 4.0 / 2.0 - 2;
 
                 HRegion accuracyRegion = new HRegion(realAccuracySize, realAccuracySize, hv_Size.D - realAccuracySize, hv_Size.D - realAccuracySize);
-
 
                 for (hv_T0 = 0; (int)hv_T0 <= (int)((new HTuple(hv_RessultClassIDs.TupleLength()
                     )) - 1); hv_T0 = (int)hv_T0 + 1)
@@ -4710,8 +4698,6 @@ namespace VisionProject.Core
         /// <returns></returns>
         public HImage action2(HTuple hv_DLModelHandle, HImage image, int[] ignoreLabels, bool isHighAccuracy = false)
         {
-
-
             // Stack for temporary objects
             HObject[] OTemp = new HObject[20];
             LabelIDS = new HTuple();
@@ -4799,11 +4785,7 @@ namespace VisionProject.Core
                         hv_RessultClassIDs[Classj] = hv_ClassIDs[i];
                         Classj++;
                     }
-
-
-
                 }
-
 
                 ho_ProcessdImages.Dispose();
                 HOperatorSet.GenEmptyObj(out ho_ProcessdImages);
@@ -4827,7 +4809,6 @@ namespace VisionProject.Core
                     }
                 }
                 catch { }
-
 
                 HOperatorSet.ZoomImageFactor(ho_Image, out ho_Image, resizeFactor, resizeFactor, "constant");
 
@@ -4864,7 +4845,6 @@ namespace VisionProject.Core
                             if ((hv_Width - column - hv_Size) < 0)
                                 column = hv_Width - hv_Size;
                         }
-
 
                         using (HDevDisposeHelper dh = new HDevDisposeHelper())
                         {
@@ -4905,12 +4885,8 @@ namespace VisionProject.Core
                                 hv_count = ExpTmpLocalVar_count;
                             }
                         }
-
-
                     }
                 }
-
-
 
                 hv_ResultCount.Dispose();
                 hv_ResultCount = 0;
@@ -4949,7 +4925,6 @@ namespace VisionProject.Core
                 double realAccuracySize = hv_Size.D / 4.0 / 2.0 - 2;
 
                 HRegion accuracyRegion = new HRegion(realAccuracySize, realAccuracySize, hv_Size.D - realAccuracySize, hv_Size.D - realAccuracySize);
-
 
                 for (hv_T0 = 0; (int)hv_T0 <= (int)((new HTuple(hv_RessultClassIDs.TupleLength()
                     )) - 1); hv_T0 = (int)hv_T0 + 1)
@@ -5006,11 +4981,7 @@ namespace VisionProject.Core
                         }
                     }
 
-
                     HOperatorSet.Connection(ho_currentRegion, out ho_currentRegion);
-
-
-
 
                     HTuple c = new HTuple();
                     HOperatorSet.CountObj(ho_currentRegion, out c);
@@ -5022,7 +4993,6 @@ namespace VisionProject.Core
                     }
 
                     resultImage = resultImage.ZoomImageFactor(1.0 / resizeFactor, 1.0 / resizeFactor, "constant");
-
                 }
             }
             catch (HalconException HDevExpDefaultException)
