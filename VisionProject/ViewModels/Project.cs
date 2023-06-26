@@ -426,7 +426,12 @@ namespace VisionProject.ViewModels
                                 saveFileDialog.Filter = "项目文件(*.lprj)|*.lprj";
                                 if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                                 {
-                                    ProjectPath = saveFileDialog.FileName;
+                                    string selectedFileName = Path.GetFileName(saveFileDialog.FileName);
+                                    ProjectPath = AppDomain.CurrentDomain.BaseDirectory + "Projects" + selectedFileName;
+                                }
+                                else
+                                {
+                                    return;
                                 }
 
                                 if (Variables.CurrentProject.CreateDate == "")
