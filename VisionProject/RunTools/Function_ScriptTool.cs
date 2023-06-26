@@ -68,29 +68,13 @@ namespace VisionProject.RunTools
                 //获取结果
                 HDict resultDict = Variables.WorkEngines[EngineIndex].GetParam<HalconDotNet.HDict>(ScriptName, "OutputDict");
                 //这里约定好对应的输出结果
-                runResult.IdentifyResult = resultDict.GetDictTuple("Result").D.ToString();//检查一下。。0619
+                runResult.MessageResult = resultDict.GetDictTuple("Result").D.ToString();//检查一下。。0619
             }
             catch { }
 
-            if (resultBool == false && IsSaveNG)
-            {
-                HImage hImage = Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage();
-                if (!Directory.Exists(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd")))
-                    Directory.CreateDirectory(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd"));
-                hImage.WriteImage("bmp", new HTuple(0), new HTuple(Variables.SavePath + "NG\\" +
-                    DateTime.Now.ToString("yyyy-MM-dd") + "\\" + DateTime.Now.ToString("HH-mm-ss-ffff") + ".bmp"));
-
-                runResult.BoolResult = resultBool;
-                runResult.NGImagePath = Variables.SavePath + "NG\\" +
-                    DateTime.Now.ToString("yyyy-MM-dd") + "\\" + DateTime.Now.ToString("HH-mm-ss-ffff") + ".bmp";
-                return runResult;
-            }
-            else
-            {
-                runResult.BoolResult = resultBool;
-                runResult.NGImagePath = "";
-                return runResult;
-            }
+            runResult.BoolResult = resultBool;
+            runResult.NGImagePath = "";
+            return runResult;
         }
     }
 }

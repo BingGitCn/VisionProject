@@ -91,14 +91,14 @@
                             hc:InfoElement.TitleWidth="80"
                             SelectedIndex="{Binding CodeIndex}"
                             Style="{StaticResource ComboBoxExtend}">
-                            <i:Interaction.Triggers>
+                            <!--<i:Interaction.Triggers>
                                 <i:EventTrigger EventName="DropDownClosed">
                                     <i:InvokeCommandAction Command="{Binding TestRun}" />
                                 </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                            <ComboBoxItem Content="条码" />
+                            </i:Interaction.Triggers>-->
+                            <ComboBoxItem Content="一维码（条形码）" />
                             <ComboBoxItem Content="DataMatrix码" />
-                            <ComboBoxItem Content="QR码" />
+                            <ComboBoxItem Content="二维码（QR码）" />
                         </hc:ComboBox>
                         <hc:ComboBox
                             Margin="20,5,5,5"
@@ -107,11 +107,11 @@
                             hc:InfoElement.TitleWidth="80"
                             SelectedIndex="{Binding ColorIndex}"
                             Style="{StaticResource ComboBoxExtend}">
-                            <i:Interaction.Triggers>
+                            <!--<i:Interaction.Triggers>
                                 <i:EventTrigger EventName="DropDownClosed">
                                     <i:InvokeCommandAction Command="{Binding TestRun}" />
                                 </i:EventTrigger>
-                            </i:Interaction.Triggers>
+                            </i:Interaction.Triggers>-->
                             <ComboBoxItem Content="白底黑字" />
                             <ComboBoxItem Content="黑底白字" />
                         </hc:ComboBox>
@@ -125,6 +125,15 @@
                             IsReadOnly="True"
                             Style="{StaticResource TextBoxExtend}"
                             Text="{Binding IdentifyResult}" />
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                Command="{Binding TestRun}"
+                                CommandParameter="0"
+                                Content="测试运行"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
                     </StackPanel>
                 </TabItem>
             </TabControl>

@@ -102,6 +102,7 @@
     <Compile Include="RunTools\Function_CodeTool.cs" />
     <Compile Include="RunTools\Function_MatchTool.cs" />
     <Compile Include="RunTools\Function_BlobTool.cs" />
+    <Compile Include="RunTools\Hal.cs" />
     <Compile Include="ViewModels\Tools\Dialog_LocationViewModel.cs" />
     <Compile Include="ViewModels\Tools\Dialog_ModelSetViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_ClsViewModel.cs" />

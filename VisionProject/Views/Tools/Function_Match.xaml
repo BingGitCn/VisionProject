@@ -358,13 +358,15 @@
                                 HorizontalAlignment="Right"
                                 Command="{Binding ResetPreEnhance}"
                                 Content="重  置"
+                                IsEnabled="{Binding IsPreEnhance}"
                                 Style="{StaticResource ButtonDashed}" />
                         </Grid>
 
                         <DockPanel
                             Height="30"
                             Margin="30,2,2,2"
-                            VerticalAlignment="Bottom">
+                            VerticalAlignment="Bottom"
+                            IsEnabled="{Binding IsPreEnhance}">
                             <TextBlock
                                 Width="50"
                                 VerticalAlignment="Center"
@@ -388,7 +390,8 @@
                         <DockPanel
                             Height="30"
                             Margin="30,2,2,2"
-                            VerticalAlignment="Bottom">
+                            VerticalAlignment="Bottom"
+                            IsEnabled="{Binding IsPreEnhance}">
                             <TextBlock
                                 Width="50"
                                 VerticalAlignment="Center"
@@ -412,7 +415,8 @@
                         <DockPanel
                             Height="30"
                             Margin="30,2,2,2"
-                            VerticalAlignment="Bottom">
+                            VerticalAlignment="Bottom"
+                            IsEnabled="{Binding IsPreEnhance}">
                             <TextBlock
                                 Width="50"
                                 VerticalAlignment="Center"
@@ -443,7 +447,8 @@
                                 Margin="5"
                                 Content="启用"
                                 FontWeight="Bold"
-                                IsChecked="{Binding IsGray, UpdateSourceTrigger=PropertyChanged}">
+                                IsChecked="{Binding IsGray, UpdateSourceTrigger=PropertyChanged}"
+                                Visibility="Hidden">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="Checked">
                                         <i:InvokeCommandAction Command="{Binding GrayValueChanged}" />
@@ -750,7 +755,14 @@
                                         Margin="5"
                                         Command="{Binding InspectROIOperate}"
                                         CommandParameter="1"
-                                        Content="绘制检测框"
+                                        Content="绘制检测区域"
+                                        Style="{StaticResource ButtonPrimary}" />
+                                    <Button
+                                        Width="170"
+                                        Margin="5"
+                                        Command="{Binding InspectROIOperate}"
+                                        CommandParameter="2"
+                                        Content="绘制屏蔽区域"
                                         Style="{StaticResource ButtonPrimary}" />
                                 </StackPanel>
                                 <hc:TextBox

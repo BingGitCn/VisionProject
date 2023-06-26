@@ -455,8 +455,8 @@
                             <Button
                                 Grid.Column="1"
                                 Width="80"
-                                Margin="172,0,0,0"
-                                HorizontalAlignment="Left"
+                                Margin="5"
+                                HorizontalAlignment="Right"
                                 Command="{Binding ResetGray}"
                                 Content="重  置"
                                 Style="{StaticResource ButtonDashed}" />
@@ -679,13 +679,13 @@
                 <TabItem Header="处理">
                     <StackPanel Orientation="Vertical">
                         <hc:ComboBox
+                            Margin="5"
                             hc:InfoElement.Title="区域操作"
                             hc:InfoElement.TitlePlacement="Left"
                             hc:InfoElement.TitleWidth="80"
-                            Margin="5"
                             ItemsSource="{Binding Source={local:EnumBindingSource {x:Type remote:RegionFoundFeatures}}}"
                             SelectedItem="{Binding RegionFoundFeature, UpdateSourceTrigger=PropertyChanged}" />
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                             <Button
                                 Width="150"
                                 Margin="5"
@@ -701,32 +701,38 @@
                                 Content="+"
                                 Style="{StaticResource ButtonPrimary}" />
                             <Button
-                                    Width="30"
-                                    Height="30"
-                                    Margin="5"
-                                    Command="{Binding RegionFoundOperater}"
-                                    CommandParameter="remove"
-                                    Content="-"
-                                    Style="{StaticResource ButtonPrimary}" />
-                            <Button Content="上移" Margin="5" Command="{Binding RegionFoundOperater}"
-                                CommandParameter="moveUp"
+                                Width="30"
+                                Height="30"
+                                Margin="5"
+                                Command="{Binding RegionFoundOperater}"
+                                CommandParameter="remove"
+                                Content="-"
                                 Style="{StaticResource ButtonPrimary}" />
-                            <Button Content="下移" Margin="5" Command="{Binding RegionFoundOperater}"
+                            <Button
+                                Margin="5"
+                                Command="{Binding RegionFoundOperater}"
+                                CommandParameter="moveUp"
+                                Content="上移"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Margin="5"
+                                Command="{Binding RegionFoundOperater}"
                                 CommandParameter="moveDown"
+                                Content="下移"
                                 Style="{StaticResource ButtonPrimary}" />
                         </StackPanel>
                         <DataGrid
-                                Height="250"
-                                Margin="5"
-                                hc:DataGridAttach.ShowRowNumber="False"
-                                AutoGenerateColumns="False"
-                                HeadersVisibility="None"
-                                IsReadOnly="True"
-                                ItemsSource="{Binding RegionFoundFeatureDatas}"
-                                RowHeaderWidth="0"
-                                ScrollViewer.VerticalScrollBarVisibility="Visible"
-                                SelectedIndex="{Binding RegionFoundFeatureDataIndex}"
-                                SelectionMode="Single">
+                            Height="250"
+                            Margin="5"
+                            hc:DataGridAttach.ShowRowNumber="False"
+                            AutoGenerateColumns="False"
+                            HeadersVisibility="None"
+                            IsReadOnly="True"
+                            ItemsSource="{Binding RegionFoundFeatureDatas}"
+                            RowHeaderWidth="0"
+                            ScrollViewer.VerticalScrollBarVisibility="Visible"
+                            SelectedIndex="{Binding RegionFoundFeatureDataIndex}"
+                            SelectionMode="Single">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="SelectionChanged">
                                     <i:InvokeCommandAction Command="{Binding RegionSelectionChanged}" />
@@ -737,50 +743,53 @@
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock
-                                                    Width="200"
-                                                    VerticalAlignment="Center"
-                                                    Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                                                Width="200"
+                                                VerticalAlignment="Center"
+                                                Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
-                        <TextBox Visibility="{Binding CircleVisibility}"
-                                Grid.Column="0"
-                                Margin="5"
-                                hc:InfoElement.Title="半径"
-                                hc:InfoElement.TitlePlacement="Left"
-                                hc:InfoElement.TitleWidth="80"
-                                Style="{StaticResource TextBoxExtend}"
-                                Text="{Binding Radius}">
+                        <TextBox
+                            Grid.Column="0"
+                            Margin="5"
+                            hc:InfoElement.Title="半径"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="80"
+                            Style="{StaticResource TextBoxExtend}"
+                            Text="{Binding Radius}"
+                            Visibility="{Binding CircleVisibility}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
                                     <i:InvokeCommandAction Command="{Binding RegionEditSelection}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </TextBox>
-                        <TextBox Visibility="{Binding RectVisibility}"
-                                Grid.Column="0"
-                                Margin="5"
-                                hc:InfoElement.Title="宽度"
-                                hc:InfoElement.TitlePlacement="Left"
-                                hc:InfoElement.TitleWidth="80"
-                                Style="{StaticResource TextBoxExtend}"
-                                Text="{Binding Width}">
+                        <TextBox
+                            Grid.Column="0"
+                            Margin="5"
+                            hc:InfoElement.Title="宽度"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="80"
+                            Style="{StaticResource TextBoxExtend}"
+                            Text="{Binding Width}"
+                            Visibility="{Binding RectVisibility}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
                                     <i:InvokeCommandAction Command="{Binding RegionEditSelection}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </TextBox>
-                        <TextBox Visibility="{Binding RectVisibility}"
-                                Grid.Column="0"
-                                Margin="5"
-                                hc:InfoElement.Title="高度"
-                                hc:InfoElement.TitlePlacement="Left"
-                                hc:InfoElement.TitleWidth="80"
-                                Style="{StaticResource TextBoxExtend}"
-                                Text="{Binding Height}">
+                        <TextBox
+                            Grid.Column="0"
+                            Margin="5"
+                            hc:InfoElement.Title="高度"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="80"
+                            Style="{StaticResource TextBoxExtend}"
+                            Text="{Binding Height}"
+                            Visibility="{Binding RectVisibility}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
                                     <i:InvokeCommandAction Command="{Binding RegionEditSelection}" />
@@ -788,14 +797,14 @@
                             </i:Interaction.Triggers>
                         </TextBox>
                         <hc:ComboBox
-                                Visibility="{Binding TransVisibility}"
-                                Grid.Column="0"
-                                Margin="5"
-                                hc:InfoElement.Title="模式"
-                                hc:InfoElement.TitlePlacement="Left"
-                                hc:InfoElement.TitleWidth="80"
-                                SelectedIndex="{Binding TransIndex}"
-                                Style="{StaticResource ComboBoxExtend}">
+                            Grid.Column="0"
+                            Margin="5"
+                            hc:InfoElement.Title="模式"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="80"
+                            SelectedIndex="{Binding TransIndex}"
+                            Style="{StaticResource ComboBoxExtend}"
+                            Visibility="{Binding TransVisibility}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="DropDownClosed">
                                     <i:InvokeCommandAction Command="{Binding RegionEditSelection}" />
@@ -920,7 +929,7 @@
                             hc:InfoElement.TitlePlacement="Left"
                             hc:InfoElement.TitleWidth="80"
                             Style="{StaticResource TextBoxExtend}"
-                            Text="{Binding MaxValue,Mode=TwoWay}"
+                            Text="{Binding MaxValue, Mode=TwoWay}"
                             Visibility="{Binding ValueVisibility}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
@@ -941,11 +950,11 @@
                             hc:InfoElement.TitleWidth="80"
                             Style="{StaticResource TextBoxExtend}"
                             Text="{Binding MinNum}">
-                            <i:Interaction.Triggers>
+                            <!--<i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
                                     <i:InvokeCommandAction Command="{Binding TestRunCommand}" />
                                 </i:EventTrigger>
-                            </i:Interaction.Triggers>
+                            </i:Interaction.Triggers>-->
                         </TextBox>
                         <TextBox
                             Grid.Column="0"
@@ -955,19 +964,44 @@
                             hc:InfoElement.TitleWidth="80"
                             Style="{StaticResource TextBoxExtend}"
                             Text="{Binding MaxNum}">
-                            <i:Interaction.Triggers>
+                            <!--<i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
                                     <i:InvokeCommandAction Command="{Binding TestRunJudge}" />
                                 </i:EventTrigger>
-                            </i:Interaction.Triggers>
+                            </i:Interaction.Triggers>-->
                         </TextBox>
+                        <TextBox
+                            Grid.Column="0"
+                            Margin="30,2,5,2"
+                            hc:InfoElement.Title="当前区域数"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="80"
+                            IsReadOnly="True"
+                            Style="{StaticResource TextBoxExtend}"
+                            Text="{Binding CurNum}" />
 
                         <StackPanel Orientation="Horizontal">
                             <Button
                                 Width="170"
                                 Margin="5"
                                 Command="{Binding InspectROIOperate}"
-                                Content="绘制检测框"
+                                CommandParameter="1"
+                                Content="绘制检测区域"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                Command="{Binding InspectROIOperate}"
+                                CommandParameter="2"
+                                Content="绘制屏蔽区域"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                Command="{Binding TestRunJudge}"
+                                Content="测试运行"
                                 Style="{StaticResource ButtonPrimary}" />
                             <Button
                                 Width="170"

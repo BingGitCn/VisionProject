@@ -55,12 +55,17 @@ namespace VisionProject.GlobalVars
 
         public static T DeepClone<T>(T data)
         {
-            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-            jsonSerializerSettings.PreserveReferencesHandling = PreserveReferencesHandling.All;
-            jsonSerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
-            jsonSerializerSettings.TypeNameHandling = TypeNameHandling.All;
-            jsonSerializerSettings.Formatting = Formatting.Indented;
-            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(data, jsonSerializerSettings), jsonSerializerSettings);
+            JsonSerializerSettings jsonSerializerSettings1 = new JsonSerializerSettings();
+            jsonSerializerSettings1.PreserveReferencesHandling = PreserveReferencesHandling.All;
+            jsonSerializerSettings1.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
+            jsonSerializerSettings1.TypeNameHandling = TypeNameHandling.All;
+            jsonSerializerSettings1.Formatting = Formatting.Indented;
+
+            JsonSerializerSettings jsonSerializerSettings2 = new JsonSerializerSettings();
+            jsonSerializerSettings2.PreserveReferencesHandling = PreserveReferencesHandling.All;
+            jsonSerializerSettings2.ReferenceLoopHandling = ReferenceLoopHandling.Serialize;
+            jsonSerializerSettings2.TypeNameHandling = TypeNameHandling.All;
+            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(data, jsonSerializerSettings1), jsonSerializerSettings2);
         }
 
         #endregion 克隆，深复制
@@ -121,6 +126,7 @@ namespace VisionProject.GlobalVars
         public static string ProjectName = "";
 
         public static string ProjectImagesPath = AppDomain.CurrentDomain.BaseDirectory + "Projects\\Images\\";
+        public static string ProjectObjectPath = AppDomain.CurrentDomain.BaseDirectory + "Projects\\Objects\\";
 
         //undone 图像长宽需设置
         public static int ImageWidth = 5000;
@@ -203,7 +209,10 @@ namespace VisionProject.GlobalVars
         public bool BoolResult { get; set; }
         public HImage ResultImage { get; set; }
         public string NGImagePath { get; set; }
-        public string IdentifyResult { get; set; }
+        public string MessageResult { get; set; }
+
+        public HRegion RunRegion { get; set; } = new HRegion();
+        public HRegion RegionResult { get; set; } = new HRegion();
     }
 
     public class ConfigSet

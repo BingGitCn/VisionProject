@@ -2,6 +2,7 @@
 using HalconDotNet;
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using VisionProject.GlobalVars;
 using VisionProject.ViewModels;
 
@@ -53,46 +54,33 @@ namespace VisionProject.RunTools
                     string resultString;
                     hRegion = hBarCode.FindBarCode(image, "auto", out resultString);
                     inspectXLD = hRegion.GenContourRegionXld("border");
-                    runResult.IdentifyResult = resultString;
+                    runResult.MessageResult = "条码：" + resultString;
                 }
                 else if (CodeIndex == 1)
                 {
                     hDataCode2D.CreateDataCode2dModel("Data Matrix ECC 200", "default_parameters", "enhanced_recognition");
                     inspectXLD = hDataCode2D.FindDataCode2d(image, new HTuple(), new HTuple(), out HTuple hTuple1, out hTuple2);
-                    runResult.IdentifyResult = (string)hTuple2;
+                    runResult.MessageResult = (string)hTuple2;
                 }
                 else if (CodeIndex == 2)
                 {
                     hDataCode2D.CreateDataCode2dModel("QR Code", "default_parameters", "enhanced_recognition");
                     inspectXLD = hDataCode2D.FindDataCode2d(image, new HTuple(), new HTuple(), out HTuple hTuple1, out hTuple2);
-                    runResult.IdentifyResult = (string)hTuple2;
+
+                    runResult.MessageResult = "条码：" + hTuple2.S;
                 }
+
+                runResult.RunRegion = inspectXLD.GenRegionContourXld("filled");
             }
-            catch
+            catch (Exception ex)
             {
-                runResult.IdentifyResult = "";
+                runResult.MessageResult = "报错：" + ex.Message;
                 resultBool = false;
             }
 
-            if (resultBool == false && IsSaveNG)
-            {
-                HImage hImage = Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage();
-                if (!Directory.Exists(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd")))
-                    Directory.CreateDirectory(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd"));
-                hImage.WriteImage("bmp", new HTuple(0), new HTuple(Variables.SavePath + "NG\\" +
-                    DateTime.Now.ToString("yyyy-MM-dd") + "\\" + DateTime.Now.ToString("HH-mm-ss-ffff") + ".bmp"));
-
-                runResult.BoolResult = resultBool;
-                runResult.NGImagePath = Variables.SavePath + "NG\\" +
-                    DateTime.Now.ToString("yyyy-MM-dd") + "\\" + DateTime.Now.ToString("HH-mm-ss-ffff") + ".bmp";
-                return runResult;
-            }
-            else
-            {
-                runResult.BoolResult = resultBool;
-                runResult.NGImagePath = "";
-                return runResult;
-            }
+            runResult.BoolResult = resultBool;
+            runResult.NGImagePath = "";
+            return runResult;
         }
     }
 }

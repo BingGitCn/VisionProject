@@ -3,12 +3,14 @@ using BingLibrary.Vision;
 using HalconDotNet;
 using Prism.Commands;
 using Prism.Mvvm;
+using Prism.Regions;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
+using VisionProject.RunTools;
 
 namespace VisionProject.ViewModels
 {
@@ -34,41 +36,86 @@ namespace VisionProject.ViewModels
 
         private void ExecuteDoSwitchTab()
         {
+            try
+            {
+                var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
+                var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
+                var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn1", 0.0);
+                var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn2", 0.0);
+                if (row1 + row2 == 0)
+                {
+                    image = originalImage.CopyImage();
+                }
+                else
+                {
+                    image = originalImage.CropRectangle1(row1, col1, row2, col2);
+                }
+                resultImage = image.CopyImage();
+            }
+            catch { }
+
             if (oldTabIndex != TabIndex)
             {
                 oldTabIndex = TabIndex;
                 if (TabIndex == 0)
-                { }
+                {
+                    try
+                    {
+                        string imagePath = "";
+                        imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+
+                        image = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
+
+                        imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+
+                        originalImage = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
+
+                        Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                        Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+                        Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(image.CopyImage());
+                        Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
+                        Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                    }
+                    catch { }
+                }
                 else if (TabIndex == 1)
                 {
-                    ExecuteModelOperate("trans");
+                    if (IsTrans)
+                        ExecuteModelOperate("trans");
                 }
                 else if (TabIndex == 2)
                 {
-                    ExecuteModelOperate("trans");
+                    if (IsTrans)
+                        ExecuteModelOperate("trans");
                     image?.Dispose();
                     image = resultImage.CopyImage();
-                    runPreEnhance();
+                    if (IsPreEnhance)
+                        runPreEnhance();
                 }
                 else if (TabIndex == 3)
                 {
-                    ExecuteModelOperate("trans");
+                    if (isTrans)
+                        ExecuteModelOperate("trans");
                     image?.Dispose();
                     image = resultImage.CopyImage();
-                    runPreEnhance();
+                    if (IsPreEnhance)
+                        runPreEnhance();
                     image?.Dispose();
                     image = resultImage.CopyImage();
+
                     runGray();
                 }
                 else if (TabIndex == 4)
                 {
-                    ExecuteModelOperate("trans");
-                    image?.Dispose();
-                    image = resultImage.CopyImage();
-                    runPreEnhance();
-                    image?.Dispose();
-                    image = resultImage.CopyImage();
-                    runGray();
+                    //if (IsTrans)
+                    //    ExecuteModelOperate("trans");
+                    //image?.Dispose();
+                    //image = resultImage.CopyImage();
+                    //if (IsPreEnhance)
+                    //    runPreEnhance();
+                    //image?.Dispose();
+                    //image = resultImage.CopyImage();
+                    //runGray();
                 }
             }
         }
@@ -241,24 +288,20 @@ namespace VisionProject.ViewModels
                         var col02 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn2", 0.0);
 
                         if ((row01 + row02) == 0)
-                        { }
+                            image = originalImage.CopyImage();
                         else
-                        {
                             image = originalImage.CropRectangle1(row01, col01, row02, col02);
-                            string imagePath = "";
-                            imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
-                            image.WriteImage("bmp", 0, Variables.ProjectImagesPath + imagePath + ".bmp");
 
-                            imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
-                            originalImage.WriteImage("bmp", 0, Variables.ProjectImagesPath + imagePath + ".bmp");
+                        string imagePath = "";
+                        imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                        image.WriteImage("bmp", 0, Variables.ProjectImagesPath + imagePath + ".bmp");
 
-                            //Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ROIImage", image);
-                            //Variables.CurrentProgramData.Parameters.BingAddOrUpdate("OriginalImage", originalImage);
+                        imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                        originalImage.WriteImage("bmp", 0, Variables.ProjectImagesPath + imagePath + ".bmp");
 
-                            Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(image.CopyImage());
-                            Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
-                            Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
-                        }
+                        Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(image.CopyImage());
+                        Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                        Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
                     }
 
                     break;
@@ -726,7 +769,7 @@ namespace VisionProject.ViewModels
 
         #region 二值处理
 
-        private bool isGray;
+        private bool isGray = true;
 
         public bool IsGray
         {
@@ -827,6 +870,7 @@ namespace VisionProject.ViewModels
             resultRegion.GenEmptyRegion();
             try
             {
+                IsGray = true;
                 if (IsGray)
                 {
                     if (GrayModeIndex == 0)
@@ -1026,7 +1070,7 @@ namespace VisionProject.ViewModels
 
             try
             {
-                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsGray", IsGray);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsGray", true);
                 Variables.CurrentProgramData.Parameters.BingAddOrUpdate("GrayModeIndex", GrayModeIndex);
 
                 Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueS1", ValueS1);
@@ -1342,47 +1386,104 @@ namespace VisionProject.ViewModels
 
         private void ExecuteInspectROIOperate(string parameter)
         {
+            Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = true;
             Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.margin;
             NotDrawIng = false;
             try
             {
-                var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow" + parameter + "1", 0.0);
-                var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow" + parameter + "2", 0.0);
-                var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn" + parameter + "1", 0.0);
-                var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn" + parameter + "2", 0.0);
-
-                if ((row1 + row2) == 0)
+                switch (parameter)
                 {
-                    Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = true;
+                    case "0":
+                        try
+                        {
+                            var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow" + parameter + "1", 0.0);
+                            var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow" + parameter + "2", 0.0);
+                            var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn" + parameter + "1", 0.0);
+                            var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn" + parameter + "2", 0.0);
 
-                    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(HalconColors.橙色.ToDescription());
-                    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1(out row1, out col1, out row2, out col2);
+                            if ((row1 + row2) == 0)
+                            {
+                                Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = true;
 
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "1", row1);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "2", row2);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "1", col1);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "2", col2);
+                                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(HalconColors.橙色.ToDescription());
+                                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1(out row1, out col1, out row2, out col2);
 
-                    Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
-                    Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
-                }
-                else
-                {
-                    Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = true;
-                    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(HalconColors.橙色.ToDescription());
-                    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1Mod(row1, col1, row2, col2, out row1, out col1, out row2, out col2);
+                                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "1", row1);
+                                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "2", row2);
+                                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "1", col1);
+                                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "2", col2);
 
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "1", row1);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "2", row2);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "1", col1);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "2", col2);
+                                Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                                Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
+                            }
+                            else
+                            {
+                                Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = true;
+                                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(HalconColors.橙色.ToDescription());
+                                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1Mod(row1, col1, row2, col2, out row1, out col1, out row2, out col2);
 
-                    Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
-                    Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
+                                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "1", row1);
+                                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIRow" + parameter + "2", row2);
+                                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "1", col1);
+                                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectROIColumn" + parameter + "2", col2);
+
+                                Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                                Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
+                            }
+                        }
+                        catch { }
+
+                        break;
+
+                    case "1":
+                        {
+                            var defaultRegion = new HRegion();
+                            defaultRegion.GenEmptyRegion();
+
+                            var regionPath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRegion", Variables.ProjectObjectPath + Guid.NewGuid().ToString() + ".reg").ToString();
+                            if (File.Exists(regionPath))
+                                defaultRegion.ReadRegion(regionPath);
+
+                            Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                            Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(defaultRegion);
+                            Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                            var tempRegion = Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRegion();
+                            defaultRegion = defaultRegion.Union2(tempRegion);
+                            Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                            Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(defaultRegion);
+                            Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+
+                            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectRegion", regionPath);
+                            defaultRegion.WriteRegion(regionPath);
+                        }
+                        break;
+
+                    case "2":
+                        {
+                            var defaultRegion = new HRegion();
+                            defaultRegion.GenEmptyRegion();
+                            var regionPath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRegion", Variables.ProjectObjectPath + Guid.NewGuid().ToString() + ".reg").ToString();
+                            if (File.Exists(regionPath))
+                                defaultRegion.ReadRegion(regionPath);
+
+                            Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                            Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(defaultRegion);
+                            Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                            var tempRegion = Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRegion();
+                            defaultRegion = defaultRegion.Difference(tempRegion);
+                            Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                            Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(defaultRegion);
+                            Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+
+                            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectRegion", regionPath);
+                            defaultRegion.WriteRegion(regionPath);
+                        }
+
+                        break;
                 }
             }
             catch { }
-
+            Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
             Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.fill;
             Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
             NotDrawIng = true;
@@ -1459,46 +1560,72 @@ namespace VisionProject.ViewModels
         {
             try
             {
+                var rst = Function_MatchTool.Run(originalImage, Variables.CurrentProgramData);
                 switch (parameter)
                 {
                     case "0":
-
-                        var nccModel = (HNCCModel)Variables.CurrentProgramData.Parameters.BingGetOrAdd("NccModel", null);
-                        HTuple nccModelRow = new HTuple(); HTuple nccModelCol = new HTuple(); HTuple nccModelAngle = new HTuple(); HTuple nccModelScore = new HTuple();
-                        resultImage.FindNccModel(nccModel, -0.39, 0.79, 0.5, 1, 0.5, "true", 3,
-                            out nccModelRow, out nccModelCol, out nccModelAngle, out nccModelScore);
-
-                        var row01 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow01", 0.0);
-                        var row02 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow02", 0.0);
-                        var col01 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn01", 0.0);
-                        var col02 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn02", 0.0);
-
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DispRectangle1(row01, col01, row02, col02);
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("fill");
-
-                        CurrentNCCScore = nccModelScore.D.ToString("f3");
+                        CurrentNCCScore = rst.MessageResult;
                         break;
 
                     case "1":
-
-                        var row11 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow11", 0.0);
-                        var row12 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow12", 0.0);
-                        var col11 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn11", 0.0);
-                        var col12 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn12", 0.0);
-                        var region = new HRegion(row11, col11, row12, col12).Intersection(resultRegion);
-
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DispRectangle1(row11, col11, row12, col12);
-                        Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("fill");
-                        CurrentArea = region.Area.D.ToString();
-
+                        CurrentArea = rst.MessageResult;
                         break;
                 }
+                var row1 = (int)((double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0));
+                var col1 = (int)((double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn1", 0.0));
+                var region = rst.RunRegion;
+                Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
+                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
+                Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(region);
+                Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
             }
             catch { }
+
+            //try
+            //{
+            //    switch (parameter)
+            //    {
+            //        case "0":
+
+            //            var nccModel = (HNCCModel)Variables.CurrentProgramData.Parameters.BingGetOrAdd("NccModel", null);
+            //            HTuple nccModelRow = new HTuple(); HTuple nccModelCol = new HTuple(); HTuple nccModelAngle = new HTuple(); HTuple nccModelScore = new HTuple();
+            //            resultImage.FindNccModel(nccModel, -0.39, 0.79, 0.5, 1, 0.5, "true", 3,
+            //                out nccModelRow, out nccModelCol, out nccModelAngle, out nccModelScore);
+
+            //            var row01 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow01", 0.0);
+            //            var row02 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow02", 0.0);
+            //            var col01 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn01", 0.0);
+            //            var col02 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn02", 0.0);
+
+            //            Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
+            //            Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
+            //            Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DispRectangle1(row01, col01, row02, col02);
+            //            Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("fill");
+
+            //            CurrentNCCScore = nccModelScore.D.ToString("f3");
+            //            break;
+
+            //        case "1":
+            //            var defaultRegion = new HRegion();
+            //            defaultRegion.GenEmptyRegion();
+
+            //            var inspectRegionPath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRegion", Variables.ProjectObjectPath + Guid.NewGuid().ToString() + ".reg").ToString();
+            //            if (File.Exists(inspectRegionPath))
+            //                defaultRegion.ReadRegion(inspectRegionPath);
+            //            var region = defaultRegion.Intersection(resultRegion);
+
+            //            Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
+            //            Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
+            //            Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DispRegion(region);
+            //            Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("fill");
+            //            CurrentArea = region.Area.D.ToString();
+
+            //            break;
+            //    }
+            //}
+            //catch { }
         }
 
         private DelegateCommand<string> _save;
@@ -1518,8 +1645,8 @@ namespace VisionProject.ViewModels
 
                 case "1":
 
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NCCScore", ResultScoreMin);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NCCScore", ResultScoreMax);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ResultScoreMin", ResultScoreMin);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ResultScoreMax", ResultScoreMax);
                     Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectIndex", InspectIndex);
 
                     break;
@@ -1529,25 +1656,25 @@ namespace VisionProject.ViewModels
             }
         }
 
-        private string _resultScoreMin;
+        private double _resultScoreMin;
 
-        public string ResultScoreMin
+        public double ResultScoreMin
         {
             get { return _resultScoreMin; }
             set { SetProperty(ref _resultScoreMin, value); }
         }
 
-        private string _resultScoreMax;
+        private double _resultScoreMax;
 
-        public string ResultScoreMax
+        public double ResultScoreMax
         {
             get { return _resultScoreMax; }
             set { SetProperty(ref _resultScoreMax, value); }
         }
 
-        private string _nCCScore;
+        private double _nCCScore;
 
-        public string NCCScore
+        public double NCCScore
         {
             get { return _nCCScore; }
             set { SetProperty(ref _nCCScore, value); }
@@ -1602,7 +1729,7 @@ namespace VisionProject.ViewModels
             ContrastValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ContrastValue", 128.0);
             GammaValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("GammaValue", 1.0);
 
-            IsGray = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsGray", false);
+            IsGray = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsGray", true);
             IsSaveNG = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsSaveNG", false);
 
             GrayModeIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("GrayModeIndex", 0).ToString());
@@ -1649,27 +1776,31 @@ namespace VisionProject.ViewModels
             //}
             try
             {
-                NCCScore = (Variables.CurrentProgramData.Parameters.BingGetOrAdd("NCCScore", 100).ToString());
-                ResultScoreMin = (Variables.CurrentProgramData.Parameters.BingGetOrAdd("ResultScoreMin", 100).ToString());
-                ResultScoreMax = (Variables.CurrentProgramData.Parameters.BingGetOrAdd("ResultScoreMax", 100).ToString());
+                NCCScore = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("NCCScore", 0.0);
+                ResultScoreMin = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ResultScoreMin", 100);
+                ResultScoreMax = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ResultScoreMax", 100);
             }
             catch { }
-            try
-            {
-                if (!originalImage.IsInitialized())
-                {
-                    string imagePath = "";
-                    imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+            //try
+            //{
+            //    if (!originalImage.IsInitialized())
+            //    {
+            //        string imagePath = "";
+            //        imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
 
-                    image = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
-                }
+            //        image = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
 
-                Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
-                Variables.ImageWindowDataForFunction.ROICtrl.Clear();
-                Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(image);
-                Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
-            }
-            catch { }
+            //        imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+
+            //        originalImage = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
+            //    }
+
+            //    Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+            //    Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+            //    Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(image);
+            //    Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+            //}
+            //catch { }
 
             InspectIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectIndex", 0).ToString());
 

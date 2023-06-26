@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Xml;
 using VisionProject.GlobalVars;
 using VisionProject.ViewModels;
 using static VisionProject.ViewModels.Function_BlobViewModel;
@@ -61,7 +62,7 @@ namespace VisionProject.RunTools
             var InspectROIRow1 = (double)programData.Parameters.BingGetOrAdd("InspectROIRow1", 0.0);
             var InspectROIRow2 = (double)programData.Parameters.BingGetOrAdd("InspectROIRow2", 0.0);
             var InspectROIColumn1 = (double)programData.Parameters.BingGetOrAdd("InspectROIColumn1", 0.0);
-            var InspectROIColumn12 = (double)programData.Parameters.BingGetOrAdd("InspectROIColumn12", 0.0);
+            var InspectROIColumn12 = (double)programData.Parameters.BingGetOrAdd("InspectROIColumn2", 0.0);
             var MinNum = (double)programData.Parameters.BingGetOrAdd("MinNum", 0.0);
             var MaxNum = (double)programData.Parameters.BingGetOrAdd("MaxNum", 0.0);
 
@@ -111,25 +112,24 @@ namespace VisionProject.RunTools
                         modelImage = modelImage.GammaImage(TransGammaValue, 0, 0, 255.0, "true");
                     }
                     catch { modelImage = image.CopyImage(); }
-                }
+                    HTuple modelScore = new HTuple();
+                    HTuple row = new HTuple(), col = new HTuple(), angle = new HTuple();
+                    HHomMat2D hHomMat2D = new HHomMat2D();
+                    var modelSM = (HShapeModel)programData.Parameters.BingGetOrAdd("Model", null);
+                    var modelRow = (HTuple)programData.Parameters.BingGetOrAdd("ModelRow", new HTuple(0));
+                    var modelCol = (HTuple)programData.Parameters.BingGetOrAdd("ModelCol", new HTuple(0));
+                    var modelAngle = (HTuple)programData.Parameters.BingGetOrAdd("ModelAngle", new HTuple(0));
+                    //搜索06101143
+                    try
+                    {
+                        modelImage.FindShapeModel(modelSM, -0.39, 0.79, 0.5, 1, 0.5, "least_squares", 3, 0.5,
+                          out row, out col, out angle, out modelScore);
+                    }
+                    catch { }
 
-                HTuple modelScore = new HTuple();
-                HTuple row = new HTuple(), col = new HTuple(), angle = new HTuple();
-                HHomMat2D hHomMat2D = new HHomMat2D();
-                var modelSM = (HShapeModel)programData.Parameters.BingGetOrAdd("Model", null);
-                var modelRow = (HTuple)programData.Parameters.BingGetOrAdd("ModelRow", new HTuple(0));
-                var modelCol = (HTuple)programData.Parameters.BingGetOrAdd("ModelCol", new HTuple(0));
-                var modelAngle = (HTuple)programData.Parameters.BingGetOrAdd("ModelAngle", new HTuple(0));
-                //搜索06101143
-                try
-                {
-                    modelImage.FindShapeModel(modelSM, -0.39, 0.79, 0.5, 1, 0.5, "least_squares", 3, 0.5,
-                      out row, out col, out angle, out modelScore);
+                    hHomMat2D.VectorAngleToRigid(row, col, angle, modelRow, modelCol, modelAngle);
+                    image = image.AffineTransImage(hHomMat2D, "constant", "false");
                 }
-                catch { }
-
-                hHomMat2D.VectorAngleToRigid(row, col, angle, modelRow, modelCol, modelAngle);
-                image = image.AffineTransImage(hHomMat2D, "constant", "false");
             }
             catch { }
 
@@ -568,42 +568,37 @@ namespace VisionProject.RunTools
                 }
             }
             catch { }
-
+            RunResult runResult = new RunResult();
             //判定
             try
             {
-                var region = new HRegion(InspectROIRow1, InspectROIColumn1, InspectROIRow2, InspectROIColumn12).Intersection(resultRegion);
-                if (InspectROIRow1 + InspectROIRow2 == 0)
-                    region = resultRegion;
+                var defaultRegion = new HRegion();
+                defaultRegion.GenEmptyRegion();
 
+                var inspectRegionPath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRegion", Variables.ProjectObjectPath + Guid.NewGuid().ToString() + ".reg").ToString();
+                if (File.Exists(inspectRegionPath))
+                    defaultRegion.ReadRegion(inspectRegionPath);
+
+                if (defaultRegion.Area == 0)
+                    defaultRegion = resultRegion;
+
+                var region = defaultRegion.Intersection(resultRegion);
                 num = region.Connection().CountObj();
                 if (num < MinNum || num > MaxNum)
                     resultBool = false;
                 else { resultBool = true; }
-            }
-            catch { resultBool = false; }
 
-            RunResult runResult = new RunResult();
-            if (resultBool == false && IsSaveNG)
-            {
-                // todo 这里不是ImageWindowDataForFunction窗口，正常运行是不会显示到该窗口
-                HImage hImage = Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage();
-                if (!Directory.Exists(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd")))
-                    Directory.CreateDirectory(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd"));
-                hImage.WriteImage("bmp", new HTuple(0), new HTuple(Variables.SavePath + "NG\\" +
-                    DateTime.Now.ToString("yyyy-MM-dd") + "\\" + DateTime.Now.ToString("HH-mm-ss-ffff") + ".bmp"));
+                runResult.RunRegion = region.Union1();
 
-                runResult.BoolResult = resultBool;
-                runResult.NGImagePath = Variables.SavePath + "NG\\" +
-                    DateTime.Now.ToString("yyyy-MM-dd") + "\\" + DateTime.Now.ToString("HH-mm-ss-ffff") + ".bmp";
-                return runResult;
+                if (row1 + row2 != 0)
+                    runResult.RegionResult = new HRegion(row1, col1, row2, col2);
+                runResult.MessageResult = "个数：" + num;
             }
-            else
-            {
-                runResult.BoolResult = resultBool;
-                runResult.NGImagePath = "";
-                return runResult;
-            }
+            catch (Exception ex) { resultBool = false; runResult.MessageResult = "报错：" + ex.Message; }
+
+            runResult.BoolResult = resultBool;
+            runResult.NGImagePath = "";
+            return runResult;
         }
     }
 }

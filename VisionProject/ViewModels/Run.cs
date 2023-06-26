@@ -250,7 +250,7 @@ namespace VisionProject.ViewModels
                                     {
                                         Variables.HCPLC0.WriteM(2568, new bool[] { true });
                                     }
-                                    if (run1Results[1].IdentifyResult.Length < 15)
+                                    if (run1Results[1].MessageResult.Length < 15)
                                     {
                                         //扫码失败
                                         Variables.HCPLC0.WriteM(2557, new bool[] { true });

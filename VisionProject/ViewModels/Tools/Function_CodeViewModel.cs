@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
+using VisionProject.RunTools;
 
 namespace VisionProject.ViewModels
 {
@@ -37,10 +38,29 @@ namespace VisionProject.ViewModels
             {
                 oldTabIndex = TabIndex;
                 if (TabIndex == 0)
-                { }
+                {
+                    try
+                    {
+                        string imagePath = "";
+                        imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+
+                        image = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
+
+                        imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+
+                        originalImage = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
+
+                        Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                        Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+                        Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(image.CopyImage());
+                        Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
+                        Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                    }
+                    catch { }
+                }
                 else if (TabIndex == 1)
                 {
-                    runCode();
+                    // runCode();
                 }
             }
         }
@@ -277,7 +297,24 @@ namespace VisionProject.ViewModels
 
         private void ExecuteTestRun()
         {
-            runCode();
+            try
+            {
+                var rst = Function_CodeTool.Run(originalImage, Variables.CurrentProgramData);
+
+                var row1 = (int)((double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0));
+                var col1 = (int)((double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn1", 0.0));
+                IdentifyResult = rst.MessageResult;
+                var region = rst.RunRegion;
+                Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
+                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
+                Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(region);
+                Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+            }
+            catch { }
+
+            // runCode();
         }
 
         private void runCode()
@@ -288,7 +325,20 @@ namespace VisionProject.ViewModels
             HRegion hRegion = new HRegion();
             try
             {
-                image = originalImage;
+                var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
+                var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
+                var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn1", 0.0);
+                var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn2", 0.0);
+
+                if ((row1 + row2) == 0)
+                {
+                    image = originalImage;
+                }
+                else
+                {
+                    image = originalImage.CropRectangle1(row1, col1, row2, col2);
+                }
+
                 if (ColorIndex == 1)
                     image = image.InvertImage();
 

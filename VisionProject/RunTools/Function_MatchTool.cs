@@ -50,16 +50,21 @@ namespace VisionProject.RunTools
             var InspectROIRow2 = (double)programData.Parameters.BingGetOrAdd("InspectROIRow2", 0.0);
             var InspectROIColumn1 = (double)programData.Parameters.BingGetOrAdd("InspectROIColumn1", 0.0);
             var InspectROIColumn12 = (double)programData.Parameters.BingGetOrAdd("InspectROIColumn12", 0.0);
+            //programData.Parameters.BingAddOrUpdate("NCCScore", 1.0);
+            //programData.Parameters.BingAddOrUpdate("ResultScoreMin", 0.1);
+            //programData.Parameters.BingAddOrUpdate("ResultScoreMax", 1.0);
             var NCCScore = (double)programData.Parameters.BingGetOrAdd("NCCScore", 0.0);
             var ResultScoreMin = (double)programData.Parameters.BingGetOrAdd("ResultScoreMin", 0.0);
             var ResultScoreMax = (double)programData.Parameters.BingGetOrAdd("ResultScoreMax", 0.0);
-            var MinNum = (double)programData.Parameters.BingGetOrAdd("MinNum", 0.0);
-            var MaxNum = (double)programData.Parameters.BingGetOrAdd("MaxNum", 0.0);
+            //var MinNum = (double)programData.Parameters.BingGetOrAdd("MinNum", 0.0);
+            //var MaxNum = (double)programData.Parameters.BingGetOrAdd("MaxNum", 0.0);
             var InspectIndex = int.Parse(programData.Parameters.BingGetOrAdd("InspectIndex", 0).ToString());
 
             #endregion 参数获得
 
             // 照片传进来
+            HImage runImage = new HImage();
+
             HImage modelImage = new HImage();
             HRegion resultRegion = new HRegion();
             bool resultBool = true;
@@ -68,7 +73,8 @@ namespace VisionProject.RunTools
             {
                 //image = ((HImage)programData.Parameters.BingGetOrAdd("ROIImage", new HImage())).CopyImage();
                 if (row1 + row2 != 0)
-                    image = image.CropRectangle1(row1, col1, row2, col2);
+                    runImage = image.CropRectangle1(row1, col1, row2, col2);
+                else runImage = image.CopyImage();
             }
             catch { }
 
@@ -79,8 +85,8 @@ namespace VisionProject.RunTools
                 {
                     try
                     {
-                        //modelImage = image.CopyImage();
-                        //modelImage = modelImage.AddImage(modelImage, 0.5, TransBrightnessValue - 128);
+                        modelImage = runImage.CopyImage();
+                        modelImage = modelImage.AddImage(modelImage, 0.5, TransBrightnessValue - 128);
 
                         if (ContrastValue >= 128)
                         {
@@ -103,25 +109,25 @@ namespace VisionProject.RunTools
                         modelImage = modelImage.GammaImage(TransGammaValue, 0, 0, 255.0, "true");
                     }
                     catch { modelImage = image.CopyImage(); }
-                }
 
-                HTuple modelScore = new HTuple();
-                HTuple row = new HTuple(), col = new HTuple(), angle = new HTuple();
-                HHomMat2D hHomMat2D = new HHomMat2D();
-                var modelSM = (HShapeModel)programData.Parameters.BingGetOrAdd("Model", null);
-                var modelRow = (HTuple)programData.Parameters.BingGetOrAdd("ModelRow", new HTuple(0));
-                var modelCol = (HTuple)programData.Parameters.BingGetOrAdd("ModelCol", new HTuple(0));
-                var modelAngle = (HTuple)programData.Parameters.BingGetOrAdd("ModelAngle", new HTuple(0));
-                //搜索06101143
-                try
-                {
-                    modelImage.FindShapeModel(modelSM, -0.39, 0.79, 0.5, 1, 0.5, "least_squares", 3, 0.5,
-                      out row, out col, out angle, out modelScore);
-                }
-                catch { }
+                    HTuple modelScore = new HTuple();
+                    HTuple row = new HTuple(), col = new HTuple(), angle = new HTuple();
+                    HHomMat2D hHomMat2D = new HHomMat2D();
+                    var modelSM = (HShapeModel)programData.Parameters.BingGetOrAdd("Model", null);
+                    var modelRow = (HTuple)programData.Parameters.BingGetOrAdd("ModelRow", new HTuple(0));
+                    var modelCol = (HTuple)programData.Parameters.BingGetOrAdd("ModelCol", new HTuple(0));
+                    var modelAngle = (HTuple)programData.Parameters.BingGetOrAdd("ModelAngle", new HTuple(0));
+                    //搜索06101143
+                    try
+                    {
+                        modelImage.FindShapeModel(modelSM, -0.39, 0.79, 0.5, 1, 0.5, "least_squares", 3, 0.5,
+                          out row, out col, out angle, out modelScore);
+                    }
+                    catch { }
 
-                hHomMat2D.VectorAngleToRigid(row, col, angle, modelRow, modelCol, modelAngle);
-                image = image.AffineTransImage(hHomMat2D, "constant", "false");
+                    hHomMat2D.VectorAngleToRigid(row, col, angle, modelRow, modelCol, modelAngle);
+                    runImage = runImage.AffineTransImage(hHomMat2D, "constant", "false");
+                }
             }
             catch { }
 
@@ -131,7 +137,7 @@ namespace VisionProject.RunTools
                 try
                 {
                     {
-                        image = image.AddImage(image, 0.5, BrightnessValue - 128);
+                        runImage = runImage.AddImage(runImage, 0.5, BrightnessValue - 128);
                         if (ContrastValue >= 128)
                         {
                             double max = 383.0 - ContrastValue;
@@ -139,7 +145,7 @@ namespace VisionProject.RunTools
 
                             double mult = 255.0 / (max - min);
                             double add = -mult * min;
-                            image = image.ScaleImage(mult, add);
+                            runImage = runImage.ScaleImage(mult, add);
                         }
                         else
                         {
@@ -148,14 +154,13 @@ namespace VisionProject.RunTools
 
                             double mult = (2 * ContrastValue - 1) / 255.0;
                             double add = 128 - ContrastValue;
-                            image = image.ScaleImage(mult, add);
+                            runImage = runImage.ScaleImage(mult, add);
                         }
-                        image = image.GammaImage(GammaValue, 0, 0, 255.0, "true");
+                        runImage = runImage.GammaImage(GammaValue, 0, 0, 255.0, "true");
                     }
                 }
                 catch
                 {
-                    image = image.CopyImage();
                 }
             }
 
@@ -167,66 +172,66 @@ namespace VisionProject.RunTools
                 {
                     if (GrayModeIndex == 0)
                     {
-                        if (image.CountChannels() == 1)
+                        if (runImage.CountChannels() == 1)
                         {
                             if (!IsReverse4)
                             {
-                                resultRegion = image.Threshold((double)ValueS4, (double)ValueE4);
+                                resultRegion = runImage.Threshold((double)ValueS4, (double)ValueE4);
                             }
                             else
                             {
-                                resultRegion = image.Threshold((new HTuple(0)).TupleConcat(new HTuple(ValueE4)), (new HTuple(ValueS4)).TupleConcat(255));
+                                resultRegion = runImage.Threshold((new HTuple(0)).TupleConcat(new HTuple(ValueE4)), (new HTuple(ValueS4)).TupleConcat(255));
                                 resultRegion = resultRegion.Union1();
                             }
                         }
                         else
                         {
                             HImage image1, image2, image3;
-                            image1 = image.Decompose3(out image2, out image3);
+                            image1 = runImage.Decompose3(out image2, out image3);
                             var rstImage1 = image1.AddImage(image1, ValueE1 * 0.5 / 100.0, 0);
                             var rstImage2 = image2.AddImage(image2, ValueE2 * 0.5 / 100.0, 0);
                             var rstImage3 = image3.AddImage(image3, ValueE3 * 0.5 / 100.0, 0);
 
-                            image = rstImage1.AddImage(rstImage2, 1.0, 0);
-                            image = image.AddImage(rstImage3, 1.0, 0);
+                            runImage = rstImage1.AddImage(rstImage2, 1.0, 0);
+                            runImage = runImage.AddImage(rstImage3, 1.0, 0);
 
                             if (IsEnable4)
                             {
                                 if (!IsReverse4)
                                 {
-                                    resultRegion = image.Threshold((double)ValueS4, (double)ValueE4);
+                                    resultRegion = runImage.Threshold((double)ValueS4, (double)ValueE4);
                                 }
                                 else
                                 {
-                                    resultRegion = image.Threshold((new HTuple(0)).TupleConcat(new HTuple(ValueE4)), (new HTuple(ValueS4)).TupleConcat(255));
+                                    resultRegion = runImage.Threshold((new HTuple(0)).TupleConcat(new HTuple(ValueE4)), (new HTuple(ValueS4)).TupleConcat(255));
                                 }
                             }
                         }
                     }
                     else if (GrayModeIndex == 1)
                     {
-                        if (image.CountChannels() == 1)
+                        if (runImage.CountChannels() == 1)
                         {
                             if (!IsReverse4)
                             {
-                                resultRegion = image.Threshold((double)ValueS4, (double)ValueE4);
+                                resultRegion = runImage.Threshold((double)ValueS4, (double)ValueE4);
                             }
                             else
                             {
-                                resultRegion = image.Threshold((new HTuple(0)).TupleConcat(new HTuple(ValueE4)), (new HTuple(ValueS4)).TupleConcat(255));
+                                resultRegion = runImage.Threshold((new HTuple(0)).TupleConcat(new HTuple(ValueE4)), (new HTuple(ValueS4)).TupleConcat(255));
                                 resultRegion = resultRegion.Union1();
                             }
                         }
                         else
                         {
                             HImage image1, image2, image3;
-                            image1 = image.Decompose3(out image2, out image3);
+                            image1 = runImage.Decompose3(out image2, out image3);
 
                             HRegion resultRegion1 = new HRegion(); resultRegion1.GenEmptyRegion();
                             HRegion resultRegion2 = new HRegion(); resultRegion2.GenEmptyRegion();
                             HRegion resultRegion3 = new HRegion(); resultRegion3.GenEmptyRegion();
 
-                            image = image1.Compose3(image2, image3);
+                            runImage = image1.Compose3(image2, image3);
                             if (IsEnable1)
                             {
                                 if (!IsReverse1)
@@ -284,22 +289,22 @@ namespace VisionProject.RunTools
                     }
                     else if (GrayModeIndex == 2)
                     {
-                        if (image.CountChannels() == 1)
+                        if (runImage.CountChannels() == 1)
                         {
                             if (!IsReverse4)
                             {
-                                resultRegion = image.Threshold((double)ValueS4, (double)ValueE4);
+                                resultRegion = runImage.Threshold((double)ValueS4, (double)ValueE4);
                             }
                             else
                             {
-                                resultRegion = image.Threshold((new HTuple(0)).TupleConcat(new HTuple(ValueE4)), (new HTuple(ValueS4)).TupleConcat(255));
+                                resultRegion = runImage.Threshold((new HTuple(0)).TupleConcat(new HTuple(ValueE4)), (new HTuple(ValueS4)).TupleConcat(255));
                                 resultRegion = resultRegion.Union1();
                             }
                         }
                         else
                         {
                             HImage image1, image2, image3;
-                            image1 = image.Decompose3(out image2, out image3);
+                            image1 = runImage.Decompose3(out image2, out image3);
                             HImage tImage1, tImage2, tImage3;
                             tImage1 = image1.TransFromRgb(image2, image3, out tImage2, out tImage3, "hsv");
 
@@ -307,7 +312,7 @@ namespace VisionProject.RunTools
                             HRegion resultRegion2 = new HRegion(); resultRegion2.GenEmptyRegion();
                             HRegion resultRegion3 = new HRegion(); resultRegion3.GenEmptyRegion();
 
-                            image = image1.Compose3(image2, image3);
+                            runImage = image1.Compose3(image2, image3);
 
                             if (!IsReverse1)
                             {
@@ -352,6 +357,7 @@ namespace VisionProject.RunTools
             {
             }
 
+            RunResult runResult = new RunResult();
             //判定
             try
             {
@@ -361,67 +367,43 @@ namespace VisionProject.RunTools
 
                         var nccModel = (HNCCModel)Variables.CurrentProgramData.Parameters.BingGetOrAdd("NccModel", null);
                         HTuple nccModelRow = new HTuple(); HTuple nccModelCol = new HTuple(); HTuple nccModelAngle = new HTuple(); HTuple nccModelScore = new HTuple();
-                        image.FindNccModel(nccModel, -0.39, 0.79, 0.5, 1, 0.5, "true", 3,
+                        runImage.FindNccModel(nccModel, -0.39, 0.79, 0.5, 1, 0.5, "true", 4,
                             out nccModelRow, out nccModelCol, out nccModelAngle, out nccModelScore);
 
-                        //var row01 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow01", 0.0);
-                        //var row02 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow02", 0.0);
-                        //var col01 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn01", 0.0);
-                        //var col02 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn02", 0.0);
-
-                        //Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
-                        //Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
-                        //Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DispRectangle1(row01, col01, row02, col02);
-                        //Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("fill");
-
-                        //var CurrentNCCScore = nccModelScore.D.ToString("f3");
                         if (nccModelScore < NCCScore)
                             resultBool = false;
                         else { resultBool = true; }
-
+                        if (row1 + row2 != 0)
+                            runResult.RegionResult = new HRegion(row1, col1, row2, col2);
+                        runResult.MessageResult = "得分：" + nccModelScore;
                         break;
 
                     case "1":
 
-                        //var row11 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow11", 0.0);
-                        //var row12 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow12", 0.0);
-                        //var col11 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn11", 0.0);
-                        //var col12 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIColumn12", 0.0);
-                        var region = new HRegion(InspectROIRow1, InspectROIColumn1, InspectROIRow2, InspectROIColumn12).Intersection(resultRegion);
+                        var defaultRegion = new HRegion();
+                        defaultRegion.GenEmptyRegion();
 
-                        //Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
-                        //Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
-                        //Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DispRectangle1(row11, col11, row12, col12);
-                        //Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("fill");
+                        var inspectRegionPath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRegion", Variables.ProjectObjectPath + Guid.NewGuid().ToString() + ".reg").ToString();
+                        if (File.Exists(inspectRegionPath))
+                            defaultRegion.ReadRegion(inspectRegionPath);
+                        var region = defaultRegion.Intersection(resultRegion).Union1();
+
                         var CurrentArea = region.Area;
                         if (CurrentArea < ResultScoreMin || CurrentArea > ResultScoreMax)
                             resultBool = false;
                         else { resultBool = true; }
+                        runResult.RunRegion = region;
+                        if (row1 + row2 != 0)
+                            runResult.RegionResult = new HRegion(row1, col1, row2, col2);
+                        runResult.MessageResult = "面积：" + CurrentArea;
+
                         break;
                 }
             }
-            catch { resultBool = false; }
+            catch (Exception ex) { resultBool = false; runResult.MessageResult = "报错：" + ex.Message; }
 
-            RunResult runResult = new RunResult();
-            if (resultBool == false && IsSaveNG)
-            {
-                HImage hImage = Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage();
-                if (!Directory.Exists(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd")))
-                    Directory.CreateDirectory(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd"));
-                hImage.WriteImage("bmp", new HTuple(0), new HTuple(Variables.SavePath + "NG\\" +
-                    DateTime.Now.ToString("yyyy-MM-dd") + "\\" + DateTime.Now.ToString("HH-mm-ss-ffff") + ".bmp"));
-
-                runResult.BoolResult = resultBool;
-                runResult.NGImagePath = Variables.SavePath + "NG\\" +
-                    DateTime.Now.ToString("yyyy-MM-dd") + "\\" + DateTime.Now.ToString("HH-mm-ss-ffff") + ".bmp";
-                return runResult;
-            }
-            else
-            {
-                runResult.BoolResult = resultBool;
-                runResult.NGImagePath = "";
-                return runResult;
-            }
+            runResult.BoolResult = resultBool;
+            return runResult;
         }
     }
 }
