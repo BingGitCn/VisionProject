@@ -3,7 +3,6 @@ using BingLibrary.Vision;
 using HalconDotNet;
 using Prism.Commands;
 using Prism.Mvvm;
-using Prism.Regions;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -62,60 +61,98 @@ namespace VisionProject.ViewModels
                     try
                     {
                         string imagePath = "";
-                        imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
-
-                        image = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
-
+                        //0729del
+                        //imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                        //image = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
+                        //imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
                         imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
 
+                        //originalImage = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
                         originalImage = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
+                        var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
+                        var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
+                        var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn1", 0.0);
+                        var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn2", 0.0);
+                        if (row1 + row2 == 0)
+                        {
+                            image = originalImage.CopyImage();
+                        }
+                        else
+                        {
+                            image = originalImage.CropRectangle1(row1, col1, row2, col2);
+                        }
 
-                        Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
-                        Variables.ImageWindowDataForFunction.ROICtrl.Clear();
                         Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(image.CopyImage());
                         Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
                         Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                        resultImage = image.CopyImage();
                     }
                     catch { }
                 }
                 else if (TabIndex == 1)
                 {
-                    if (IsTrans)
-                        ExecuteModelOperate("trans");
+                    try
+                    {
+                        if (IsTrans)
+                            ExecuteModelOperate("trans");
+                    }
+                    catch { }
                 }
                 else if (TabIndex == 2)
                 {
-                    if (IsTrans)
-                        ExecuteModelOperate("trans");
-                    image?.Dispose();
-                    image = resultImage.CopyImage();
-                    if (IsPreEnhance)
-                        runPreEnhance();
+                    try
+                    {
+                        if (IsTrans)
+                            ExecuteModelOperate("trans");
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        if (IsPreEnhance)
+                        {
+                            preEnhanceAdd();
+                            runPreEnhance();
+                        }
+                    }
+                    catch { }
                 }
                 else if (TabIndex == 3)
                 {
-                    if (isTrans)
-                        ExecuteModelOperate("trans");
-                    image?.Dispose();
-                    image = resultImage.CopyImage();
-                    if (IsPreEnhance)
-                        runPreEnhance();
-                    image?.Dispose();
-                    image = resultImage.CopyImage();
-
-                    runGray();
+                    try
+                    {
+                        if (isTrans)
+                            ExecuteModelOperate("trans");
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        if (IsPreEnhance)
+                        {
+                            preEnhanceAdd();
+                            runPreEnhance();
+                        }
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        grayAdd();
+                        runGray();
+                    }
+                    catch { }
                 }
                 else if (TabIndex == 4)
                 {
-                    //if (IsTrans)
-                    //    ExecuteModelOperate("trans");
-                    //image?.Dispose();
-                    //image = resultImage.CopyImage();
-                    //if (IsPreEnhance)
-                    //    runPreEnhance();
-                    //image?.Dispose();
-                    //image = resultImage.CopyImage();
-                    //runGray();
+                    try
+                    {
+                        if (IsTrans)
+                            ExecuteModelOperate("trans");
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        if (IsPreEnhance)
+                        {
+                            preEnhanceAdd();
+                            runPreEnhance();
+                        }
+                        image?.Dispose();
+                        image = resultImage.CopyImage();
+                        grayAdd();
+                        runGray();
+                    }
+                    catch { }
                 }
             }
         }
@@ -126,13 +163,6 @@ namespace VisionProject.ViewModels
         private HImage image = new HImage();
 
         private HImage resultImage = new HImage();
-        private bool _isSaveNG;
-
-        public bool IsSaveNG
-        {
-            get { return _isSaveNG; }
-            set { SetProperty(ref _isSaveNG, value); }
-        }
 
         private bool notDrawIng = true;
 
@@ -233,6 +263,7 @@ namespace VisionProject.ViewModels
             switch (parameter)
             {
                 case "roiDraw":
+                    ExecuteImageOperate("original");
                     NotDrawIng = false;
                     var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
                     var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
@@ -293,12 +324,27 @@ namespace VisionProject.ViewModels
                             image = originalImage.CropRectangle1(row01, col01, row02, col02);
 
                         string imagePath = "";
-                        imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
-                        image.WriteImage("bmp", 0, Variables.ProjectImagesPath + imagePath + ".bmp");
+
+                        try
+                        {
+                            imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                            if (System.IO.File.Exists(Variables.ProjectImagesPath + imagePath + ".bmp"))
+                                System.IO.File.Delete(Variables.ProjectImagesPath + imagePath + ".bmp");
+                            //0729del
+                            //imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                            //if (System.IO.File.Exists(Variables.ProjectImagesPath + imagePath + ".bmp"))
+                            //    System.IO.File.Delete(Variables.ProjectImagesPath + imagePath + ".bmp");
+                        }
+                        catch { }
+                        //0729del
+                        //imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                        //image.WriteImage("bmp", 0, Variables.ProjectImagesPath + imagePath + ".bmp");
 
                         imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
                         originalImage.WriteImage("bmp", 0, Variables.ProjectImagesPath + imagePath + ".bmp");
 
+                        //Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ROIImage", image);
+                        //Variables.CurrentProgramData.Parameters.BingAddOrUpdate("OriginalImage", originalImage);
                         Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(image.CopyImage());
                         Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
                         Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
@@ -325,16 +371,6 @@ namespace VisionProject.ViewModels
             }
             string fileName = openFileDialog.FileName;
             return fileName;
-        }
-
-        private DelegateCommand _isSaveNGChanged;
-
-        public DelegateCommand IsSaveNGChanged =>
-            _isSaveNGChanged ?? (_isSaveNGChanged = new DelegateCommand(ExecuteIsSaveNGChanged));
-
-        private void ExecuteIsSaveNGChanged()
-        {
-            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsSaveNG", IsSaveNG);
         }
 
         #endregion 图像选择
@@ -419,7 +455,7 @@ namespace VisionProject.ViewModels
             if (!isInitlized)
                 return;
             try
-            {
+            {///0729 疑问，这里的图片初始化是指的什么？
                 if (!originalImage.IsInitialized())
                 {
                     string imagePath = "";
@@ -449,7 +485,7 @@ namespace VisionProject.ViewModels
                 else
                 {
                     modelImage = image.AddImage(image, 0.5, TransBrightnessValue - 128);
-                    if (ContrastValue >= 128)
+                    if (TransContrastValue >= 128)
                     {
                         double max = 383.0 - TransContrastValue;
                         double min = TransContrastValue - 128.0;
@@ -600,9 +636,9 @@ namespace VisionProject.ViewModels
                         Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(rstCon);
                         Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
                         Variables.ShowMessage("查找成功！\r\n" +
-                            "模板行位置：" + row.D.ToString("3f") + "\r\n" +
-                            "模板列位置：" + col.D.ToString("3f") + "\r\n" +
-                            "模板角度：" + (angle.D * 180.0 / Math.PI).ToString("3f") + "\r\n" +
+                            "模板行位置：" + row.D.ToString("N3") + "\r\n" +
+                            "模板列位置：" + col.D.ToString("N3") + "\r\n" +
+                            "模板角度：" + (angle.D * 180.0 / Math.PI).ToString("N3") + "\r\n" +
                             "模板分：" + modelScore.D);
                         break;
 
@@ -617,7 +653,7 @@ namespace VisionProject.ViewModels
                           out row, out col, out angle, out modelScore);
 
                         hHomMat2D.VectorAngleToRigid(row, col, angle, modelRow, modelCol, modelAngle);
-                        resultImage = resultImage.AffineTransImage(hHomMat2D, "constant", "false");
+                        resultImage = image.AffineTransImage(hHomMat2D, "constant", "false");
 
                         Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(resultImage.CopyImage());
                         Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
@@ -633,6 +669,55 @@ namespace VisionProject.ViewModels
 
         #region 预处理
 
+        private void preEnhanceAdd()
+        {
+            BrightnessValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("BrightnessValue", 128.0);
+            ContrastValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ContrastValue", 128.0);
+            GammaValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("GammaValue", 1.0);
+            runPreEnhance();
+        }
+
+        private DelegateCommand _savePreEnhance;
+
+        public DelegateCommand SavePreEnhance =>
+            _savePreEnhance ?? (_savePreEnhance = new DelegateCommand(ExecuteSavePreEnhance));
+
+        private void ExecuteSavePreEnhance()
+        {
+            var rst = Variables.ShowConfirm("是否保存当前设置？");
+            if (!rst)
+            {
+                return;
+            }
+            try
+            {
+                //Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsPreEnhance", IsPreEnhance);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("BrightnessValue", BrightnessValue);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ContrastValue", ContrastValue);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("GammaValue", GammaValue);
+            }
+            catch { }
+        }
+
+        private DelegateCommand _revokePreEnhance;
+
+        public DelegateCommand RevokePreEnhance =>
+            _revokePreEnhance ?? (_revokePreEnhance = new DelegateCommand(ExecuteRevokePreEnhance));
+
+        private void ExecuteRevokePreEnhance()
+        {
+            var rst = Variables.ShowConfirm("是否还原为最近一次保存的设置？");
+            if (!rst)
+            {
+                return;
+            }
+            //IsPreEnhance = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsPreEnhance", false);
+            BrightnessValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("BrightnessValue", 128.0);
+            ContrastValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ContrastValue", 128.0);
+            GammaValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("GammaValue", 1.0);
+            runPreEnhance();
+        }
+
         private DelegateCommand _resetPreEnhance;
 
         public DelegateCommand ResetPreEnhance =>
@@ -640,6 +725,11 @@ namespace VisionProject.ViewModels
 
         private void ExecuteResetPreEnhance()
         {
+            var rst = Variables.ShowConfirm("是否还原为默认设置？");
+            if (!rst)
+            {
+                return;
+            }
             BrightnessValue = 128;
             ContrastValue = 128;
             GammaValue = 1.0;
@@ -708,6 +798,7 @@ namespace VisionProject.ViewModels
         {
             try
             {
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsPreEnhance", IsPreEnhance);
                 runPreEnhance();
             }
             catch { }
@@ -754,15 +845,6 @@ namespace VisionProject.ViewModels
             Variables.ImageWindowDataForFunction.ROICtrl.Clear();
             Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(resultImage);
             Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
-
-            try
-            {
-                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsPreEnhance", IsPreEnhance);
-                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("BrightnessValue", BrightnessValue);
-                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ContrastValue", ContrastValue);
-                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("GammaValue", GammaValue);
-            }
-            catch { }
         }
 
         #endregion 预处理
@@ -777,6 +859,124 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref isGray, value); }
         }
 
+        private DelegateCommand _saveGray;
+
+        public DelegateCommand SaveGray =>
+            _saveGray ?? (_saveGray = new DelegateCommand(ExecuteSaveGray));
+
+        /// <summary>
+        /// 保存过滤
+        /// </summary>
+        private void ExecuteSaveGray()
+        {
+            var rst = Variables.ShowConfirm("是否保存当前设置？");
+            if (!rst)
+            {
+                return;
+            }
+            try
+            {
+                //Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsGray", IsGray);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("GrayModeIndex", GrayModeIndex);
+
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueS1", ValueS1);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueS2", ValueS2);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueS3", ValueS3);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueS4", ValueS4);
+
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueE1", ValueE1);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueE2", ValueE2);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueE3", ValueE3);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueE4", ValueE4);
+
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsEnable1", IsEnable1);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsEnable2", IsEnable2);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsEnable3", IsEnable3);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsEnable4", IsEnable4);
+
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsReverse11", IsReverse1);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsReverse12", IsReverse2);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsReverse13", IsReverse3);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsReverse14", IsReverse4);
+
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueS1" + GrayModeIndex.ToString(), ValueS1);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueS2" + GrayModeIndex.ToString(), ValueS2);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueS3" + GrayModeIndex.ToString(), ValueS3);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueS4" + GrayModeIndex.ToString(), ValueS4);
+
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueE1" + GrayModeIndex.ToString(), ValueE1);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueE2" + GrayModeIndex.ToString(), ValueE2);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueE3" + GrayModeIndex.ToString(), ValueE3);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueE4" + GrayModeIndex.ToString(), ValueE4);
+
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsEnable1" + GrayModeIndex.ToString(), IsEnable1);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsEnable2" + GrayModeIndex.ToString(), IsEnable2);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsEnable3" + GrayModeIndex.ToString(), IsEnable3);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsEnable4" + GrayModeIndex.ToString(), IsEnable4);
+
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsReverse11" + GrayModeIndex.ToString(), IsReverse1);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsReverse12" + GrayModeIndex.ToString(), IsReverse2);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsReverse13" + GrayModeIndex.ToString(), IsReverse3);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsReverse14" + GrayModeIndex.ToString(), IsReverse4);
+            }
+            catch { }
+        }
+
+        private DelegateCommand _revokeGray;
+
+        public DelegateCommand RevokeGray =>
+            _revokeGray ?? (_revokeGray = new DelegateCommand(ExecuteRevokeGray));
+
+        /// <summary>
+        /// 撤销过滤
+        /// </summary>
+        private void ExecuteRevokeGray()
+        {
+            var rst = Variables.ShowConfirm("是否还原为最近一次保存的设置？");
+            if (!rst)
+            {
+                return;
+            }
+            if (GrayModeIndex == 0)
+            {
+                Minimum1 = 0; Maximum1 = 100;
+                Minimum2 = 0; Maximum2 = 100;
+                Minimum3 = 0; Maximum3 = 100;
+                Minimum4 = 0; Maximum4 = 255;
+            }
+            else if (GrayModeIndex == 1)
+            {
+                Minimum1 = 0; Maximum1 = 255;
+                Minimum2 = 0; Maximum2 = 255;
+                Minimum3 = 0; Maximum3 = 255;
+                Minimum4 = 0; Maximum4 = 255;
+            }
+            else if (GrayModeIndex == 2)
+            {
+                Minimum1 = 0; Maximum1 = 255;
+                Minimum2 = 0; Maximum2 = 255;
+                Minimum3 = 0; Maximum3 = 255;
+                Minimum4 = 0; Maximum4 = 255;
+            }
+            ValueS1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS1" + GrayModeIndex.ToString(), 0).ToString());
+            ValueS2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS2" + GrayModeIndex.ToString(), 0).ToString());
+            ValueS3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS3" + GrayModeIndex.ToString(), 0).ToString());
+            ValueS4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS4" + GrayModeIndex.ToString(), 0).ToString());
+            ValueE1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE1" + GrayModeIndex.ToString(), 0).ToString());
+            ValueE2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE2" + GrayModeIndex.ToString(), 0).ToString());
+            ValueE3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE3" + GrayModeIndex.ToString(), 0).ToString());
+            ValueE4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE4" + GrayModeIndex.ToString(), 0).ToString());
+            IsEnable1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable1" + GrayModeIndex.ToString(), false);
+            IsEnable2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable2" + GrayModeIndex.ToString(), false);
+            IsEnable3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable3" + GrayModeIndex.ToString(), false);
+            IsEnable4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable4" + GrayModeIndex.ToString(), false);
+            IsReverse1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse11" + GrayModeIndex.ToString(), false);
+            IsReverse2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse12" + GrayModeIndex.ToString(), false);
+            IsReverse3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse13" + GrayModeIndex.ToString(), false);
+            IsReverse4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse14" + GrayModeIndex.ToString(), false);
+            runGray();
+        }
+
         private DelegateCommand _resetGray;
 
         public DelegateCommand ResetGray =>
@@ -784,6 +984,11 @@ namespace VisionProject.ViewModels
 
         private void ExecuteResetGray()
         {
+            var rst = Variables.ShowConfirm("是否还原为默认设置？");
+            if (!rst)
+            {
+                return;
+            }
             if (GrayModeIndex == 0)
             {
                 Minimum1 = 0; Maximum1 = 100;
@@ -857,6 +1062,48 @@ namespace VisionProject.ViewModels
                 IsReverse1 = false; IsReverse2 = false; IsReverse3 = false; IsReverse4 = false;
             }
             runGray();
+        }
+
+        private void grayAdd()
+        {
+            GrayModeIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("GrayModeIndex", 0).ToString());
+            if (GrayModeIndex == 0)
+            {
+                Minimum1 = 0; Maximum1 = 100;
+                Minimum2 = 0; Maximum2 = 100;
+                Minimum3 = 0; Maximum3 = 100;
+                Minimum4 = 0; Maximum4 = 255;
+            }
+            else if (GrayModeIndex == 1)
+            {
+                Minimum1 = 0; Maximum1 = 255;
+                Minimum2 = 0; Maximum2 = 255;
+                Minimum3 = 0; Maximum3 = 255;
+                Minimum4 = 0; Maximum4 = 255;
+            }
+            else if (GrayModeIndex == 2)
+            {
+                Minimum1 = 0; Maximum1 = 255;
+                Minimum2 = 0; Maximum2 = 255;
+                Minimum3 = 0; Maximum3 = 255;
+                Minimum4 = 0; Maximum4 = 255;
+            }
+            ValueS1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS1" + GrayModeIndex.ToString(), 0).ToString());
+            ValueS2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS2" + GrayModeIndex.ToString(), 0).ToString());
+            ValueS3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS3" + GrayModeIndex.ToString(), 0).ToString());
+            ValueS4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS4" + GrayModeIndex.ToString(), 0).ToString());
+            ValueE1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE1" + GrayModeIndex.ToString(), 0).ToString());
+            ValueE2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE2" + GrayModeIndex.ToString(), 0).ToString());
+            ValueE3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE3" + GrayModeIndex.ToString(), 0).ToString());
+            ValueE4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE4" + GrayModeIndex.ToString(), 0).ToString());
+            IsEnable1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable1" + GrayModeIndex.ToString(), false);
+            IsEnable2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable2" + GrayModeIndex.ToString(), false);
+            IsEnable3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable3" + GrayModeIndex.ToString(), false);
+            IsEnable4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable4" + GrayModeIndex.ToString(), false);
+            IsReverse1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse11" + GrayModeIndex.ToString(), false);
+            IsReverse2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse12" + GrayModeIndex.ToString(), false);
+            IsReverse3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse13" + GrayModeIndex.ToString(), false);
+            IsReverse4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse14" + GrayModeIndex.ToString(), false);
         }
 
         private HRegion resultRegion = new HRegion();
@@ -1114,7 +1361,79 @@ namespace VisionProject.ViewModels
 
         private void ExecuteGrayModeChanged()
         {
-            ExecuteResetGray();
+            if (GrayModeIndex == 0)
+            {
+                Minimum1 = 0; Maximum1 = 100;
+                Minimum2 = 0; Maximum2 = 100;
+                Minimum3 = 0; Maximum3 = 100;
+                Minimum4 = 0; Maximum4 = 255;
+
+                ValueS1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS1" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS2" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS3" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS4" + GrayModeIndex.ToString(), 0).ToString());
+                ValueE1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE1" + GrayModeIndex.ToString(), 30).ToString());
+                ValueE2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE2" + GrayModeIndex.ToString(), 59).ToString());
+                ValueE3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE3" + GrayModeIndex.ToString(), 11).ToString());
+                ValueE4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE4" + GrayModeIndex.ToString(), 128).ToString());
+                IsEnable1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable1" + GrayModeIndex.ToString(), true);
+                IsEnable2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable2" + GrayModeIndex.ToString(), true);
+                IsEnable3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable3" + GrayModeIndex.ToString(), true);
+                IsEnable4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable4" + GrayModeIndex.ToString(), true);
+                IsReverse1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse11" + GrayModeIndex.ToString(), false);
+                IsReverse2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse12" + GrayModeIndex.ToString(), false);
+                IsReverse3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse13" + GrayModeIndex.ToString(), false);
+                IsReverse4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse14" + GrayModeIndex.ToString(), false);
+            }
+            else if (GrayModeIndex == 1)
+            {
+                Minimum1 = 0; Maximum1 = 255;
+                Minimum2 = 0; Maximum2 = 255;
+                Minimum3 = 0; Maximum3 = 255;
+                Minimum4 = 0; Maximum4 = 255;
+
+                ValueS1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS1" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS2" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS3" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS4" + GrayModeIndex.ToString(), 0).ToString());
+                ValueE1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE1" + GrayModeIndex.ToString(), 128).ToString());
+                ValueE2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE2" + GrayModeIndex.ToString(), 255).ToString());
+                ValueE3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE3" + GrayModeIndex.ToString(), 255).ToString());
+                ValueE4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE4" + GrayModeIndex.ToString(), 255).ToString());
+                IsEnable1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable1" + GrayModeIndex.ToString(), true);
+                IsEnable2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable2" + GrayModeIndex.ToString(), true);
+                IsEnable3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable3" + GrayModeIndex.ToString(), true);
+                IsEnable4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable4" + GrayModeIndex.ToString(), false);
+                IsReverse1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse11" + GrayModeIndex.ToString(), false);
+                IsReverse2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse12" + GrayModeIndex.ToString(), false);
+                IsReverse3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse13" + GrayModeIndex.ToString(), false);
+                IsReverse4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse14" + GrayModeIndex.ToString(), false);
+            }
+            else if (GrayModeIndex == 2)
+            {
+                Minimum1 = 0; Maximum1 = 255;
+                Minimum2 = 0; Maximum2 = 255;
+                Minimum3 = 0; Maximum3 = 255;
+                Minimum4 = 0; Maximum4 = 255;
+
+                ValueS1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS1" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS2" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS3" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS4" + GrayModeIndex.ToString(), 0).ToString());
+                ValueE1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE1" + GrayModeIndex.ToString(), 128).ToString());
+                ValueE2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE2" + GrayModeIndex.ToString(), 255).ToString());
+                ValueE3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE3" + GrayModeIndex.ToString(), 255).ToString());
+                ValueE4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE4" + GrayModeIndex.ToString(), 255).ToString());
+                IsEnable1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable1" + GrayModeIndex.ToString(), true);
+                IsEnable2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable2" + GrayModeIndex.ToString(), true);
+                IsEnable3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable3" + GrayModeIndex.ToString(), true);
+                IsEnable4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable4" + GrayModeIndex.ToString(), false);
+                IsReverse1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse11" + GrayModeIndex.ToString(), false);
+                IsReverse2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse12" + GrayModeIndex.ToString(), false);
+                IsReverse3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse13" + GrayModeIndex.ToString(), false);
+                IsReverse4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse14" + GrayModeIndex.ToString(), false);
+            }
+            runGray();
         }
 
         private DelegateCommand _grayValueChanged;
@@ -1440,9 +1759,9 @@ namespace VisionProject.ViewModels
                             var defaultRegion = new HRegion();
                             defaultRegion.GenEmptyRegion();
 
-                            var regionPath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRegion", Variables.ProjectObjectPath + Guid.NewGuid().ToString() + ".reg").ToString();
-                            if (File.Exists(regionPath))
-                                defaultRegion.ReadRegion(regionPath);
+                            var regionPath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRegion", Guid.NewGuid().ToString() + ".reg").ToString();
+                            if (File.Exists(Variables.ProjectObjectPath + regionPath))
+                                defaultRegion.ReadRegion(Variables.ProjectObjectPath + regionPath);
 
                             Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
                             Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(defaultRegion);
@@ -1454,7 +1773,7 @@ namespace VisionProject.ViewModels
                             Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
 
                             Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectRegion", regionPath);
-                            defaultRegion.WriteRegion(regionPath);
+                            defaultRegion.WriteRegion(Variables.ProjectObjectPath + regionPath);
                         }
                         break;
 
@@ -1462,9 +1781,9 @@ namespace VisionProject.ViewModels
                         {
                             var defaultRegion = new HRegion();
                             defaultRegion.GenEmptyRegion();
-                            var regionPath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRegion", Variables.ProjectObjectPath + Guid.NewGuid().ToString() + ".reg").ToString();
-                            if (File.Exists(regionPath))
-                                defaultRegion.ReadRegion(regionPath);
+                            var regionPath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRegion", Guid.NewGuid().ToString() + ".reg").ToString();
+                            if (File.Exists(Variables.ProjectObjectPath + regionPath))
+                                defaultRegion.ReadRegion(Variables.ProjectObjectPath + regionPath);
 
                             Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
                             Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(defaultRegion);
@@ -1476,7 +1795,31 @@ namespace VisionProject.ViewModels
                             Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
 
                             Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectRegion", regionPath);
-                            defaultRegion.WriteRegion(regionPath);
+                            defaultRegion.WriteRegion(Variables.ProjectObjectPath + regionPath);
+                        }
+
+                        break;
+
+                    case "3":
+                        {
+                            var InspectRow1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRow1", 0.0);
+                            var InspectColumn1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectColumn1", 0.0);
+                            var InspectRow2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRow2", 0.0);
+                            var InspectColumn2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectColumn2", 0.0);
+
+                            Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                            Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                            Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(HalconColors.橙色.ToDescription());
+
+                            if ((InspectRow1 + InspectColumn2) != 0)
+                                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawLineMod(InspectRow1, InspectColumn1, InspectRow2, InspectColumn2, out InspectRow1, out InspectColumn1, out InspectRow2, out InspectColumn2);
+                            else
+                                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawLine(out InspectRow1, out InspectColumn1, out InspectRow2, out InspectColumn2);
+
+                            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectRow1", InspectRow1);
+                            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectColumn1", InspectColumn1);
+                            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectRow2", InspectRow2);
+                            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectColumn2", InspectColumn2);
                         }
 
                         break;
@@ -1500,6 +1843,10 @@ namespace VisionProject.ViewModels
             try
             {
                 var rst = Variables.ShowConfirm("是否注册标准检测？");
+                if (!rst)
+                {
+                    return;
+                }
 
                 var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow01", 0.0);
                 var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectROIRow02", 0.0);
@@ -1517,13 +1864,13 @@ namespace VisionProject.ViewModels
                     dict.Add(paramterName.SArr[i], paramterValue[i]);
 
                 nCCModel = resultImage.ReduceDomain(new HRegion(row1, col1, row2, col2)).CreateNccModel(
-                       dict["num_levels"], -0.39, 0.79, dict["angle_step"], "use_polarity");
+                      new HTuple(3), -0.39, 0.79, dict["angle_step"], "use_polarity");
 
                 HTuple nccModelRow = new HTuple(); HTuple nccModelCol = new HTuple(); HTuple nccModelAngle = new HTuple(); HTuple nccModelScore = new HTuple();
                 resultImage.FindNccModel(nCCModel, -0.39, 0.79, 0.5, 1, 0.5, "true", 3,
                     out nccModelRow, out nccModelCol, out nccModelAngle, out nccModelScore);
 
-                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NccModel", nCCModel);
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NccModel", nCCModel);//NCC模型
                 Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NccModelRow", nccModelRow);
                 Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NccModelCol", nccModelCol);
                 Variables.CurrentProgramData.Parameters.BingAddOrUpdate("NccModelAngle", nccModelAngle);
@@ -1532,21 +1879,6 @@ namespace VisionProject.ViewModels
             {
                 boolResult = false;
                 Variables.ShowMessage("注册失败：" + ex.Message);
-            }
-
-            if (!boolResult && IsSaveNG)
-            {
-                try
-                {
-                    //截屏保存
-                    HImage hImage = Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage();
-                    if (!Directory.Exists(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd")))
-                        Directory.CreateDirectory(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd"));
-                    hImage.WriteImage("bmp", new HTuple(0), new HTuple(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd") + "\\" + DateTime.Now.ToString("HH-mm-ss-ffff") + ".bmp"));
-
-                    //Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindow("postscript", path);
-                }
-                catch { }
             }
         }
 
@@ -1570,12 +1902,28 @@ namespace VisionProject.ViewModels
                     case "1":
                         CurrentArea = rst.MessageResult;
                         break;
+
+                    case "2":
+                        CurrentDistance = rst.MessageResult;
+                        break;
                 }
-                var row1 = (int)((double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0));
-                var col1 = (int)((double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn1", 0.0));
                 var region = rst.RunRegion;
+
+                var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
+                var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
+                var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn1", 0.0);
+                var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn2", 0.0);
+
+                HImage showImage = new HImage();
+                if (row1 + row2 != 0)//这里注意裁剪originalImage用于显示
+                    showImage = originalImage.CropRectangle1(row1, col1, row2, col2);
+                else showImage = image.CopyImage();
+                Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(showImage);
+
                 Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
                 Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+
+                Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(resultImage.CopyImage());
                 Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
                 Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
                 Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(region);
@@ -1645,8 +1993,16 @@ namespace VisionProject.ViewModels
 
                 case "1":
 
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ResultScoreMin", ResultScoreMin);
-                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ResultScoreMax", ResultScoreMax);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ResultAreaMin", ResultAreaMin);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ResultAreaMax", ResultAreaMax);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectIndex", InspectIndex);
+
+                    break;
+
+                case "2":
+
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ResultDistanceMin", ResultDistanceMin);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ResultDistanceMax", ResultDistanceMax);
                     Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectIndex", InspectIndex);
 
                     break;
@@ -1656,20 +2012,20 @@ namespace VisionProject.ViewModels
             }
         }
 
-        private double _resultScoreMin;
+        private double _resultAreaMin;
 
-        public double ResultScoreMin
+        public double ResultAreaMin
         {
-            get { return _resultScoreMin; }
-            set { SetProperty(ref _resultScoreMin, value); }
+            get { return _resultAreaMin; }
+            set { SetProperty(ref _resultAreaMin, value); }
         }
 
-        private double _resultScoreMax;
+        private double _resultAreaMax;
 
-        public double ResultScoreMax
+        public double ResultAreaMax
         {
-            get { return _resultScoreMax; }
-            set { SetProperty(ref _resultScoreMax, value); }
+            get { return _resultAreaMax; }
+            set { SetProperty(ref _resultAreaMax, value); }
         }
 
         private double _nCCScore;
@@ -1696,6 +2052,30 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref currentArea, value); }
         }
 
+        private string currentDistance;
+
+        public string CurrentDistance
+        {
+            get { return currentDistance; }
+            set { SetProperty(ref currentDistance, value); }
+        }
+
+        private double _resultDistanceMin;
+
+        public double ResultDistanceMin
+        {
+            get { return _resultDistanceMin; }
+            set { SetProperty(ref _resultDistanceMin, value); }
+        }
+
+        private double _resultDistanceMax;
+
+        public double ResultDistanceMax
+        {
+            get { return _resultDistanceMax; }
+            set { SetProperty(ref _resultDistanceMax, value); }
+        }
+
         //
 
         #endregion 判定
@@ -1706,7 +2086,13 @@ namespace VisionProject.ViewModels
 
         public bool CanCloseDialog()
         {
-            return true;
+            if (NotDrawIng)
+                return true;
+            else
+            {
+                Variables.ShowMessage("请先右键完成绘制");
+                return false;
+            }
         }
 
         private bool isInitlized = false;
@@ -1715,6 +2101,7 @@ namespace VisionProject.ViewModels
         {
             isInitlized = false;
             await Task.Delay(300);
+
             try
             {
                 IsTrans = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsTrans", false);
@@ -1730,15 +2117,32 @@ namespace VisionProject.ViewModels
             GammaValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("GammaValue", 1.0);
 
             IsGray = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsGray", true);
-            IsSaveNG = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsSaveNG", false);
 
             GrayModeIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("GrayModeIndex", 0).ToString());
+
             if (GrayModeIndex == 0)
             {
                 Minimum1 = 0; Maximum1 = 100;
                 Minimum2 = 0; Maximum2 = 100;
                 Minimum3 = 0; Maximum3 = 100;
                 Minimum4 = 0; Maximum4 = 255;
+
+                ValueS1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS1" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS2" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS3" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS4" + GrayModeIndex.ToString(), 0).ToString());
+                ValueE1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE1" + GrayModeIndex.ToString(), 30).ToString());
+                ValueE2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE2" + GrayModeIndex.ToString(), 59).ToString());
+                ValueE3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE3" + GrayModeIndex.ToString(), 11).ToString());
+                ValueE4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE4" + GrayModeIndex.ToString(), 128).ToString());
+                IsEnable1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable1" + GrayModeIndex.ToString(), true);
+                IsEnable2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable2" + GrayModeIndex.ToString(), true);
+                IsEnable3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable3" + GrayModeIndex.ToString(), true);
+                IsEnable4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable4" + GrayModeIndex.ToString(), true);
+                IsReverse1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse11" + GrayModeIndex.ToString(), false);
+                IsReverse2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse12" + GrayModeIndex.ToString(), false);
+                IsReverse3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse13" + GrayModeIndex.ToString(), false);
+                IsReverse4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse14" + GrayModeIndex.ToString(), false);
             }
             else if (GrayModeIndex == 1)
             {
@@ -1746,6 +2150,23 @@ namespace VisionProject.ViewModels
                 Minimum2 = 0; Maximum2 = 255;
                 Minimum3 = 0; Maximum3 = 255;
                 Minimum4 = 0; Maximum4 = 255;
+
+                ValueS1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS1" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS2" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS3" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS4" + GrayModeIndex.ToString(), 0).ToString());
+                ValueE1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE1" + GrayModeIndex.ToString(), 128).ToString());
+                ValueE2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE2" + GrayModeIndex.ToString(), 255).ToString());
+                ValueE3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE3" + GrayModeIndex.ToString(), 255).ToString());
+                ValueE4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE4" + GrayModeIndex.ToString(), 255).ToString());
+                IsEnable1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable1" + GrayModeIndex.ToString(), true);
+                IsEnable2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable2" + GrayModeIndex.ToString(), true);
+                IsEnable3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable3" + GrayModeIndex.ToString(), true);
+                IsEnable4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable4" + GrayModeIndex.ToString(), false);
+                IsReverse1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse11" + GrayModeIndex.ToString(), false);
+                IsReverse2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse12" + GrayModeIndex.ToString(), false);
+                IsReverse3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse13" + GrayModeIndex.ToString(), false);
+                IsReverse4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse14" + GrayModeIndex.ToString(), false);
             }
             else if (GrayModeIndex == 2)
             {
@@ -1753,23 +2174,24 @@ namespace VisionProject.ViewModels
                 Minimum2 = 0; Maximum2 = 255;
                 Minimum3 = 0; Maximum3 = 255;
                 Minimum4 = 0; Maximum4 = 255;
+
+                ValueS1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS1" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS2" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS3" + GrayModeIndex.ToString(), 0).ToString());
+                ValueS4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS4" + GrayModeIndex.ToString(), 0).ToString());
+                ValueE1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE1" + GrayModeIndex.ToString(), 128).ToString());
+                ValueE2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE2" + GrayModeIndex.ToString(), 255).ToString());
+                ValueE3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE3" + GrayModeIndex.ToString(), 255).ToString());
+                ValueE4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE4" + GrayModeIndex.ToString(), 255).ToString());
+                IsEnable1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable1" + GrayModeIndex.ToString(), true);
+                IsEnable2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable2" + GrayModeIndex.ToString(), true);
+                IsEnable3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable3" + GrayModeIndex.ToString(), true);
+                IsEnable4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable4" + GrayModeIndex.ToString(), false);
+                IsReverse1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse11" + GrayModeIndex.ToString(), false);
+                IsReverse2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse12" + GrayModeIndex.ToString(), false);
+                IsReverse3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse13" + GrayModeIndex.ToString(), false);
+                IsReverse4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse14" + GrayModeIndex.ToString(), false);
             }
-            ValueS1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS1", 0).ToString());
-            ValueS2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS2", 0).ToString());
-            ValueS3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS3", 0).ToString());
-            ValueS4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueS4", 0).ToString());
-            ValueE1 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE1", 0).ToString());
-            ValueE2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE2", 0).ToString());
-            ValueE3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE3", 0).ToString());
-            ValueE4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE4", 0).ToString());
-            IsEnable1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable1", false);
-            IsEnable2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable2", false);
-            IsEnable3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable3", false);
-            IsEnable4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable4", false);
-            IsReverse1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse11", false);
-            IsReverse2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse12", false);
-            IsReverse3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse13", false);
-            IsReverse4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse14", false);
             //if ((ValueE1 + ValueE2 + ValueE3 + ValueE4) == 0)
             //{
             //    ExecuteResetGray();
@@ -1777,10 +2199,13 @@ namespace VisionProject.ViewModels
             try
             {
                 NCCScore = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("NCCScore", 0.0);
-                ResultScoreMin = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ResultScoreMin", 100);
-                ResultScoreMax = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ResultScoreMax", 100);
+                ResultAreaMin = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ResultAreaMin", 100);
+                ResultAreaMax = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ResultAreaMax", 100);
+                ResultDistanceMin = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ResultDistanceMin", 100);
+                ResultDistanceMax = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ResultDistanceMax", 100);
             }
             catch { }
+
             //try
             //{
             //    if (!originalImage.IsInitialized())
@@ -1803,9 +2228,11 @@ namespace VisionProject.ViewModels
             //catch { }
 
             InspectIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectIndex", 0).ToString());
-
+            grayAdd();
+            preEnhanceAdd();
             await Task.Delay(200);
             isInitlized = true;
+            DoSwitchTab.Execute();
             return true;
         }
 

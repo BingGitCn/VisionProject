@@ -18,6 +18,10 @@ namespace VisionProject.GlobalVars
 
         public static string ShowLocationDialog = "9255539F-2D8E-44F2-90CC-E697E969A3A8";
 
+        public static string ShowProjectSetDialog = "E93CE1DE-87A0-472B-9DA6-59C0E8FA787A";
+
+        public static string ShowJoinDialog = "7B088097-9BA6-402A-9771-715BF0F333A7";
+
         //Step..
         //工具或检测方式的名称，在此添加
         public static Dictionary<string, string> ToolNams = new Dictionary<string, string>()
@@ -30,6 +34,7 @@ namespace VisionProject.GlobalVars
               { Functions.Blob分析.ToDescription(),"99462AEB-2C55-4442-B12E-66D0B4B5A737"},
               { Functions.条码识别.ToDescription(),"F3D93CEF-E997-4AB6-93A9-F33167414DFA"},
               { Functions.视觉脚本.ToDescription(),"67137939-F6C5-4B8E-9862-D1D9AD46E1FD"},
+              { Functions.PIN针检测.ToDescription(),"26F8BCEA-89CC-493F-8B1B-2C89768C9F4A"},
         };
     }
 
@@ -38,6 +43,7 @@ namespace VisionProject.GlobalVars
         [Description("图像比对")] 图像比对,
         [Description("Blob分析")] Blob分析,
         [Description("条码识别")] 条码识别,
+        [Description("PIN针检测")] PIN针检测,
         [Description("视觉脚本")] 视觉脚本
     }
 }

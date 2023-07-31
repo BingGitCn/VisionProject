@@ -93,6 +93,8 @@ namespace VisionProject.ViewModels
 
         public bool UseMES { set; get; } = true;
 
+        public bool IsSaveOriginalImage { set; get; }
+
         public int UserIndex { set; get; }
 
         public int HardDrive { set; get; }

@@ -217,8 +217,8 @@ namespace BingLibrary.Vision
             int idxROI = -1;
             int idxSizeEnableROI = -1;
             double max = 10000, dist = 0;
-            double epsilon = 20.0;  //矩形移动点击生效的区域		//maximal shortest distance to one of
-                                    //the handles
+            //maximal shortest distance to one of
+            //the handles
 
             if (roi != null)             //either a new ROI object is created
             {
@@ -233,12 +233,13 @@ namespace BingLibrary.Vision
 
                 for (int i = 0; i < ROIList.Count; i++)
                 {
+                    double epsilon = ROIList[i].smallregionwidth;  //矩形移动点击生效的区域
                     if (ROIList[i] is ROIRegion)//ROIRegion例外
                     {
                         HRegion tempRegion = new HRegion();//创建一个局部变量并实例化，用来保存鼠标点击的区域
                         tempRegion.GenRegionPoints(imgY, imgX);//根据鼠标点击的位置创建一个Point区域
                         var r = ((ROIRegion)ROIList[i]).mCurHRegion.Intersection(tempRegion);
-                        if (r.Area > 0)
+                        if (r.Area.TupleMax() >= 1)
                         {
                             idxSizeEnableROI = i;
                             break;

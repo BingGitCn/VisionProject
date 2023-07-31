@@ -116,8 +116,8 @@
                         Command="{Binding RunScript}"
                         Content="运行测试"
                         Style="{StaticResource ButtonPrimary}" />
-                    <TextBlock VerticalAlignment="Center" Text="{Binding RunScriptResult}" />
                 </StackPanel>
+                <TextBlock VerticalAlignment="Center" Text="{Binding RunScriptResult}" />
             </StackPanel>
         </Grid>
     </Grid>

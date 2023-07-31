@@ -1,6 +1,6 @@
 ﻿namespace VisionProject.GlobalVars
 {
-    public static class RegionNames
+    public class Funcs
     {
     }
 }

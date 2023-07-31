@@ -1,0 +1,103 @@
+﻿<UserControl
+    x:Class="VisionProject.Views.Dialog_ProjectSet"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:prism="http://prismlibrary.com/"
+    Width="480"
+    Height="250"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    FontFamily="pack://application:,,,/VisionProject;component/fonts/#iconfont,pack://application:,,,/VisionProject;component/fonts/#仓耳今楷03 W04"
+    MouseDown="UserControl_MouseDown">
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterOwner" />
+            <Setter Property="SizeToContent" Value="WidthAndHeight" />
+        </Style>
+    </prism:Dialog.WindowStyle>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <StackPanel Margin="5" Orientation="Vertical">
+
+            <CheckBox
+                Margin="5"
+                Content="双相机拍同一个产品"
+                IsChecked="{Binding CheckCameraMode}" />
+            <CheckBox
+                Margin="5"
+                Content="NG结果显示到拼图"
+                IsChecked="{Binding IsShowResultToPinTu}" />
+            <TextBox HorizontalAlignment="Left"
+                Margin="5"
+                hc:InfoElement.Placeholder="{Binding RowDefault}"
+                hc:InfoElement.Title="PLC对应料号左："
+                hc:InfoElement.TitlePlacement="Left"
+                hc:InfoElement.TitleWidth="110"
+                Style="{StaticResource TextBoxExtend}"
+                Width="300"
+                Text="{Binding PLCProjectName1}">
+            </TextBox>
+            <TextBox HorizontalAlignment="Left"
+                Margin="5"
+                hc:InfoElement.Placeholder="{Binding RowDefault}"
+                hc:InfoElement.Title="PLC对应料号右："
+                hc:InfoElement.TitlePlacement="Left"
+                hc:InfoElement.TitleWidth="110"
+                Style="{StaticResource TextBoxExtend}"
+                Width="300"
+                Text="{Binding PLCProjectName2}">
+            </TextBox>
+
+            <StackPanel Margin="5" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
+                <TextBox
+                Margin="5"
+                hc:InfoElement.Placeholder="{Binding RowDefault}"
+                hc:InfoElement.Title="裁剪后行高："
+                hc:InfoElement.TitlePlacement="Left"
+                hc:InfoElement.TitleWidth="110"
+                Style="{StaticResource TextBoxExtend}"
+                Width="300"
+                Text="{Binding RowCrop}">
+                </TextBox>
+                <TextBlock Margin="5,12,5,5" Text="原图行高为： " />
+                <TextBlock Margin="5,12,5,5" Text="{Binding RowDefault}" />
+            </StackPanel>
+            <StackPanel Margin="5" Orientation="Horizontal" VerticalAlignment="Center" Visibility="Collapsed">
+                <TextBox
+                Margin="5"
+                hc:InfoElement.Placeholder="{Binding RowDefault}"
+                hc:InfoElement.Title="裁剪后列宽："
+                hc:InfoElement.TitlePlacement="Left"
+                hc:InfoElement.TitleWidth="110"
+                Style="{StaticResource TextBoxExtend}"
+                Width="300"
+                Text="{Binding ColCrop}">
+                </TextBox>
+                <TextBlock Margin="5,12,5,5" Text="原图列宽为： " />
+                <TextBlock Margin="5,12,5,5" Text="{Binding ColDefault}" />
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button
+                    Width="100"
+                    Margin="25"
+                    Command="{Binding Confirm}"
+                    Content="确  认"
+                    Style="{StaticResource ButtonPrimary}" />
+                <Button
+                    Width="100"
+                    Margin="25"
+                    Command="{Binding Cancel}"
+                    Content="关  闭"
+                    Style="{StaticResource ButtonPrimary}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

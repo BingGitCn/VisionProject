@@ -40,6 +40,8 @@ namespace VisionProject.Views
             //给图像控件windowdata全局
             Variables.WindowData1 = ImageWindow1.windowData;
             Variables.WindowData2 = ImageWindow2.windowData;
+            Variables.WindowData3 = ImageWindow3.windowData;
+            Variables.WindowData4 = ImageWindow4.windowData;
 
             //regionManager.RegisterViewWithRegion(GlobalPrism.RegionNames.StatusRegionName, typeof(Status));
             //GlobalVars.Variables.ImageWindowData = imageWin.windowData;
@@ -86,7 +88,7 @@ namespace VisionProject.Views
                     }
                     else
                     {
-                        if (TabControlDemo.SelectedIndex != 0)
+                        if (TabControlDemo.SelectedIndex != 0 || TabControlDemo.SelectedIndex != 1)
                         {
                             TabControlDemo.SelectedIndex = 0;
                             Variables.AutoHomeEventArgs.Publish();
@@ -162,7 +164,18 @@ namespace VisionProject.Views
             if (Variables.ShowConfirm("确认退出软件？") == false)
                 return;
             else
+            {
+                for (int i = 0; i < Variables.Cameras.Count; i++)
+                {
+                    try
+                    {
+                        Variables.Cameras[i].CloseCamera();
+                    }
+                    catch { }
+                }
+
                 Environment.Exit(0);
+            }
         }
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)

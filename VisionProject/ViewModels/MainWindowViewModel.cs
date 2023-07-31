@@ -7,7 +7,9 @@ using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -49,6 +51,14 @@ namespace VisionProject.ViewModels
         {
             get { return _plcStatus; }
             set { SetProperty(ref _plcStatus, value); }
+        }
+
+        private ShowStatus _camStatus = new ShowStatus();
+
+        public ShowStatus CamStatus
+        {
+            get { return _camStatus; }
+            set { SetProperty(ref _camStatus, value); }
         }
 
         private ShowStatus _hardWareStatus = new ShowStatus();
@@ -107,12 +117,20 @@ namespace VisionProject.ViewModels
 
         #region 数据统计
 
-        private ShowStatus _resultStatus = new ShowStatus() { Value = true };
+        private ShowResultStatus _resultStatus1 = new ShowResultStatus() { Value = 3 };
 
-        public ShowStatus ResultStatus
+        public ShowResultStatus ResultStatus1
         {
-            get { return _resultStatus; }
-            set { SetProperty(ref _resultStatus, value); }
+            get { return _resultStatus1; }
+            set { SetProperty(ref _resultStatus1, value); }
+        }
+
+        private ShowResultStatus _resultStatus2 = new ShowResultStatus() { Value = 3 };
+
+        public ShowResultStatus ResultStatus2
+        {
+            get { return _resultStatus2; }
+            set { SetProperty(ref _resultStatus2, value); }
         }
 
         //数据类
@@ -303,60 +321,129 @@ namespace VisionProject.ViewModels
             });
         }
 
+        private bool isSetOK = false;
+        private bool isSetNG = false;
+
+        private async void runStatistic()
+        {
+            while (true)
+            {
+                await Task.Delay(100);
+
+                if (isSetOK)
+                {
+                    isSetOK = false;
+                    try
+                    {
+                        FileInfo fileInfo = new FileInfo(Variables.StatisticDataFilePath);
+                        ExcelPackage package = new ExcelPackage(fileInfo);
+                        var w = package.Workbook.Worksheets[0];
+                        w.Protection.IsProtected = false;
+                        w.DefaultColWidth = 20;
+
+                        int rowCount = 4;
+
+                        if (w.Cells[4, 1].Value.ToString() != DateTime.Now.ToString("yyyy/MM/dd"))
+                        {
+                            w.InsertRow(4, 1);
+                            rowCount = 4;
+
+                            w.Cells[rowCount, 1].Value = DateTime.Now.ToString("yyyy/MM/dd");
+                            w.Cells[rowCount, 2].Value = 0;
+                            w.Cells[rowCount, 3].Value = 0;
+                            w.Cells[rowCount, 4].Value = 0;
+                            w.Cells[rowCount, 5].Value = "0%";
+                        }
+
+                        w.Cells[3, 2].Value = double.Parse(w.Cells[3, 2].Value.ToString()) + 1;
+                        w.Cells[3, 4].Value = double.Parse(w.Cells[3, 2].Value.ToString()) + double.Parse(w.Cells[3, 3].Value.ToString());
+                        w.Cells[3, 5].Value = (double.Parse(w.Cells[3, 2].Value.ToString()) / double.Parse(w.Cells[3, 4].Value.ToString()) * 100.0).ToString("f2") + "%";
+
+                        w.Cells[4, 2].Value = double.Parse(w.Cells[4, 2].Value.ToString()) + 1;
+                        w.Cells[4, 4].Value = double.Parse(w.Cells[4, 2].Value.ToString()) + double.Parse(w.Cells[4, 3].Value.ToString());
+                        w.Cells[4, 5].Value = (double.Parse(w.Cells[4, 2].Value.ToString()) / double.Parse(w.Cells[4, 4].Value.ToString()) * 100.0).ToString("f2") + "%";
+
+                        HomeStatisticData.Clear();
+                        for (int i = 3; i <= 4; i++)
+                        {
+                            var sd = new StatisticData();
+                            sd.CurrentDate = w.Cells[i, 1].Value.ToString();
+                            sd.OK = double.Parse(w.Cells[i, 2].Value.ToString());
+                            sd.NG = double.Parse(w.Cells[i, 3].Value.ToString());
+                            sd.All = double.Parse(w.Cells[i, 4].Value.ToString());
+                            sd.Rate = w.Cells[i, 5].Value.ToString();
+                            HomeStatisticData.Add(sd);
+                        }
+
+                        //锁住
+                        w.Protection.IsProtected = true;
+                        package.Save();
+                        package.Dispose();
+                    }
+                    catch { }
+                }
+                if (isSetNG)
+                {
+                    isSetNG = false;
+
+                    try
+                    {
+                        FileInfo fileInfo = new FileInfo(Variables.StatisticDataFilePath);
+                        ExcelPackage package = new ExcelPackage(fileInfo);
+                        var w = package.Workbook.Worksheets[0];
+                        w.Protection.IsProtected = false;
+                        w.DefaultColWidth = 20;
+
+                        int rowCount = 4;
+
+                        if (w.Cells[4, 1].Value.ToString() != DateTime.Now.ToString("yyyy/MM/dd"))
+                        {
+                            w.InsertRow(4, 1);
+                            rowCount = 4;
+
+                            w.Cells[rowCount, 1].Value = DateTime.Now.ToString("yyyy/MM/dd");
+                            w.Cells[rowCount, 2].Value = 0;
+                            w.Cells[rowCount, 3].Value = 0;
+                            w.Cells[rowCount, 4].Value = 0;
+                            w.Cells[rowCount, 5].Value = "0%";
+                        }
+
+                        w.Cells[3, 3].Value = double.Parse(w.Cells[3, 3].Value.ToString()) + 1;
+                        w.Cells[3, 4].Value = double.Parse(w.Cells[3, 2].Value.ToString()) + double.Parse(w.Cells[3, 3].Value.ToString());
+                        w.Cells[3, 5].Value = (double.Parse(w.Cells[3, 2].Value.ToString()) / double.Parse(w.Cells[3, 4].Value.ToString()) * 100.0).ToString("f2") + "%";
+
+                        w.Cells[4, 3].Value = double.Parse(w.Cells[4, 3].Value.ToString()) + 1;
+                        w.Cells[4, 4].Value = double.Parse(w.Cells[4, 2].Value.ToString()) + double.Parse(w.Cells[4, 3].Value.ToString());
+                        w.Cells[4, 5].Value = (double.Parse(w.Cells[4, 2].Value.ToString()) / double.Parse(w.Cells[4, 4].Value.ToString()) * 100.0).ToString("f2") + "%";
+
+                        HomeStatisticData.Clear();
+                        for (int i = 3; i <= 4; i++)
+                        {
+                            var sd = new StatisticData();
+                            sd.CurrentDate = w.Cells[i, 1].Value.ToString();
+                            sd.OK = double.Parse(w.Cells[i, 2].Value.ToString());
+                            sd.NG = double.Parse(w.Cells[i, 3].Value.ToString());
+                            sd.All = double.Parse(w.Cells[i, 4].Value.ToString());
+                            sd.Rate = w.Cells[i, 5].Value.ToString();
+                            HomeStatisticData.Add(sd);
+                        }
+
+                        //锁住
+                        w.Protection.IsProtected = true;
+                        package.Save();
+                        package.Dispose();
+                    }
+                    catch { }
+                }
+            }
+        }
+
         /// <summary>
         /// 检测成功时调用
         /// </summary>
         private void setOK()
         {
-            ResultStatus.Value = true;
-            try
-            {
-                FileInfo fileInfo = new FileInfo(Variables.StatisticDataFilePath);
-                ExcelPackage package = new ExcelPackage(fileInfo);
-                var w = package.Workbook.Worksheets[0];
-                w.Protection.IsProtected = false;
-                w.DefaultColWidth = 20;
-
-                int rowCount = 4;
-
-                if (w.Cells[4, 1].Value.ToString() != DateTime.Now.ToString("yyyy/MM/dd"))
-                {
-                    w.InsertRow(4, 1);
-                    rowCount = 4;
-
-                    w.Cells[rowCount, 1].Value = DateTime.Now.ToString("yyyy/MM/dd");
-                    w.Cells[rowCount, 2].Value = 0;
-                    w.Cells[rowCount, 3].Value = 0;
-                    w.Cells[rowCount, 4].Value = 0;
-                    w.Cells[rowCount, 5].Value = "0%";
-                }
-
-                w.Cells[3, 2].Value = double.Parse(w.Cells[3, 2].Value.ToString()) + 1;
-                w.Cells[3, 4].Value = double.Parse(w.Cells[3, 2].Value.ToString()) + double.Parse(w.Cells[3, 3].Value.ToString());
-                w.Cells[3, 5].Value = (double.Parse(w.Cells[3, 2].Value.ToString()) / double.Parse(w.Cells[3, 4].Value.ToString()) * 100.0).ToString("f2") + "%";
-
-                w.Cells[4, 2].Value = double.Parse(w.Cells[4, 2].Value.ToString()) + 1;
-                w.Cells[4, 4].Value = double.Parse(w.Cells[4, 2].Value.ToString()) + double.Parse(w.Cells[4, 3].Value.ToString());
-                w.Cells[4, 5].Value = (double.Parse(w.Cells[4, 2].Value.ToString()) / double.Parse(w.Cells[4, 4].Value.ToString()) * 100.0).ToString("f2") + "%";
-
-                HomeStatisticData.Clear();
-                for (int i = 3; i <= 4; i++)
-                {
-                    var sd = new StatisticData();
-                    sd.CurrentDate = w.Cells[i, 1].Value.ToString();
-                    sd.OK = double.Parse(w.Cells[i, 2].Value.ToString());
-                    sd.NG = double.Parse(w.Cells[i, 3].Value.ToString());
-                    sd.All = double.Parse(w.Cells[i, 4].Value.ToString());
-                    sd.Rate = w.Cells[i, 5].Value.ToString();
-                    HomeStatisticData.Add(sd);
-                }
-
-                //锁住
-                w.Protection.IsProtected = true;
-                package.Save();
-                package.Dispose();
-            }
-            catch { }
+            isSetOK = true;
         }
 
         /// <summary>
@@ -364,62 +451,14 @@ namespace VisionProject.ViewModels
         /// </summary>
         private void setNG()
         {
-            ResultStatus.Value = false;
-            try
-            {
-                FileInfo fileInfo = new FileInfo(Variables.StatisticDataFilePath);
-                ExcelPackage package = new ExcelPackage(fileInfo);
-                var w = package.Workbook.Worksheets[0];
-                w.Protection.IsProtected = false;
-                w.DefaultColWidth = 20;
-
-                int rowCount = 4;
-
-                if (w.Cells[4, 1].Value.ToString() != DateTime.Now.ToString("yyyy/MM/dd"))
-                {
-                    w.InsertRow(4, 1);
-                    rowCount = 4;
-
-                    w.Cells[rowCount, 1].Value = DateTime.Now.ToString("yyyy/MM/dd");
-                    w.Cells[rowCount, 2].Value = 0;
-                    w.Cells[rowCount, 3].Value = 0;
-                    w.Cells[rowCount, 4].Value = 0;
-                    w.Cells[rowCount, 5].Value = "0%";
-                }
-
-                w.Cells[3, 3].Value = double.Parse(w.Cells[3, 3].Value.ToString()) + 1;
-                w.Cells[3, 4].Value = double.Parse(w.Cells[3, 2].Value.ToString()) + double.Parse(w.Cells[3, 3].Value.ToString());
-                w.Cells[3, 5].Value = (double.Parse(w.Cells[3, 2].Value.ToString()) / double.Parse(w.Cells[3, 4].Value.ToString()) * 100.0).ToString("f2") + "%";
-
-                w.Cells[4, 3].Value = double.Parse(w.Cells[4, 3].Value.ToString()) + 1;
-                w.Cells[4, 4].Value = double.Parse(w.Cells[4, 2].Value.ToString()) + double.Parse(w.Cells[4, 3].Value.ToString());
-                w.Cells[4, 5].Value = (double.Parse(w.Cells[4, 2].Value.ToString()) / double.Parse(w.Cells[4, 4].Value.ToString()) * 100.0).ToString("f2") + "%";
-
-                HomeStatisticData.Clear();
-                for (int i = 3; i <= 4; i++)
-                {
-                    var sd = new StatisticData();
-                    sd.CurrentDate = w.Cells[i, 1].Value.ToString();
-                    sd.OK = double.Parse(w.Cells[i, 2].Value.ToString());
-                    sd.NG = double.Parse(w.Cells[i, 3].Value.ToString());
-                    sd.All = double.Parse(w.Cells[i, 4].Value.ToString());
-                    sd.Rate = w.Cells[i, 5].Value.ToString();
-                    HomeStatisticData.Add(sd);
-                }
-
-                //锁住
-                w.Protection.IsProtected = true;
-                package.Save();
-                package.Dispose();
-            }
-            catch { }
+            isSetNG = true;
         }
 
         //数据操作，清除，刷新，导出
         private DelegateCommand<string> _statisticOperate;
 
         public DelegateCommand<string> StatisticOperate =>
-            _statisticOperate ?? (_statisticOperate = new DelegateCommand<string>((string param) =>
+            _statisticOperate ?? (_statisticOperate = new DelegateCommand<string>(async (string param) =>
             {
                 switch (param)
                 {
@@ -558,6 +597,17 @@ namespace VisionProject.ViewModels
         private bool _value = false;
 
         public bool Value
+        {
+            get { return _value; }
+            set { SetProperty(ref _value, value); }
+        }
+    }
+
+    public class ShowResultStatus : BindableBase
+    {
+        private int _value = 2;
+
+        public int Value
         {
             get { return _value; }
             set { SetProperty(ref _value, value); }

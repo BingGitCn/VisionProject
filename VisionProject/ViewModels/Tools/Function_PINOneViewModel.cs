@@ -3,13 +3,10 @@ using BingLibrary.Vision;
 using HalconDotNet;
 using Prism.Commands;
 using Prism.Mvvm;
-using Prism.Regions;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using VisionProject.GlobalVars;
@@ -17,14 +14,14 @@ using VisionProject.RunTools;
 
 namespace VisionProject.ViewModels
 {
-    public class Function_BlobViewModel : BindableBase, IDialogAware, IFunction_ViewModel_Interface
+    public class Function_PINOneViewModel : BindableBase, IDialogAware, IFunction_ViewModel_Interface
     {
-        public Function_BlobViewModel()
+        public Function_PINOneViewModel()
         {
         }
 
         public bool Result = false;
-        private int tabIndex = -1;
+        private int tabIndex;
 
         public int TabIndex
         {
@@ -65,6 +62,10 @@ namespace VisionProject.ViewModels
                 if (oldTabIndex != TabIndex)
                 {
                     oldTabIndex = TabIndex;
+
+                    Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+                    Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                    Variables.ImageWindowDataForFunction.MessageCtrl.ClearMessages();
                     if (TabIndex == 0)
                     {
                         try
@@ -137,7 +138,6 @@ namespace VisionProject.ViewModels
                             }
                             image?.Dispose();
                             image = resultImage.CopyImage();
-                            grayAdd();
                             runGray();
                         }
                         catch { }
@@ -204,27 +204,48 @@ namespace VisionProject.ViewModels
                     {
                         try
                         {
+                            if (IsTrans)
+                                ExecuteModelOperate("trans");
+                            image?.Dispose();
+                            image = resultImage.CopyImage();
+                            if (IsPreEnhance)
+                            {
+                                preEnhanceAdd();
+                                runPreEnhance();
+                            }
+                            image?.Dispose();
+                            image = resultImage.CopyImage();
+                            grayAdd();
+                            runGray();
+
+                            regionTemp?.Dispose();
+                            regionTemp = resultRegion.Clone();
+                            RegionFoundFeatureDataIndex = RegionFoundFeatureDatas.Count - 1;
+                            runDispose();
+
+                            regionTemp?.Dispose();
+                            regionTemp = resultRegion.Clone();
+                            runExtract();
                         }
                         catch { }
-                        //if (IsTrans)
-                        //    ExecuteModelOperate("trans");
-                        //image?.Dispose();
-                        //image = resultImage.CopyImage();
-                        //if (IsPreEnhance)
-                        //    runPreEnhance();
-                        //image?.Dispose();
-                        //image = resultImage.CopyImage();
-                        //runGray();
 
-                        //regionTemp?.Dispose();
-                        //regionTemp = resultRegion.Clone();
-                        //runDispose();
-
-                        //regionTemp?.Dispose();
-                        //regionTemp = resultRegion.Clone();
-                        //runExtract();
-
-                        //ExecuteTestRunJudge();
+                        inspectFrames = (List<InspectFrame>)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectFrames", new List<InspectFrame>());
+                        Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+                        for (int i = 0; i < inspectFrames.Count; i++)
+                        {
+                            ROIRectangle1 rOIRectangle1 = new ROIRectangle1();
+                            rOIRectangle1.row1 = inspectFrames[i].Row1;
+                            rOIRectangle1.col1 = inspectFrames[i].Col1;
+                            rOIRectangle1.row2 = inspectFrames[i].Row2;
+                            rOIRectangle1.col2 = inspectFrames[i].Col2;
+                            if (inspectFrames[i].ContainsObject)
+                                rOIRectangle1.ROIColor = BingLibrary.Vision.HalconColors.蓝色;
+                            else
+                                rOIRectangle1.ROIColor = BingLibrary.Vision.HalconColors.红色;
+                            Variables.ImageWindowDataForFunction.ROICtrl.AddROI(rOIRectangle1);
+                        }
+                        Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.margin;
+                        Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
                     }
                 }
             }
@@ -337,7 +358,6 @@ namespace VisionProject.ViewModels
             {
                 case "roiDraw":
                     ExecuteImageOperate("original");
-
                     NotDrawIng = false;
                     var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
                     var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
@@ -398,7 +418,6 @@ namespace VisionProject.ViewModels
                         {
                             image = originalImage.CropRectangle1(row01, col01, row02, col02);
                             string imagePath = "";
-
                             try
                             {
                                 imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
@@ -923,6 +942,15 @@ namespace VisionProject.ViewModels
             Variables.ImageWindowDataForFunction.ROICtrl.Clear();
             Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(resultImage);
             Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+
+            //try
+            //{
+            //    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsPreEnhance", IsPreEnhance);
+            //    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("BrightnessValue", BrightnessValue);
+            //    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ContrastValue", ContrastValue);
+            //    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("GammaValue", GammaValue);
+            //}
+            //catch { }
         }
 
         #endregion 预处理
@@ -965,6 +993,8 @@ namespace VisionProject.ViewModels
                 Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueE2", ValueE2);
                 Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueE3", ValueE3);
                 Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ValueE4", ValueE4);
+
+                Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsEnableDeep", IsEnableDeep);
 
                 Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsEnable1", IsEnable1);
                 Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsEnable2", IsEnable2);
@@ -1043,6 +1073,8 @@ namespace VisionProject.ViewModels
             ValueE2 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE2" + GrayModeIndex.ToString(), 0).ToString());
             ValueE3 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE3" + GrayModeIndex.ToString(), 0).ToString());
             ValueE4 = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ValueE4" + GrayModeIndex.ToString(), 0).ToString());
+
+            IsEnableDeep = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnableDeep", false);
             IsEnable1 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable1" + GrayModeIndex.ToString(), false);
             IsEnable2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable2" + GrayModeIndex.ToString(), false);
             IsEnable3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnable3" + GrayModeIndex.ToString(), false);
@@ -1051,6 +1083,7 @@ namespace VisionProject.ViewModels
             IsReverse2 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse12" + GrayModeIndex.ToString(), false);
             IsReverse3 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse13" + GrayModeIndex.ToString(), false);
             IsReverse4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse14" + GrayModeIndex.ToString(), false);
+
             runGray();
         }
 
@@ -1066,6 +1099,7 @@ namespace VisionProject.ViewModels
             {
                 return;
             }
+            IsEnableDeep = false;
             if (GrayModeIndex == 0)
             {
                 Minimum1 = 0; Maximum1 = 100;
@@ -1198,7 +1232,12 @@ namespace VisionProject.ViewModels
             {
                 if (true)
                 {
-                    if (GrayModeIndex == 0)
+                    if (IsEnableDeep)
+                    {
+                        resultImage = image.CopyImage();
+                        resultRegion = Variables.PinDeep.ApplyModelInSegmentation(resultImage, new int[] { 1 }, true).Threshold(2.0, 2.0);
+                    }
+                    else if (GrayModeIndex == 0)
                     {
                         if (image.CountChannels() == 1)
                         {
@@ -1501,6 +1540,14 @@ namespace VisionProject.ViewModels
             runGray();
         }
 
+        private bool isEnableDeep;
+
+        public bool IsEnableDeep
+        {
+            get { return isEnableDeep; }
+            set { SetProperty(ref isEnableDeep, value); }
+        }
+
         private bool isEnable1;
 
         public bool IsEnable1
@@ -1749,8 +1796,7 @@ namespace VisionProject.ViewModels
         {
             try
             {
-                HRegion region = regionTemp.Connection();//0726
-                //HRegion region = regionTemp;
+                HRegion region = regionTemp.Connection();
 
                 var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("DisposeROIRow1", 0.0);
                 var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("DisposeROIRow2", 0.0);
@@ -1866,18 +1912,15 @@ namespace VisionProject.ViewModels
                     }
                 }
 
-                //resultRegion = region.Union1().Connection();
-                resultRegion = region;
+                resultRegion = region.Union1().Connection();
+
+                Variables.ImageWindowDataForFunction.ROICtrl.Clear();
                 Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
                 Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(resultRegion);
-                //Variables.ImageWindowDataForFunction.ROICtrl.Clear();
                 //Variables.ImageWindowDataForFunction.ROICtrl.AddROI(new BingLibrary.Vision.ROIRegion(resultRegion) { ROIColor = BingLibrary.Vision.HalconColors.蓝色 });
                 Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
             }
             catch { }
-            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("RegionFoundFeatureDatas", RegionFoundFeatureDatas);
-            RegionFoundFeatureDatas = (ObservableCollection<RegionFoundFeatureData>)Variables.CurrentProgramData.Parameters.BingGetOrAdd("RegionFoundFeatureDatas", new ObservableCollection<RegionFoundFeatureData>());
-
             isTestRuning = false;
         }
 
@@ -2173,7 +2216,6 @@ namespace VisionProject.ViewModels
                             TransIndex = 0
                         });
                     }
-
                     RegionFoundFeatureDataIndex = RegionFoundFeatureDatas.Count - 1;
                     break;
 
@@ -2214,6 +2256,7 @@ namespace VisionProject.ViewModels
                     break;
             }
             runDispose();//TestRun();
+            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("RegionFoundFeatureDatas", RegionFoundFeatureDatas);
         }
 
         private double _radius;
@@ -2344,6 +2387,7 @@ namespace VisionProject.ViewModels
                     break;
             }
             runExtract();
+            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("BlobFeatureDatas", BlobFeatureDatas);
         }
 
         private DelegateCommand _selectionChanged;
@@ -2381,11 +2425,10 @@ namespace VisionProject.ViewModels
         private void ExecuteDrawTemp()
         {
             Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = true;
-            NotDrawIng = false;
+
             Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor(HalconColors.橙色.ToDescription());
             Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1(out row1Temp, out col1Temp, out row2Temp, out col2Temp);
             Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
-            NotDrawIng = true;
             try
             {
                 runExtract();
@@ -2455,8 +2498,7 @@ namespace VisionProject.ViewModels
             try
             {
                 Dictionary<string, List<double>> blobRess = new Dictionary<string, List<double>>();
-                //HRegion region = regionTemp.Connection();//0726
-                HRegion region = regionTemp;
+                HRegion region = regionTemp.Connection();
                 HRegion regions = new HRegion(region);
                 HRegion regionrefer = new HRegion(row1Temp, col1Temp, row2Temp, col2Temp);
 
@@ -2487,15 +2529,8 @@ namespace VisionProject.ViewModels
                     {
                         HTuple featureName = new HTuple(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
                         HTuple featureValue = region.RegionFeatures(featureName);
-                        if (featureValue.Length == 0)
-                        {
-                            min = 0; max = 0;
-                        }
-                        else
-                        {
-                            min = featureValue.TupleMin();
-                            max = featureValue.TupleMax();
-                        }
+                        min = featureValue.TupleMin();
+                        max = featureValue.TupleMax();
 
                         regions = region.SelectShape(hNames, "or", hMins, hMaxs);
                     }
@@ -2519,16 +2554,8 @@ namespace VisionProject.ViewModels
                             featureValue = regions.RegionFeatures(featureName);
                         }
                         else featureValue = region.RegionFeatures(featureName);
-
-                        if (featureValue.Length == 0)
-                        {
-                            min = 0; max = 0;
-                        }
-                        else
-                        {
-                            min = featureValue.TupleMin();
-                            max = featureValue.TupleMax();
-                        }
+                        min = featureValue.TupleMin();
+                        max = featureValue.TupleMax();
 
                         hNames = hNames.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
                         hMins = hMins.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].MinValue);
@@ -2545,16 +2572,8 @@ namespace VisionProject.ViewModels
                             featureValue = regions.RegionFeatures(featureName);
                         }
                         else featureValue = region.RegionFeatures(featureName);
-
-                        if (featureValue.Length == 0)
-                        {
-                            min = 0; max = 0;
-                        }
-                        else
-                        {
-                            min = featureValue.TupleMin();
-                            max = featureValue.TupleMax();
-                        }
+                        min = featureValue.TupleMin();
+                        max = featureValue.TupleMax();
 
                         hNames = hNames.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
                         hMins = hMins.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].MinValue);
@@ -2567,16 +2586,8 @@ namespace VisionProject.ViewModels
                         HTuple featureName = new HTuple(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
                         regionrefer = regionrefer.Intersection(region).Connection();
                         HTuple featureValue = regionrefer.RegionFeatures(featureName);
-
-                        if (featureValue.Length == 0)
-                        {
-                            min = 0; max = 0;
-                        }
-                        else
-                        {
-                            min = featureValue.TupleMin();
-                            max = featureValue.TupleMax();
-                        }
+                        min = featureValue.TupleMin();
+                        max = featureValue.TupleMax();
                     }
                     resultRegion = regions;
                     HTuple unique = Unique(hNames);
@@ -2595,19 +2606,18 @@ namespace VisionProject.ViewModels
                     Text = "    区域内特征参数最小为：" + Math.Round(min).ToString() + " , 最大为： " + Math.Round(max).ToString();
                 }
             }
-            catch (Exception ex) { Text = "    提取区域报错：" + ex; }
+            catch { }
             isTestRuning = false;
             //Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(resultImage.CopyImage());///因为被释放掉了
-
+            Variables.ImageWindowDataForFunction.ROICtrl.Clear();
             Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
             Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(resultRegion);
+            //Variables.ImageWindowDataForFunction.ROICtrl.AddROI(new BingLibrary.Vision.ROIRegion(resultRegion) { ROIColor = BingLibrary.Vision.HalconColors.蓝色 });
             Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
 
             Variables.CurrentProgramData.Parameters.BingAddOrUpdate("FilterModeIndex", FilterModeIndex);
             Variables.CurrentProgramData.Parameters.BingAddOrUpdate("BlobFeatureDatas", BlobFeatureDatas);
             Variables.CurrentProgramData.Parameters.BingAddOrUpdate("BlobFeatureDataIndex", BlobFeatureDataIndex);
-            //更正显示
-            BlobFeatureDatas = (ObservableCollection<BlobFeatureData>)Variables.CurrentProgramData.Parameters.BingGetOrAdd("BlobFeatureDatas", new ObservableCollection<BlobFeatureData>());
             //Variables.CurrentProgramData.Parameters.BingAddOrUpdate("resultRegion", resultRegion);
         }
 
@@ -2687,7 +2697,7 @@ namespace VisionProject.ViewModels
             set
             {
                 if (value < 0) _minValue = 0;
-                else if (value > BlobFeatureDatas[BlobFeatureDataIndex].MaxValue)
+                else if (value > _maxValue)
                     _minValue = _maxValue;
                 else _minValue = value;
                 RaisePropertyChanged(nameof(MinValue));
@@ -2702,7 +2712,7 @@ namespace VisionProject.ViewModels
             set
             {
                 if (value < 0) { _maxValue = 0; }
-                else if (value < BlobFeatureDatas[BlobFeatureDataIndex].MinValue)
+                else if (value < _minValue)
                     _maxValue = _minValue;
                 else { _maxValue = value; }
                 RaisePropertyChanged(nameof(MaxValue));
@@ -2737,44 +2747,25 @@ namespace VisionProject.ViewModels
 
         #region 判定
 
-        private bool _isDeleteOverlop;
+        private double _allowOffset = 0;
 
-        public bool IsDeleteOverlop
+        public double AllowOffset
         {
-            get { return _isDeleteOverlop; }
+            get { return _allowOffset; }
             set
             {
-                SetProperty(ref _isDeleteOverlop, value);
+                SetProperty(ref _allowOffset, value);
             }
         }
 
-        private int _minNum;
+        private int _scale = 1;
 
-        public int MinNum
+        public int Scale
         {
-            get { return _minNum; }
+            get { return _scale; }
             set
             {
-                SetProperty(ref _minNum, value);
-            }
-        }
-
-        private string _curNum;
-
-        public string CurNum
-        {
-            get { return _curNum; }
-            set { SetProperty(ref _curNum, value); }
-        }
-
-        private int _maxNum;
-
-        public int MaxNum
-        {
-            get { return _maxNum; }
-            set
-            {
-                SetProperty(ref _maxNum, value);
+                SetProperty(ref _scale, value);
             }
         }
 
@@ -2790,61 +2781,131 @@ namespace VisionProject.ViewModels
             NotDrawIng = false;
             try
             {
+                //List<InspectFrame> InspectFrames = new List<InspectFrame>();
                 switch (parameter)
                 {
                     case "1":
                         {
-                            var defaultRegion = new HRegion();
-                            defaultRegion.GenEmptyRegion();
+                            HRegion RegionTemp = new HRegion();
+                            RegionTemp.GenEmptyRegion();
+                            inspectFrames = (List<InspectFrame>)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectFrames", new List<InspectFrame>());
+                            double r1 = 0, c1 = 0, r2 = 0, c2 = 0;
+                            // (  (ROIRectangle1)   Variables.ImageWindowDataForFunction.ROICtrl.GetActiveROI()[0]).ro;
+                            Variables.ImageWindowDataForFunction.WindowCtrl.CanEdit = true;
+                            Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1(out r1, out c1, out r2, out c2);
 
-                            var regionPath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRegion", Guid.NewGuid().ToString() + ".reg").ToString();
-                            //regionPath = Guid.NewGuid().ToString() + ".reg";
-                            if (File.Exists(Variables.ProjectObjectPath + regionPath))
-                                defaultRegion.ReadRegion(Variables.ProjectObjectPath + regionPath);
-
-                            Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
-                            Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(defaultRegion);
-                            Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
-                            var tempRegion = Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRegion();
-                            defaultRegion = defaultRegion.Union2(tempRegion);
-                            Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
-                            Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(defaultRegion);
-                            Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
-
-                            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectRegion", regionPath);
-                            defaultRegion.WriteRegion(Variables.ProjectObjectPath + regionPath);
+                            double crossRow = 0, crossCol = 0;
+                            double area = 0;
+                            RegionTemp.GenRectangle1(r1, c1, r2, c2);
+                            ROIRectangle1 rOIRectangle1 = new ROIRectangle1();
+                            rOIRectangle1.createROIRect1(r1, c1, r2, c2);
+                            rOIRectangle1.ROIColor = BingLibrary.Vision.HalconColors.蓝色;
+                            RegionTemp = RegionTemp.Intersection(resultRegion);
+                            try
+                            {
+                                area = RegionTemp.AreaCenter(out crossRow, out crossCol);
+                            }
+                            catch { }
+                            if ((RegionTemp.Connection()).CountObj() == 1 && area > 1)
+                            {
+                                inspectFrames.Add(new InspectFrame() { Row1 = r1, Row2 = r2, Col1 = c1, Col2 = c2, ContainsObject = true, CrossRow = crossRow, CrossCol = crossCol });
+                                rOIRectangle1.ROIColor = BingLibrary.Vision.HalconColors.蓝色;
+                                Variables.ImageWindowDataForFunction.ROICtrl.AddROI(rOIRectangle1);
+                                Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                            }
+                            else
+                            {
+                                inspectFrames.Add(new InspectFrame() { Row1 = r1, Row2 = r2, Col1 = c1, Col2 = c2, ContainsObject = false, CrossRow = crossRow, CrossCol = crossCol });
+                                rOIRectangle1.ROIColor = BingLibrary.Vision.HalconColors.红色;
+                                Variables.ImageWindowDataForFunction.ROICtrl.AddROI(rOIRectangle1);
+                                Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                            }
                         }
                         break;
 
                     case "2":
                         {
-                            var defaultRegion = new HRegion();
-                            defaultRegion.GenEmptyRegion();
-                            var regionPath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRegion", Guid.NewGuid().ToString() + ".reg").ToString();
-                            if (File.Exists(Variables.ProjectObjectPath + regionPath))
-                                defaultRegion.ReadRegion(Variables.ProjectObjectPath + regionPath);
+                            int index = Variables.ImageWindowDataForFunction.ROICtrl.GetActiveROIIdx();
+                            Variables.ImageWindowDataForFunction.ROICtrl.RemoveActiveRoi();
 
-                            Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
-                            Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(defaultRegion);
-                            Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
-                            var tempRegion = Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRegion();
-                            defaultRegion = defaultRegion.Difference(tempRegion);
-                            Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
-                            Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(defaultRegion);
-                            Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
-
-                            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectRegion", regionPath);
-                            defaultRegion.WriteRegion(Variables.ProjectObjectPath + regionPath);
+                            inspectFrames.RemoveAt(index);
                         }
-
                         break;
                 }
             }
             catch { }
             Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
-            Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.fill;
+            Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.margin;
             Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
             NotDrawIng = true;
+        }
+
+        private int _inspectWidth = 60;
+
+        public int InspectWidth
+        {
+            get { return _inspectWidth; }
+            set { SetProperty(ref _inspectWidth, value); }
+        }
+
+        private int _inspectHeight = 60;
+
+        public int InspectHeight
+        {
+            get { return _inspectHeight; }
+            set { SetProperty(ref _inspectHeight, value); }
+        }
+
+        private DelegateCommand _oneStepToInspect;
+
+        public DelegateCommand OneStepToInspect =>
+            _oneStepToInspect ?? (_oneStepToInspect = new DelegateCommand(ExecuteOneStepToInspect));
+
+        private void ExecuteOneStepToInspect()
+        {
+            bool rst = Variables.ShowConfirm("请确认好设置的单个Pin检测框的宽高！");
+            if (rst)
+            {
+                rst = Variables.ShowConfirm("是否清除已有的检测框？");
+                if (rst)
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectFrames", new List<InspectFrame>());
+
+                Variables.ShowMessage("绘制包含需要自动设置的Pin的检测框。");
+                HRegion RegionTemp = new HRegion();
+                RegionTemp.GenEmptyRegion();
+                inspectFrames = (List<InspectFrame>)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectFrames", new List<InspectFrame>());
+                double r1 = 0, c1 = 0, r2 = 0, c2 = 0;
+                // (  (ROIRectangle1)   Variables.ImageWindowDataForFunction.ROICtrl.GetActiveROI()[0]).ro;
+                Variables.ImageWindowDataForFunction.WindowCtrl.CanEdit = true;
+                NotDrawIng = false;
+                Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = true;
+
+                Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DrawRectangle1(out r1, out c1, out r2, out c2);
+                Variables.ImageWindowDataForFunction.WindowCtrl.IsDrawing = false;
+                NotDrawIng = true;
+                double crossRow = 0, crossCol = 0;
+                double area = 0;
+                RegionTemp.GenRectangle1(r1, c1, r2, c2);
+
+                var regions = RegionTemp.Intersection(resultRegion).Union1().Connection();
+                HTuple rs, cs;
+                regions.AreaCenter(out rs, out cs);
+
+                Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
+                Variables.ImageWindowDataForFunction.MessageCtrl.ClearMessages();
+                Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+                for (int i = 0; i < rs.DArr.Length; i++)
+                {
+                    ROIRectangle1 rOIRectangle1 = new ROIRectangle1();
+                    rOIRectangle1.createROIRect1(rs[i] - InspectHeight, cs[i] - InspectHeight, rs[i] + InspectHeight, cs[i] + InspectHeight);
+                    rOIRectangle1.ROIColor = BingLibrary.Vision.HalconColors.蓝色;
+                    inspectFrames.Add(new InspectFrame() { Row1 = rs[i] - InspectHeight, Row2 = rs[i] + InspectHeight, Col1 = cs[i] - InspectHeight, Col2 = cs[i] + InspectHeight, ContainsObject = true, CrossRow = rs[i], CrossCol = cs[i] });
+                    Variables.ImageWindowDataForFunction.ROICtrl.AddROI(rOIRectangle1);
+                    Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                }
+
+                Variables.ShowMessage("创建完成，请做进一步调整。");
+            }
         }
 
         private DelegateCommand _testRunJudge;
@@ -2856,16 +2917,15 @@ namespace VisionProject.ViewModels
         {
             try
             {
-                var rst = Function_BlobTool.Run(originalImage, Variables.CurrentProgramData);
+                var rst = Function_PINOneTool.Run(originalImage, Variables.CurrentProgramData);
 
-                CurNum = rst.MessageResult;
+                string[] results = rst.MessageResult.Split('\n');
+                //CurNum = rst.MessageResult;
                 var region = rst.RunRegion;
 
                 var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
-                var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
                 var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn1", 0.0);
-                var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn2", 0.0);
-
+                var Frames = (List<InspectFrame>)Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectFrames", new List<InspectFrame>());
                 //HImage showImage = new HImage();
                 //if (row1 + row2 != 0)
                 //    showImage = image.CropRectangle1(row1, col1, row2, col2);
@@ -2873,50 +2933,41 @@ namespace VisionProject.ViewModels
                 //Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(showImage);
 
                 Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
-                Variables.ImageWindowDataForFunction.ROICtrl.Clear();
-                Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(resultImage.CopyImage());
+                Variables.ImageWindowDataForFunction.MessageCtrl.ClearMessages();
                 Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
                 Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetColor("green");
                 Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(region);
-                //region.MoveRegion(-(int)row1, -(int)col1);
+                region.MoveRegion(-(int)row1, -(int)col1);
+                for (int i = 0; i < Frames.Count; i++)
+                {
+                    double row = Frames[i].Row1;
+                    double col = Frames[i].Col1;
+                    double distance = 0;
+                    bool b = double.TryParse(results[i + 1], out distance);
+                    //results[i].Split("");
+                    if (!Frames[i].ContainsObject)
+                    {
+                        Variables.ImageWindowDataForFunction.MessageCtrl.AddMessageVar("", (int)row, (int)col, 36, BingLibrary.Vision.HalconColors.红色);
+                    }
+                    else if (distance < AllowOffset)
+                    {
+                        if (results[i + 1] == "缺失")
+                            Variables.ImageWindowDataForFunction.MessageCtrl.AddMessageVar(results[i + 1], (int)row, (int)col, 20, BingLibrary.Vision.HalconColors.红色);
+                        else
+                            Variables.ImageWindowDataForFunction.MessageCtrl.AddMessageVar(results[i + 1], (int)row, (int)col, 20, BingLibrary.Vision.HalconColors.蓝色);
+                    }
+                    else { Variables.ImageWindowDataForFunction.MessageCtrl.AddMessageVar(results[i + 1], (int)row, (int)col, 20, BingLibrary.Vision.HalconColors.红色); }
+                }
                 Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
             }
             catch { }
-
-            //try
-            //{
-            //    var defaultRegion = new HRegion();
-            //    defaultRegion.GenEmptyRegion();
-
-            //    var inspectRegionPath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("InspectRegion", Variables.ProjectObjectPath + Guid.NewGuid().ToString() + ".reg").ToString();
-            //    if (File.Exists(inspectRegionPath))
-            //        defaultRegion.ReadRegion(inspectRegionPath);
-
-            //    if (defaultRegion.Area == 0)
-            //        defaultRegion = resultRegion;
-
-            //    var finalRegion = defaultRegion.Intersection(resultRegion);
-            //    num = finalRegion.Connection().CountObj();
-            //    CurNum = num;
-            //    if (num < MinNum || num > MaxNum)
-            //    {
-            //        Result = false;
-            //    }
-            //    else { Result = true; }
-
-            //    Variables.ImageWindowDataForFunction.ROICtrl.Clear();
-            //    Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
-            //    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("margin");
-            //    Variables.ImageWindowDataForFunction.DispObjectCtrl.AddDispObjectVar(finalRegion);
-            //    Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.SetDraw("fill");
-            //    Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
-            //}
-            //catch { Result = false; }
         }
+
+        private List<InspectFrame> inspectFrames = new List<InspectFrame> { };
 
         #endregion 判定
 
-        public string Title => "Blob分析";
+        public string Title => "PIN针检测";
 
         public event Action<IDialogResult> RequestClose;
 
@@ -2947,6 +2998,7 @@ namespace VisionProject.ViewModels
             catch { }
 
             IsPreEnhance = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsPreEnhance", false);
+            IsEnableDeep = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsEnableDeep", false);
             BrightnessValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("BrightnessValue", 128.0);
             ContrastValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ContrastValue", 128.0);
             GammaValue = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("GammaValue", 1.0);
@@ -3027,9 +3079,8 @@ namespace VisionProject.ViewModels
                 IsReverse4 = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsReverse14" + GrayModeIndex.ToString(), false);
             }
 
-            MinNum = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("MinNum", 0).ToString());
-            MaxNum = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("MaxNum", 0).ToString());
-            IsDeleteOverlop = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsDeleteOverlop", false);
+            AllowOffset = (double)(Variables.CurrentProgramData.Parameters.BingGetOrAdd("AllowOffset", 0.0));
+            Scale = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("Scale", 0).ToString());
 
             FilterModeIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("FilterModeIndex", 0).ToString());
 
@@ -3038,9 +3089,8 @@ namespace VisionProject.ViewModels
             ExecuteRegionSelectionChanged();
             BlobFeatureDatas = (ObservableCollection<BlobFeatureData>)Variables.CurrentProgramData.Parameters.BingGetOrAdd("BlobFeatureDatas", new ObservableCollection<BlobFeatureData>());
             BlobFeatureDataIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("BlobFeatureDataIndex", 0).ToString());
-            // ExecuteSelectionChanged();
-            grayAdd();
-            preEnhanceAdd();
+            ExecuteSelectionChanged();
+
             await Task.Delay(200);
             isInitlized = true;
             DoSwitchTab.Execute();
@@ -3054,9 +3104,67 @@ namespace VisionProject.ViewModels
 
         private void ExecuteSave(string parameter)
         {
-            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("MinNum", MinNum);
-            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("MaxNum", MaxNum);
-            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsDeleteOverlop", IsDeleteOverlop);
+            switch (parameter)
+            {
+                case "0":
+                    Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+                    for (int i = 0; i < inspectFrames.Count; i++)
+                    {
+                        ROIRectangle1 rOIRectangle1 = new ROIRectangle1();
+                        rOIRectangle1.row1 = inspectFrames[i].Row1;
+                        rOIRectangle1.col1 = inspectFrames[i].Col1;
+                        rOIRectangle1.row2 = inspectFrames[i].Row2;
+                        rOIRectangle1.col2 = inspectFrames[i].Col2;
+                        if (inspectFrames[i].ContainsObject)
+                            rOIRectangle1.ROIColor = BingLibrary.Vision.HalconColors.蓝色;
+                        else
+                            rOIRectangle1.ROIColor = BingLibrary.Vision.HalconColors.红色;
+                        Variables.ImageWindowDataForFunction.ROICtrl.AddROI(rOIRectangle1);
+                    }
+                    Variables.ImageWindowDataForFunction.WindowCtrl.DrawMode = HalconDrawing.margin;
+                    Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("InspectFrames", inspectFrames);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("AllowOffset", AllowOffset);
+                    Variables.CurrentProgramData.Parameters.BingAddOrUpdate("Scale", Scale);
+                    break;
+
+                case "1":
+                    var rst = Variables.ShowConfirm("是否注册为检测基准模板？");
+                    if (rst)
+                    {
+                        HRegion RegionTemp = new HRegion();
+                        RegionTemp.GenEmptyRegion();
+                        var rolList = Variables.ImageWindowDataForFunction.ROICtrl.GetROIList();
+                        inspectFrames.Clear();
+                        for (int i = 0; i < rolList.Count; i++)
+                        {
+                            var v = (ROIRectangle1)rolList[i];
+                            RegionTemp.GenRectangle1(v.row1, v.col1, v.row2, v.col2);
+                            RegionTemp = RegionTemp.Intersection(resultRegion);
+                            double area = 0;
+                            try
+                            {
+                                area = RegionTemp.AreaCenter(out double crossRow, out double crossCol);
+                            }
+                            catch { }
+                            if ((RegionTemp.Connection()).CountObj() != 1 || area <= 1)
+                            {
+                                inspectFrames.Add(new InspectFrame() { Row1 = v.row1, Row2 = v.row2, Col1 = v.col1, Col2 = v.col2, ContainsObject = false, CrossRow = 0, CrossCol = 0 });
+                            }
+                            else
+                            {
+                                double cr = 0, cc = 0;
+                                try
+                                {
+                                    RegionTemp.AreaCenter(out cr, out cc);
+                                }
+                                catch { }
+                                inspectFrames.Add(new InspectFrame() { Row1 = v.row1, Row2 = v.row2, Col1 = v.col1, Col2 = v.col2, ContainsObject = true, CrossRow = cr, CrossCol = cc });
+                            }
+                        }
+                    }
+                    break;
+            }
         }
 
         public void OnDialogClosed()
@@ -3072,89 +3180,5 @@ namespace VisionProject.ViewModels
         {
             return true;
         }
-    }
-
-    public enum RegionFoundFeatures
-    {
-        圆形开运算 = 0,
-
-        矩形开运算 = 1,
-
-        圆形闭运算 = 2,
-
-        矩形闭运算 = 3,
-
-        圆形膨胀 = 4,
-
-        矩形膨胀 = 5,
-
-        圆形腐蚀 = 6,
-
-        矩形腐蚀 = 7,
-
-        填充孔洞 = 8,
-
-        形状变换 = 9,
-
-        连通 = 10,
-
-        联合 = 11,
-    }
-
-    public enum BlobFeatures
-    {
-        [Description("area")]
-        面积 = 0,
-
-        [Description("row")]
-        行 = 1,
-
-        [Description("column")]
-        列 = 2,
-
-        [Description("width")]
-        宽度 = 3,
-
-        [Description("height")]
-        高度 = 4,
-
-        [Description("ratio")]
-        高宽比 = 5,
-
-        [Description("circularity")]
-        圆度 = 6,
-
-        [Description("rectangularity")]
-        矩形度 = 7,
-
-        [Description("compactness")]
-        紧密度 = 8,
-
-        [Description("ra")]
-        等效椭圆长轴半径 = 9,
-
-        [Description("rb")]
-        等效椭圆短轴半径 = 10,
-
-        [Description("phi")]
-        等效椭圆角度 = 11,
-
-        [Description("anisometry")]
-        等效椭圆长短轴比 = 12,
-
-        [Description("outer_radius")]
-        最小外接圆半径 = 13,
-
-        [Description("inner_radius")]
-        最大内接圆半径 = 14,
-
-        [Description("inner_width")]
-        最大内接矩形宽度 = 15,
-
-        [Description("inner_height")]
-        最大内接矩形高度 = 16,
-
-        [Description("orientation")]
-        区域角度 = 17,
     }
 }

@@ -1,6 +1,6 @@
 ﻿using HalconDotNet;
 
-namespace VisionProject.Core
+namespace DLTools.Apply
 {
     public class InspectCY
     {
@@ -505,15 +505,15 @@ namespace VisionProject.Core
                 using (HDevDisposeHelper dh = new HDevDisposeHelper())
                 {
                     trp.LabelName = hv_PredictClasses.TupleSelect(hv_IndexMax).S;
-                    trp.Area = double.Parse(hv_Max.TupleString(".N3").S);
+                    trp.Area = double.Parse(hv_Max.TupleString(".3f").S);
 
                     hv_Text = ((hv_PredictClasses.TupleSelect(
-                        hv_IndexMax)) + new HTuple(", ")) + (hv_Max.TupleString(".N3"));
+                        hv_IndexMax)) + new HTuple(", ")) + (hv_Max.TupleString(".3f"));
                 }
             }
             catch (HalconException HDevExpDefaultException)
             {
-                // ho_Image.Dispose();
+               // ho_Image.Dispose();
                 ho_ImagePreprocessedByte.Dispose();
                 ho_ImagePreprocessed.Dispose();
 

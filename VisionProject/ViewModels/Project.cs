@@ -1,14 +1,22 @@
-﻿using BingLibrary.FileOpreate;
+﻿using BingLibrary.Extension;
+using BingLibrary.FileOpreate;
 using HalconDotNet;
+using ImTools;
+using MySqlX.XDevAPI.Relational;
 using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using VisionProject.GlobalVars;
+using VisionProject.RunTools;
 using Log = BingLibrary.Logs.LogOpreate;
 
 namespace VisionProject.ViewModels
@@ -62,7 +70,6 @@ namespace VisionProject.ViewModels
                 {
                     try
                     {
-                        HOperatorSet.SetSystem(new HTuple("clip_region"), new HTuple("false"));
                         ProjectIndex = SystemConfig.ProjectIndex;
                         if (!File.Exists(SelectProjectName.Path))
                         {
@@ -73,6 +80,7 @@ namespace VisionProject.ViewModels
                             Variables.CurrentProject = Serialize.ReadJsonV2<Project>(SelectProjectName.Path);
                         });
 
+                        //CheckCameraMode = Variables.CurrentProject.CameraMode == 1 ? true : false;
                         Programs = Variables.CurrentProject.Programs;
 
                         CurrentProgram.Clear();
@@ -88,6 +96,7 @@ namespace VisionProject.ViewModels
                         CreateDate = Variables.CurrentProject.CreateDate;
                         LastDate = Variables.CurrentProject.LastDate;
                         ProjectPath = SelectProjectName.Path;
+                        CameraMode = Variables.CurrentProject.CameraMode;
 
                         Log.Info("打开了项目 " + ProjectName);
 
@@ -96,9 +105,147 @@ namespace VisionProject.ViewModels
                             ProgramsName.Add(Programs.Keys.ToList()[i]);
 
                         Variables.ProgramName = ProgramsName[ProgramsIndex];
+                        initShowDatas(CameraMode);
                     }
                     catch { }
                 }
+        }
+
+        private void initShowDatas(int cameraMode)
+        {
+            //这里注意生成顺序，2,1,4,3
+
+            RunShowDatas.Clear();
+            if (cameraMode == 1)
+            {
+                for (int i = 1; i < Programs[Programs.Keys.ToList()[1]].Count; i++)
+                {
+                    int row = Programs[Programs.Keys.ToList()[1]][i].ProductConfigSet.RowInput;
+                    int column = Programs[Programs.Keys.ToList()[1]][i].ProductConfigSet.ColInput;
+
+                    RunShowData rsd = new RunShowData();
+                    rsd.Header = "cam2-" + i;
+                    rsd.Left = 20 + (column - 1) * 120;
+                    rsd.Top = 20 + (row - 1) * 160;
+
+                    for (int j = 0; j < Programs[Programs.Keys.ToList()[1]][i].ProgramDatas.Count; j++)
+                    {
+                        rsd.RunShowDataResult.Add(Programs[Programs.Keys.ToList()[1]][i].ProgramDatas[j].Content);
+                    }
+                    RunShowDatas.Add(rsd);
+                }
+                for (int i = 1; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
+                {
+                    int row = Programs[Programs.Keys.ToList()[0]][i].ProductConfigSet.RowInput;
+                    int column = Programs[Programs.Keys.ToList()[0]][i].ProductConfigSet.ColInput;
+
+                    RunShowData rsd = new RunShowData();
+                    rsd.Header = "cam1-" + i;
+                    rsd.Left = 20 + (column - 1) * 120;
+                    rsd.Top = 20 + (row - 1) * 160;
+
+                    for (int j = 0; j < Programs[Programs.Keys.ToList()[0]][i].ProgramDatas.Count; j++)
+                    {
+                        rsd.RunShowDataResult.Add(Programs[Programs.Keys.ToList()[0]][i].ProgramDatas[j].Content);
+                    }
+                    RunShowDatas.Add(rsd);
+                }
+
+                for (int i = 0; i < Programs[Programs.Keys.ToList()[3]].Count; i++)
+                {
+                    RunShowData rsd = new RunShowData();
+                    rsd.Header = "cam4-" + i;
+                    rsd.Left = 20 + i * 120;
+                    rsd.Top = 20 + (5 - 1) * 160;
+
+                    for (int j = 0; j < Programs[Programs.Keys.ToList()[3]][i].ProgramDatas.Count; j++)
+                    {
+                        rsd.RunShowDataResult.Add(Programs[Programs.Keys.ToList()[3]][i].ProgramDatas[j].Content);
+                    }
+                    RunShowDatas.Add(rsd);
+                }
+
+                for (int i = 0; i < Programs[Programs.Keys.ToList()[2]].Count; i++)
+                {
+                    RunShowData rsd = new RunShowData();
+                    rsd.Header = "cam3-" + i;
+                    rsd.Left = 20 + (5 + i) * 120;
+                    rsd.Top = 20 + (5 - 1) * 160;
+
+                    for (int j = 0; j < Programs[Programs.Keys.ToList()[2]][i].ProgramDatas.Count; j++)
+                    {
+                        rsd.RunShowDataResult.Add(Programs[Programs.Keys.ToList()[2]][i].ProgramDatas[j].Content);
+                    }
+                    RunShowDatas.Add(rsd);
+                }
+            }
+            else if (cameraMode == 2)
+            {
+                int maxColumn = 0;
+                //右在前
+                for (int i = 1; i < Programs[Programs.Keys.ToList()[1]].Count; i++)
+                {
+                    int row = Programs[Programs.Keys.ToList()[1]][i].ProductConfigSet.RowInput;
+                    int column = Programs[Programs.Keys.ToList()[1]][i].ProductConfigSet.ColInput;
+                    if (maxColumn < column)
+                        maxColumn = column;
+                    RunShowData rsd = new RunShowData();
+                    rsd.Header = "cam2-" + i;
+                    rsd.Left = 20 + (column - 1) * 120;
+                    rsd.Top = 20 + (row - 1) * 160;
+
+                    for (int j = 0; j < Programs[Programs.Keys.ToList()[1]][i].ProgramDatas.Count; j++)
+                    {
+                        rsd.RunShowDataResult.Add(Programs[Programs.Keys.ToList()[1]][i].ProgramDatas[j].Content);
+                    }
+                    RunShowDatas.Add(rsd);
+                }
+
+                for (int i = 1; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
+                {
+                    int row = Programs[Programs.Keys.ToList()[0]][i].ProductConfigSet.RowInput;
+                    int column = Programs[Programs.Keys.ToList()[0]][i].ProductConfigSet.ColInput;
+
+                    RunShowData rsd = new RunShowData();
+                    rsd.Header = "cam1-" + i;
+                    rsd.Left = 20 + (column - 1 + maxColumn) * 120;//这里有前面的maxColumn
+                    rsd.Top = 20 + (row - 1) * 160;
+
+                    for (int j = 0; j < Programs[Programs.Keys.ToList()[0]][i].ProgramDatas.Count; j++)
+                    {
+                        rsd.RunShowDataResult.Add(Programs[Programs.Keys.ToList()[0]][i].ProgramDatas[j].Content);
+                    }
+                    RunShowDatas.Add(rsd);
+                }
+
+                for (int i = 0; i < Programs[Programs.Keys.ToList()[3]].Count; i++)
+                {
+                    RunShowData rsd = new RunShowData();
+                    rsd.Header = "cam4-" + i;
+                    rsd.Left = 20 + i * 120;
+                    rsd.Top = 20 + (5 - 1) * 160;
+
+                    for (int j = 0; j < Programs[Programs.Keys.ToList()[3]][i].ProgramDatas.Count; j++)
+                    {
+                        rsd.RunShowDataResult.Add(Programs[Programs.Keys.ToList()[3]][i].ProgramDatas[j].Content);
+                    }
+                    RunShowDatas.Add(rsd);
+                }
+
+                for (int i = 0; i < Programs[Programs.Keys.ToList()[2]].Count; i++)
+                {
+                    RunShowData rsd = new RunShowData();
+                    rsd.Header = "cam3-" + i;
+                    rsd.Left = 20 + (5 + i) * 120;
+                    rsd.Top = 20 + (5 - 1) * 160;
+
+                    for (int j = 0; j < Programs[Programs.Keys.ToList()[2]][i].ProgramDatas.Count; j++)
+                    {
+                        rsd.RunShowDataResult.Add(Programs[Programs.Keys.ToList()[2]][i].ProgramDatas[j].Content);
+                    }
+                    RunShowDatas.Add(rsd);
+                }
+            }
         }
 
         private string _projectName;
@@ -192,7 +339,7 @@ namespace VisionProject.ViewModels
 
                             Variables.CurrentProject = Serialize.ReadJsonV2<Project>(SelectProjectName.Path);
                             Programs = Variables.CurrentProject.Programs;
-
+                            //CheckCameraMode = Variables.CurrentProject.CameraMode == 1 ? true : false;
                             CurrentProgram.Clear();
                             if (Programs.Count > 0)
                                 CurrentProgram = Variables.DeepClone(Programs[Programs.Keys.ToList()[0]]);
@@ -200,31 +347,14 @@ namespace VisionProject.ViewModels
                             if (CurrentProgram.Count > 0)
                                 CurrentProgramDatas = Variables.DeepClone(CurrentProgram[0].ProgramDatas);
 
-                            //CurrentProgram.Clear();
-                            //if (Programs.Keys.ToList().Count > 0)
-                            //{
-                            //    for (int i = 0; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
-                            //    {
-                            //        CurrentProgram.Add(new SubProgram() { ProductIndex = Programs[Programs.Keys.ToList()[0]][i].ProductIndex });
-                            //        for (int j = 0; j < Programs[Programs.Keys.ToList()[0]][i].ProgramDatas.Count; j++)
-                            //            CurrentProgram[i].ProgramDatas.Add(Programs[Programs.Keys.ToList()[0]][i].ProgramDatas[j].Clone());
-                            //    }
-                            //    CurrentProgramIndex = 0;
-                            //}
-
-                            //CurrentProgramDatas.Clear();
-                            //if (CurrentProgram.Count > 0)
-                            //{
-                            //    for (int i = 0; i < CurrentProgram[0].ProgramDatas.Count; i++)
-                            //        CurrentProgramDatas.Add(CurrentProgram[0].ProgramDatas[i].Clone());
-                            //    CurrentProgramDatasIndex = 0;
-                            //}
                             CurrentProgramIndex = 0;
 
                             ProjectName = SelectProjectName.Name;
                             CreateDate = Variables.CurrentProject.CreateDate;
                             LastDate = Variables.CurrentProject.LastDate;
                             ProjectPath = SelectProjectName.Path;
+                            CameraMode = Variables.CurrentProject.CameraMode;
+                            initShowDatas(CameraMode);
                             Log.Info("打开了项目 " + ProjectName);
 
                             if (SystemConfig.IsLoadProject == true)
@@ -279,6 +409,7 @@ namespace VisionProject.ViewModels
                                 Variables.CurrentProject = new Project();
                                 Variables.CurrentProject = Serialize.ReadJsonV2<Project>(dig_openFileDialog.FileName);
                                 Programs = Variables.CurrentProject.Programs;
+                                //CheckCameraMode = Variables.CurrentProject.CameraMode == 1 ? true : false;
 
                                 CurrentProgram.Clear();
                                 if (Programs.Count > 0)
@@ -286,27 +417,6 @@ namespace VisionProject.ViewModels
                                 CurrentProgramDatas.Clear();
                                 if (CurrentProgram.Count > 0)
                                     CurrentProgramDatas = Variables.DeepClone(CurrentProgram[0].ProgramDatas);
-
-                                //CurrentProgram.Clear();
-                                //if (Programs.Keys.ToList().Count > 0)
-                                //{
-                                //    for (int i = 0; i < Programs[Programs.Keys.ToList()[0]].Count; i++)
-                                //    {
-                                //        CurrentProgram.Add(new SubProgram() { ProductIndex = Programs[Programs.Keys.ToList()[0]][i].ProductIndex });
-                                //        for (int j = 0; j < Programs[Programs.Keys.ToList()[0]][i].ProgramDatas.Count; j++)
-                                //            CurrentProgram[i].ProgramDatas.Add(Programs[Programs.Keys.ToList()[0]][i].ProgramDatas[j].Clone());
-                                //    }
-
-                                //    CurrentProgramIndex = 0;
-                                //}
-
-                                //CurrentProgramDatas.Clear();
-                                //if (CurrentProgram.Count > 0)
-                                //{
-                                //    for (int i = 0; i < CurrentProgram[0].ProgramDatas.Count; i++)
-                                //        CurrentProgramDatas.Add(CurrentProgram[0].ProgramDatas[i].Clone());
-                                //    CurrentProgramDatasIndex = 0;
-                                //}
 
                                 CurrentProgramIndex = 0;
                                 ProjectName = dig_openFileDialog.SafeFileName.Replace(".lprj", "");
@@ -381,13 +491,11 @@ namespace VisionProject.ViewModels
                                 Variables.CurrentProject.LastDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                                 LastDate = Variables.CurrentProject.LastDate;
 
-                                CurrentProgram[CurrentProgramIndex].ProgramDatas = Variables.DeepClone(CurrentProgramDatas);
+                                if (CurrentProgramDatas.Count != 0)
+                                    CurrentProgram[CurrentProgramIndex].ProgramDatas = Variables.DeepClone(CurrentProgramDatas);
 
                                 Programs[Programs.Keys.ToList()[ProgramsIndex]] = Variables.DeepClone(CurrentProgram);
-
-                                //Programs[Programs.Keys.ToList()[ProgramsIndex]] = Variables.DeepClone(ParamSetVars);
                                 Variables.CurrentProject.Programs = Programs;
-
                                 bool isSaveOK = true;
 
                                 try
@@ -406,50 +514,95 @@ namespace VisionProject.ViewModels
                                     Serialize.WriteJsonV2(Variables.CurrentProject, ProjectPath);
                                 }
                             }
-                            Variables.ShowMessage("保存文件成功。");
+                            Variables.ShowGrowlInfo("保存文件成功。");
                             Log.Info("保存了项目");
                         }
                         catch (Exception ex) { Variables.ShowMessage("保存文件出错，当前项目文件未受影响。" + "\r\n" + ex.Message); }
                         break;
 
                     case "saveas":
-                        try
                         {
-                            bool rst = Variables.ShowConfirm("是否要保存文件？");
-                            if (rst)
+                            try
                             {
-                                System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-                                saveFileDialog.Title = ("请选择项目文件路径");
-
-                                saveFileDialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "Projects";
-
-                                saveFileDialog.Filter = "项目文件(*.lprj)|*.lprj";
-                                if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                                bool rst = Variables.ShowConfirm("是否要保存文件？");
+                                if (rst)
                                 {
-                                    string selectedFileName = Path.GetFileName(saveFileDialog.FileName);
-                                    ProjectPath = AppDomain.CurrentDomain.BaseDirectory + "Projects" + selectedFileName;
-                                }
-                                else
-                                {
-                                    return;
-                                }
+                                    System.Windows.Forms.SaveFileDialog saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+                                    saveFileDialog.Title = ("请选择项目文件路径");
 
-                                if (Variables.CurrentProject.CreateDate == "")
-                                {
-                                    Variables.CurrentProject.CreateDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                                    CreateDate = Variables.CurrentProject.CreateDate;
+                                    saveFileDialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "Projects";
+
+                                    saveFileDialog.Filter = "项目文件(*.lprj)|*.lprj";
+                                    if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                                    {
+                                        string selectedFileName = Path.GetFileName(saveFileDialog.FileName);
+                                        ProjectPath = AppDomain.CurrentDomain.BaseDirectory + "Projects" + selectedFileName;
+                                    }
+                                    else
+                                    {
+                                        return;
+                                    }
+
+                                    if (Variables.CurrentProject.CreateDate == "")
+                                    {
+                                        Variables.CurrentProject.CreateDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                        CreateDate = Variables.CurrentProject.CreateDate;
+                                    }
+                                    Variables.CurrentProject.LastDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                    LastDate = Variables.CurrentProject.LastDate;
+
+                                    if (CurrentProgramDatas.Count != 0)
+                                        CurrentProgram[CurrentProgramIndex].ProgramDatas = Variables.DeepClone(CurrentProgramDatas);
+
+                                    Programs[Programs.Keys.ToList()[ProgramsIndex]] = Variables.DeepClone(CurrentProgram);
+                                    Variables.CurrentProject.Programs = Programs;
+
+                                    bool isSaveOK = true;
+
+                                    try
+                                    {
+                                        Serialize.WriteJsonV2(Variables.CurrentProject, AppDomain.CurrentDomain.BaseDirectory + "cache.lprj");
+                                        Serialize.ReadJsonV2<Project>(AppDomain.CurrentDomain.BaseDirectory + "cache.lprj");
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        isSaveOK = false;
+                                        Variables.ShowMessage("保存文件出错，当前项目文件未受影响。" + "\r\n" + ex.Message);
+                                    }
+
+                                    if (isSaveOK)
+                                    {
+                                        Serialize.WriteJsonV2(Variables.CurrentProject, ProjectPath);
+                                    }
                                 }
-                                Variables.CurrentProject.LastDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                                LastDate = Variables.CurrentProject.LastDate;
+                                Variables.ShowGrowlInfo("保存文件成功。");
+                                Log.Info("保存了项目");
+                            }
+                            catch (Exception ex) { Variables.ShowMessage("保存文件出错，当前项目文件未受影响。" + "\r\n" + ex.Message); }
+                        }
+                        break;
+
+                    case "new":
+                        {
+                            if (ProjectPath != "" && ProjectPath != null)
+                            {
+                                if (CurrentProgramDatas.Count != 0)
+                                    CurrentProgram[CurrentProgramIndex].ProgramDatas = Variables.DeepClone(CurrentProgramDatas);
+
+                                if (Programs.Count > 0)
+                                    Programs[Programs.Keys.ToList()[ProgramsIndex]] = Variables.DeepClone(CurrentProgram);
 
                                 Variables.CurrentProject.Programs = Programs;
+
+                                Variables.CurrentProject.LastDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                LastDate = Variables.CurrentProject.LastDate;
 
                                 bool isSaveOK = true;
 
                                 try
                                 {
                                     Serialize.WriteJsonV2(Variables.CurrentProject, AppDomain.CurrentDomain.BaseDirectory + "cache.lprj");
-                                    Serialize.ReadJsonV2<Project>(AppDomain.CurrentDomain.BaseDirectory + "cache.lprj");
+                                    var cache = Serialize.ReadJsonV2<Project>(AppDomain.CurrentDomain.BaseDirectory + "cache.lprj");
                                 }
                                 catch (Exception ex)
                                 {
@@ -461,11 +614,95 @@ namespace VisionProject.ViewModels
                                 {
                                     Serialize.WriteJsonV2(Variables.CurrentProject, ProjectPath);
                                 }
+                                if (isSaveOK)
+                                {
+                                    Variables.ShowGrowlInfo("当前项目保存文件成功。");
+                                    Log.Info("保存了项目");
+                                }
+                                else
+                                    return;
                             }
-                            Variables.ShowMessage("保存文件成功。");
-                            Log.Info("保存了项目");
+
+                            System.Windows.Forms.SaveFileDialog saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+                            saveFileDialog1.Title = ("请选择项目文件路径");
+
+                            saveFileDialog1.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "Projects";
+
+                            saveFileDialog1.Filter = "项目文件(*.lprj)|*.lprj";
+                            if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                            {
+                                string selectedFileName = Path.GetFileName(saveFileDialog1.FileName);
+                                ProjectPath = AppDomain.CurrentDomain.BaseDirectory + "Projects//" + selectedFileName;
+                            }
+                            else
+                            {
+                                return;
+                            }
+                            Variables.CurrentProject = new Project();
+
+                            if (Variables.CurrentProject.CreateDate == "")
+                            {
+                                Variables.CurrentProject.CreateDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                                CreateDate = Variables.CurrentProject.CreateDate;
+                            }
+                            Variables.CurrentProject.LastDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                            LastDate = Variables.CurrentProject.LastDate;
+                            ProgramsName.Clear();
+                            Programs.Clear();
+                            Programs.Add("1", new ObservableCollection<SubProgram>());
+                            Programs.Add("2", new ObservableCollection<SubProgram>());
+                            Programs.Add("3", new ObservableCollection<SubProgram>());
+                            Programs.Add("4", new ObservableCollection<SubProgram>());
+                            ProgramsName.Clear();
+                            for (int i = 0; i < Programs.Keys.Count; i++)
+                                ProgramsName.Add(Programs.Keys.ToList()[i]);
+                            ProgramsIndex = 0;
+
+                            try
+                            {
+                                CurrentProgram.Clear();
+                                CurrentProgram = Variables.DeepClone(Programs[ProgramsName[ProgramsIndex]]);
+
+                                Variables.ProgramName = ProgramsName[ProgramsIndex];
+
+                                if (CurrentProgram.Count > 0)
+                                    CurrentProgramIndex = 0;
+                            }
+                            catch (Exception ex) { }
+
+                            CurrentProgramDatas = new ObservableCollection<ProgramData>();
+
+                            bool isSaveOK1 = true;
+                            try
+                            {
+                                Serialize.WriteJsonV2(Variables.CurrentProject, AppDomain.CurrentDomain.BaseDirectory + "cache.lprj");
+                                var cache = Serialize.ReadJsonV2<Project>(AppDomain.CurrentDomain.BaseDirectory + "cache.lprj");
+                            }
+                            catch (Exception ex)
+                            {
+                                isSaveOK1 = false;
+                                Variables.ShowMessage("保存文件出错，当前项目文件未受影响。" + "\r\n" + ex.Message);
+                            }
+
+                            if (isSaveOK1)
+                            {
+                                Serialize.WriteJsonV2(Variables.CurrentProject, ProjectPath);
+                            }
                         }
-                        catch (Exception ex) { Variables.ShowMessage("保存文件出错，当前项目文件未受影响。" + "\r\n" + ex.Message); }
+
+                        break;
+
+                    case "set":
+                        DialogParameters setParam = new DialogParameters { };
+
+                        Variables.CurDialogService.ShowDialog(DialogNames.ShowProjectSetDialog, setParam, callback =>
+                        {
+                            if (callback.Result == ButtonResult.Yes)
+                            {
+                            }
+                        });
+
                         break;
                 }
             }));
@@ -481,6 +718,9 @@ namespace VisionProject.ViewModels
          * Variables.CurrentProgram 为全局变量，主要是用于子工具中使用。
          *
          */
+
+        //相机工作模式
+        //private bool CheckCameraMode;
 
         //界面上的多程序
         public Dictionary<string, ObservableCollection<SubProgram>> Programs = new Dictionary<string, ObservableCollection<SubProgram>>();
@@ -580,6 +820,38 @@ namespace VisionProject.ViewModels
                                             {
                                                 var newProgram = Variables.DeepClone(Programs[ProgramsName[ProgramsIndex]]);
 
+                                                for (int j = 0; j < newProgram.Count; j++)
+                                                {
+                                                    for (int i = 0; i < newProgram[j].ProgramDatas.Count(); i++)
+                                                    {
+                                                        ProgramData programDataTemp = CurrentProgram[CurrentProgramIndex].ProgramDatas[i];
+                                                        var inspectRegionPath = programDataTemp.Parameters.BingGetOrAdd("InspectRegion", Guid.NewGuid().ToString() + ".reg").ToString();
+                                                        var ROIImagePath = programDataTemp.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                                                        var OriginalImagePath = programDataTemp.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                                                        try
+                                                        {
+                                                            string s = Guid.NewGuid().ToString() + ".reg";
+                                                            File.Copy(Variables.ProjectObjectPath + inspectRegionPath, (Variables.ProjectObjectPath + s).ToString());
+                                                            programDataTemp.Parameters.BingAddOrUpdate("InspectRegion", s);
+                                                        }
+                                                        catch { }
+                                                        try
+                                                        {
+                                                            string s = Guid.NewGuid().ToString();
+                                                            File.Copy(Variables.ProjectImagesPath + ROIImagePath + ".bmp", (Variables.ProjectImagesPath + s + ".bmp").ToString());
+                                                            programDataTemp.Parameters.BingAddOrUpdate("ROIImage", s);
+                                                        }
+                                                        catch { }
+                                                        try
+                                                        {
+                                                            string s = Guid.NewGuid().ToString();
+                                                            File.Copy(Variables.ProjectImagesPath + OriginalImagePath + ".bmp", (Variables.ProjectImagesPath + s + ".bmp").ToString());
+                                                            programDataTemp.Parameters.BingAddOrUpdate("OriginalImage", s);
+                                                        }
+                                                        catch { }
+                                                    }
+                                                }
+
                                                 //var newProgram = new ObservableCollection<SubProgram>();
                                                 //for (int i = 0; i < Programs[ProgramsName[ProgramsIndex]].Count; i++)
                                                 //{
@@ -639,6 +911,35 @@ namespace VisionProject.ViewModels
                         {   //删除确认
                             if (Variables.ShowConfirm("确认删除当前程序？") == true)
                             {
+                                for (int j = 0; j < Programs[ProgramsName[ProgramsIndex]].Count; j++)
+                                {
+                                    try
+                                    {
+                                        for (int i = 0; i < Programs[ProgramsName[ProgramsIndex]][j].ProgramDatas.Count(); i++)
+                                        {
+                                            ProgramData programDataTemp = CurrentProgram[CurrentProgramIndex].ProgramDatas[i];
+                                            var inspectRegionPath = programDataTemp.Parameters.BingGetOrAdd("InspectRegion", Guid.NewGuid().ToString() + ".reg").ToString();
+                                            var ROIImagePath = programDataTemp.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                                            var OriginalImagePath = programDataTemp.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                                            try
+                                            {
+                                                File.Delete(Variables.ProjectObjectPath + inspectRegionPath);
+                                            }
+                                            catch { }
+                                            try
+                                            {
+                                                File.Delete(Variables.ProjectImagesPath + ROIImagePath + ".bmp");
+                                            }
+                                            catch { }
+                                            try
+                                            {
+                                                File.Delete(Variables.ProjectImagesPath + OriginalImagePath + ".bmp");
+                                            }
+                                            catch { }
+                                        }
+                                    }
+                                    catch { }
+                                }
                                 Programs.Remove(ProgramsName[ProgramsIndex]);
                                 ProgramsName.Remove(ProgramsName[ProgramsIndex]);
                                 Variables.ProgramName = ProgramsName[ProgramsIndex];
@@ -653,26 +954,24 @@ namespace VisionProject.ViewModels
         private DelegateCommand _selectProgram;
 
         public DelegateCommand SelectProgram =>
-            _selectProgram ?? (_selectProgram = new DelegateCommand(() =>
+            _selectProgram ?? (_selectProgram = new DelegateCommand(async () =>
             {
                 try
                 {
+                    await Task.Delay(20);
+                    //当前界面显示的程序清空
                     CurrentProgram.Clear();
+                    //把切换后的程序显示到界面
                     CurrentProgram = Variables.DeepClone(Programs[ProgramsName[ProgramsIndex]]);
-
-                    ////将程序集合中选中的程序给到界面
-                    //CurrentProgram.Clear();
-                    //for (int i = 0; i < Programs[ProgramsName[ProgramsIndex]].Count; i++)
-                    //{
-                    //    CurrentProgram.Add(new SubProgram() { ProductIndex = Programs[ProgramsName[ProgramsIndex]][i].ProductIndex });
-                    //    for (int j = 0; j < Programs[ProgramsName[ProgramsIndex]][i].ProgramDatas.Count; j++)
-                    //        CurrentProgram[i].ProgramDatas.Add(Programs[ProgramsName[ProgramsIndex]][i].ProgramDatas[j].Clone());
-                    //}
 
                     Variables.ProgramName = ProgramsName[ProgramsIndex];
 
                     if (CurrentProgram.Count > 0)
                         CurrentProgramIndex = 0;
+
+                    CurrentProgramDatas.Clear();
+                    if (CurrentProgram.Count > 0)
+                        CurrentProgramDatas = Variables.DeepClone(CurrentProgram[0].ProgramDatas);
                 }
                 catch (Exception ex) { }
             }));
@@ -717,7 +1016,31 @@ namespace VisionProject.ViewModels
                         try
                         {
                             if (Variables.ShowConfirm("禁止直接删除！\r\n将删除最后一行程序？") == true)
+                            {
+                                for (int i = 0; i < CurrentProgram[CurrentProgram.Count() - 1].ProgramDatas.Count(); i++)
+                                {
+                                    ProgramData programDataTemp = CurrentProgram[CurrentProgram.Count() - 1].ProgramDatas[i];
+                                    var inspectRegionPath = programDataTemp.Parameters.BingGetOrAdd("InspectRegion", Guid.NewGuid().ToString() + ".reg").ToString();
+                                    var ROIImagePath = programDataTemp.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                                    var OriginalImagePath = programDataTemp.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                                    try
+                                    {
+                                        File.Delete(Variables.ProjectObjectPath + inspectRegionPath);
+                                    }
+                                    catch { }
+                                    try
+                                    {
+                                        File.Delete(Variables.ProjectImagesPath + ROIImagePath + ".bmp");
+                                    }
+                                    catch { }
+                                    try
+                                    {
+                                        File.Delete(Variables.ProjectImagesPath + OriginalImagePath + ".bmp");
+                                    }
+                                    catch { }
+                                }
                                 CurrentProgram.RemoveAt(CurrentProgram.Count - 1);
+                            }
                         }
                         catch { }
                         break;
@@ -736,7 +1059,7 @@ namespace VisionProject.ViewModels
         public DelegateCommand<string> ProgramDatasOperate =>
             _programDatasOperate ?? (_programDatasOperate = new DelegateCommand<string>(ExecuteProgramDatasOperate));
 
-        private void ExecuteProgramDatasOperate(string parameter)
+        private async void ExecuteProgramDatasOperate(string parameter)
         {
             if (ProgramsName.Count == 0)
             {
@@ -766,6 +1089,20 @@ namespace VisionProject.ViewModels
                                 var inspectName = callback.Parameters.GetValue<string>("InspectName");
                                 var content = callback.Parameters.GetValue<string>("Content");
                                 CurrentProgramDatas.Add(new ProgramData() { InspectFunction = inspectName, Content = content, IsUse = true });
+
+                                if (CurrentProgramDatas.Count > 1)
+                                {
+                                    var imagePath1 = CurrentProgramDatas[0].Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                                    var imagePath2 = CurrentProgramDatas[CurrentProgramDatas.Count - 1].Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+
+                                    if (File.Exists(Variables.ProjectImagesPath + imagePath1 + ".bmp"))
+                                    {
+                                        if (!File.Exists(Variables.ProjectImagesPath + imagePath2 + ".bmp"))
+                                        {
+                                            CurrentProgramDatas[CurrentProgramDatas.Count - 1].Parameters.BingAddOrUpdate("OriginalImage", imagePath1);
+                                        }
+                                    }
+                                }
                             }
                         });
                     }
@@ -776,7 +1113,34 @@ namespace VisionProject.ViewModels
                     try
                     {
                         if (Variables.ShowConfirm("确认删除检测？") == true)
+                        {
+                            try
+                            {
+                                ProgramData programDataTemp = CurrentProgram[CurrentProgramIndex].ProgramDatas[currentProgramDatasIndex];
+                                var inspectRegionPath = programDataTemp.Parameters.BingGetOrAdd("InspectRegion", Guid.NewGuid().ToString() + ".reg").ToString();
+                                var ROIImagePath = programDataTemp.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                                var OriginalImagePath = programDataTemp.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                                try
+                                {
+                                    File.Delete(Variables.ProjectObjectPath + inspectRegionPath);
+                                }
+                                catch { }
+                                try
+                                {
+                                    File.Delete(Variables.ProjectImagesPath + ROIImagePath + ".bmp");
+                                }
+                                catch { }
+                                try
+                                {
+                                    string originalImagePath0 = CurrentProgram[CurrentProgramIndex].ProgramDatas[0].Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                                    if (originalImagePath0 != OriginalImagePath)
+                                        File.Delete(Variables.ProjectImagesPath + OriginalImagePath + ".bmp");
+                                }
+                                catch { }
+                            }
+                            catch { }
                             CurrentProgramDatas.Remove(CurrentSelectedProgramData);
+                        }
                     }
                     catch { }
                     break;
@@ -812,6 +1176,358 @@ namespace VisionProject.ViewModels
                     }
                     catch (Exception ex) { }
                     break;
+
+                case "simplify":
+                    if (Variables.ShowConfirm("当前位置的所有检测项将同一使用第一张图像？") == true)
+                    {
+                        if (Variables.ShowConfirm("这将删除其它检测项的图像，此操作不可逆且立即生效，是否继续？") == true)
+                        {
+                            if (CurrentProgram[CurrentProgramIndex].ProgramDatas.Count > 0)
+                            {
+                                string originalImagePath = CurrentProgramDatas[0].Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+
+                                for (int i = 1; i < CurrentProgramDatas.Count; i++)
+                                {
+                                    try
+                                    {
+                                        string originalImageTempPath = CurrentProgramDatas[i].Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                                        if (originalImageTempPath != originalImagePath)
+                                        {
+                                            if (File.Exists(Variables.ProjectImagesPath + originalImageTempPath + ".bmp"))
+                                                File.Delete(Variables.ProjectImagesPath + originalImageTempPath + ".bmp");
+                                            CurrentProgramDatas[i].Parameters.BingAddOrUpdate("OriginalImage", originalImagePath);
+                                        }
+                                    }
+                                    catch { }
+                                }
+
+                                ProjectOperate.Execute("save");
+                            }
+                        }
+                    }
+
+                    break;
+
+                case "run":
+                    try
+                    {
+                        if (CurrentProgramDatas.Count == 0)
+                            return;
+                        var rst = openImageDialog();
+                        if (rst != "")
+                        {
+                            HImage image = new HImage(rst);
+                            List<RunResult> runResults = new List<RunResult>();
+                            foreach (var pd in CurrentProgramDatas)
+                            {
+                                if (pd.InspectFunction == Functions.图像比对.ToDescription())
+                                {
+                                    runResults.Add(Function_MatchTool.Run(image, pd));
+                                }
+                                else if (pd.InspectFunction == Functions.Blob分析.ToDescription())
+                                {
+                                    runResults.Add(Function_BlobTool.Run(image, pd));
+                                }
+                                else if (pd.InspectFunction == Functions.条码识别.ToDescription())
+                                {
+                                    runResults.Add(Function_CodeTool.Run(image, pd));
+                                }
+                                else if (pd.InspectFunction == Functions.PIN针检测.ToDescription())
+                                {
+                                    runResults.Add(Function_PINOneTool.Run(image, pd));
+                                }
+                                else if (pd.InspectFunction == Functions.视觉脚本.ToDescription())
+                                {
+                                    runResults.Add(Function_ScriptTool.Run(image, pd));
+                                }
+                            }
+
+                            if (CurrentProgramDatas[0].InspectFunction == Functions.PIN针检测.ToDescription())
+                            {
+                                HalWindowImage hwi = new HalWindowImage(image);
+
+                                for (int m = 0; m < runResults.Count; m++)
+                                {
+                                    try
+                                    {
+                                        if (runResults[m].MessageResult.Contains("PIN针检测"))
+                                        {
+                                            hwi.AddRegion(run4Results[m].RegionResult, BingLibrary.Vision.HalconColors.红色);
+
+                                            string[] results = runResults[m].MessageResult.Split('\n');
+                                            var AllowOffset = double.Parse((CurrentProgramDatas[m].Parameters.BingGetOrAdd("AllowOffset", 0)).ToString());
+                                            var Frames = (List<InspectFrame>)CurrentProgramDatas[m].Parameters.BingGetOrAdd("InspectFrames", new List<InspectFrame>());
+                                            for (int i = 0; i < Frames.Count; i++)
+                                            {
+                                                double row = Frames[i].Row1;
+                                                double col = Frames[i].Col1;
+                                                double distance = 0;
+                                                bool b = double.TryParse(results[i + 1], out distance);
+                                                //results[i].Split("");
+                                                if (!Frames[i].ContainsObject)
+                                                {
+                                                    hwi.AddText("", (int)(row), (int)(col), BingLibrary.Vision.HalconColors.红色, 24);
+                                                }
+                                                else if (distance < AllowOffset)
+                                                {
+                                                    if (results[i + 1] == "缺失")
+                                                        hwi.AddText(results[i + 1], (int)(row) - 12, (int)(col), BingLibrary.Vision.HalconColors.红色, 24);
+                                                    else
+                                                        hwi.AddText(results[i + 1], (int)(row) - 12, (int)(col), BingLibrary.Vision.HalconColors.蓝色, 24);
+                                                }
+                                                else { hwi.AddText(results[i + 1], (int)(row) - 12, (int)(col), BingLibrary.Vision.HalconColors.红色, 24); }
+                                            }
+                                            hwi.GetWindowImage().WriteImage("bmp", 0, AppDomain.CurrentDomain.BaseDirectory + "runImage.bmp"); ;
+                                            Process.Start("explorer", AppDomain.CurrentDomain.BaseDirectory + "runImage.bmp");
+                                            hwi.Close();
+                                        }
+                                    }
+                                    catch { }
+                                }
+                            }
+                            else
+                            {
+                                HalWindowImage hwi = new HalWindowImage(image);
+                                int ngCount = 0;
+                                foreach (var rr in runResults)
+                                {
+                                    try
+                                    {
+                                        if (!rr.BoolResult)
+                                        {
+                                            hwi.AddRegion(rr.RegionResult, BingLibrary.Vision.HalconColors.红色);
+                                            hwi.AddText(rr.MessageResult, 20 + ngCount * 60, 20, BingLibrary.Vision.HalconColors.红色, 32);
+                                            ngCount++;
+                                        }
+                                    }
+                                    catch { }
+                                }
+
+                                hwi.GetWindowImage().WriteImage("bmp", 0, AppDomain.CurrentDomain.BaseDirectory + "runImage.bmp"); ;
+                                hwi.Close();
+                                Process.Start("explorer", AppDomain.CurrentDomain.BaseDirectory + "runImage.bmp");
+                            }
+                        }
+                    }
+                    catch { }
+                    break;
+
+                case "running":
+                    try
+                    {
+                        // 使用FolderBrowserDialog选择文件夹
+                        FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+                        System.Windows.Forms.DialogResult result = folderBrowserDialog.ShowDialog();
+                        //FolderBrowserDialog folderBrowserDialog2 = new FolderBrowserDialog();
+                        //System.Windows.Forms.DialogResult result2 = folderBrowserDialog.ShowDialog();
+                        CameraMode = 2;
+                        initTotalImage(CameraMode);
+                        if (result == System.Windows.Forms.DialogResult.OK)
+                        {
+                            string folderPath = folderBrowserDialog.SelectedPath;
+                            //遍历文件夹中的图片文件
+                            string[] imageFiles = Directory.GetFiles(folderPath, "*.jpg"); // 你可以根据需要修改文件类型  Tiff文件|*.tif|BMP文件|*.bmp|Jpeg文件|
+                            int programIndex = 0;
+                            int CameraIndex = 0;
+
+                            foreach (string rst in imageFiles)
+                            {
+                                await 1000;
+                                if (rst != "")
+                                {
+                                    ObservableCollection<ProgramData> programDatas = new ObservableCollection<ProgramData>();
+
+                                    if (programIndex == Programs[ProgramsName[CameraIndex]].Count())
+                                    {
+                                        programIndex = 0; //三张生成一张大图后继续生成并拼图
+                                        //break;//三张生成一张大图后结束
+                                    }
+                                    programIndex++;
+                                    programDatas = Programs[ProgramsName[CameraIndex]][programIndex - 1].ProgramDatas;
+                                    HImage image = new HImage(rst);
+
+                                    ImageQueue imageQueue = new ImageQueue();
+                                    CancellationToken tokenNone = CancellationToken.None;
+
+                                    try
+                                    {
+                                        imageQueue = new ImageQueue();
+                                        imageQueue.PositionIndex = programIndex - 1;
+                                        imageQueue.CameraIndex = CameraIndex + 1;
+                                        imageQueue.Image = image.CopyImage();
+                                        tokenNone = CancellationToken.None;
+                                        await imageQueues.Enqueue(imageQueue, tokenNone);
+                                    }
+                                    catch { }
+
+                                    List<RunResult> runResults = new List<RunResult>();
+                                    foreach (var pd in programDatas)
+                                    {
+                                        if (pd.InspectFunction == Functions.图像比对.ToDescription())
+                                        {
+                                            runResults.Add(Function_MatchTool.Run(image, pd));
+                                        }
+                                        else if (pd.InspectFunction == Functions.Blob分析.ToDescription())
+                                        {
+                                            runResults.Add(Function_BlobTool.Run(image, pd));
+                                        }
+                                        else if (pd.InspectFunction == Functions.条码识别.ToDescription())
+                                        {
+                                            runResults.Add(Function_CodeTool.Run(image, pd));
+                                        }
+                                        else if (pd.InspectFunction == Functions.PIN针检测.ToDescription())
+                                        {
+                                            runResults.Add(Function_PINOneTool.Run(image, pd));
+                                        }
+                                        else if (pd.InspectFunction == Functions.视觉脚本.ToDescription())
+                                        {
+                                            runResults.Add(Function_ScriptTool.Run(image, pd));
+                                        }
+                                    }
+
+                                    HalWindowImage hwi = new HalWindowImage(image);
+
+                                    int ngCount = 0;
+                                    int IndexTemp = 0;
+                                    for (int i = 0; i < runResults.Count; i++)
+                                    {
+                                        if (runResults[i].MessageResult.Contains("PIN针检测"))
+                                        {
+                                            IndexTemp = i;
+                                        }
+                                    }
+                                    bool totalBool = true;
+                                    foreach (var rr in runResults)
+                                    {
+                                        try
+                                        {
+                                            if (rr.MessageResult.Contains("PIN针检测"))
+                                            {
+                                                totalBool = false;
+                                                hwi = new HalWindowImage(rr.ResultImage);
+                                                image = rr.ResultImage;
+                                                string[] results = rr.MessageResult.Split('\n');
+                                                var AllowOffset = double.Parse((CurrentProgramDatas[IndexTemp].Parameters.BingGetOrAdd("AllowOffset", 0)).ToString());
+                                                var Frames = (List<InspectFrame>)CurrentProgramDatas[IndexTemp].Parameters.BingGetOrAdd("InspectFrames", new List<InspectFrame>());
+
+                                                for (int i = 0; i < Frames.Count; i++)
+                                                {
+                                                    double row = Frames[i].Row1;
+                                                    double col = Frames[i].Col1;
+                                                    double distance = 0;
+                                                    bool b = double.TryParse(results[i + 1], out distance);
+                                                    //results[i].Split("");
+                                                    if (!Frames[i].ContainsObject)
+                                                    {
+                                                        hwi.AddText("", (int)(row), (int)(col), BingLibrary.Vision.HalconColors.红色, 24);
+                                                    }
+                                                    else if (distance < AllowOffset)
+                                                    {
+                                                        if (results[i + 1] == "缺失")
+                                                            hwi.AddText(results[i + 1], (int)(row) - 12, (int)(col), BingLibrary.Vision.HalconColors.红色, 24);
+                                                        else
+                                                            hwi.AddText(results[i + 1], (int)(row) - 12, (int)(col), BingLibrary.Vision.HalconColors.蓝色, 24);
+                                                    }
+                                                    else { hwi.AddText(results[i + 1], (int)(row) - 12, (int)(col), BingLibrary.Vision.HalconColors.红色, 24); }
+
+                                                    // hwi.AddText(results[i], (int)InspectFrames[i].Row1, (int)InspectFrames[i].Col1, BingLibrary.Vision.HalconColors.红色, 32);
+                                                }
+                                            }
+                                            if (!rr.BoolResult)
+                                            {
+                                                totalBool = false;
+                                                hwi.AddRegion(rr.RegionResult, BingLibrary.Vision.HalconColors.红色);
+                                                hwi.AddText(rr.MessageResult, 20 + ngCount * 60, 20, BingLibrary.Vision.HalconColors.红色, 32);
+                                                ngCount++;
+                                            }
+                                            else
+                                            {
+                                                hwi.AddRegion(rr.RegionResult, BingLibrary.Vision.HalconColors.绿色);
+                                            }
+                                        }
+                                        catch { }
+                                    }
+                                    if (!totalBool)
+                                    {
+                                        hwi.GetWindowImage().WriteImage("bmp", 0, AppDomain.CurrentDomain.BaseDirectory + "runImage.bmp");
+                                    }
+                                    hwi.Close();
+                                }
+                            }
+                        }
+                    }
+                    catch { }
+                    break;
+
+                case "join1":
+                    try
+                    {
+                        CameraMode = 2;
+                        initTotalImage(CameraMode);
+                        HImage imageRead = new HImage(openImageDialog());
+                        ImageQueue imageQueue = new ImageQueue();
+                        //imageQueue.PositionIndex = 0;
+                        //imageQueue.CameraIndex = 1;
+                        //imageQueue.Image = imageRead.CopyImage();
+                        CancellationToken tokenNone = CancellationToken.None;
+                        //await  imageQueues.Enqueue(imageQueue, tokenNone);
+
+                        for (int i = 0; i < Programs[ProgramsName[0]].Count(); i++)
+                        {
+                            imageRead = new HImage(openImageDialog());
+                            imageQueue = new ImageQueue();
+                            imageQueue.PositionIndex = i;
+                            imageQueue.CameraIndex = 1;
+                            imageQueue.Image = imageRead.CopyImage();
+                            tokenNone = CancellationToken.None;
+                            await imageQueues.Enqueue(imageQueue, tokenNone);
+                        }
+
+                        //await Task.Delay(2000);
+                        //showImage();
+                        //HalWindowImage hwi = new HalWindowImage(TotalImageLeft);
+
+                        //hwi.GetWindowImage().WriteImage("bmp", 0, AppDomain.CurrentDomain.BaseDirectory + "runImage.bmp"); ;
+                        //hwi.Close();
+                        //Process.Start("explorer", AppDomain.CurrentDomain.BaseDirectory + "runImage.bmp");
+                    }
+                    catch { }
+                    break;
+
+                case "join2":
+                    try
+                    {
+                        CameraMode = 2;
+                        initTotalImage(CameraMode);
+                        HImage imageRead = new HImage(openImageDialog());
+                        ImageQueue imageQueue = new ImageQueue();
+                        //imageQueue.PositionIndex = 0;
+                        //imageQueue.CameraIndex = 1;
+                        //imageQueue.Image = imageRead.CopyImage();
+                        CancellationToken tokenNone = CancellationToken.None;
+                        //await  imageQueues.Enqueue(imageQueue, tokenNone);
+
+                        for (int i = 0; i < Programs[ProgramsName[1]].Count(); i++)
+                        {
+                            imageRead = new HImage(openImageDialog());
+                            imageQueue = new ImageQueue();
+                            imageQueue.PositionIndex = i;
+                            imageQueue.CameraIndex = 2;
+                            imageQueue.Image = imageRead.CopyImage();
+                            tokenNone = CancellationToken.None;
+                            await imageQueues.Enqueue(imageQueue, tokenNone);
+                        }
+
+                        //await Task.Delay(2000);
+                        //showImage();
+                        //HalWindowImage hwi = new HalWindowImage(TotalImageLeft);
+
+                        //hwi.GetWindowImage().WriteImage("bmp", 0, AppDomain.CurrentDomain.BaseDirectory + "runImage.bmp"); ;
+                        //hwi.Close();
+                        //Process.Start("explorer", AppDomain.CurrentDomain.BaseDirectory + "runImage.bmp");
+                    }
+                    catch { }
+                    break;
             }
 
             //将界面的programdata更新到项目的程序集合中。
@@ -829,6 +1545,25 @@ namespace VisionProject.ViewModels
             Variables.IngoreAutoHome = false;
         }
 
+        private string openImageDialog()
+        {
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            openFileDialog.Title = "选择文件";
+            openFileDialog.Filter = "所有文件|*.*|Tiff文件|*.tif|BMP文件|*.bmp|Jpeg文件|*.jpg";
+            openFileDialog.FileName = string.Empty;
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.DereferenceLinks = false;
+            openFileDialog.AutoUpgradeEnabled = true;
+            System.Windows.Forms.DialogResult result = openFileDialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.Cancel)
+            {
+                return "";
+            }
+            string fileName = openFileDialog.FileName;
+            return fileName;
+        }
+
         private DelegateCommand _updateSelectedCurrentProgram;
 
         public DelegateCommand UpdateSelectedCurrentProgram =>
@@ -839,6 +1574,11 @@ namespace VisionProject.ViewModels
             try
             {
                 CurrentProgramDatas = Variables.DeepClone(CurrentProgram[CurrentProgramIndex].ProgramDatas);
+                if (CurrentProgramDatasIndex < 0)
+                    CurrentProgramDatasIndex = 0;
+                Variables.CurrentProgramData = Variables.DeepClone(CurrentProgramDatas[CurrentProgramDatasIndex]);
+
+                //Serialize.WriteJsonV2(CurrentProgramDatas, "D:\\qwer.json");
 
                 //CurrentProgramDatas.Clear();
 
@@ -871,37 +1611,81 @@ namespace VisionProject.ViewModels
                 catch (Exception ex) { }
             }));
 
-        private ObservableCollection<ProgramData> copyDatas = new ObservableCollection<ProgramData>();
-        private string copyMsg = "";
-        private DelegateCommand<string> _ctrlProgramDatasOperate;
+        //用于复制的单个检测项
+        private ProgramData copyData = new ProgramData();
 
-        public DelegateCommand<string> CtrlProgramDatasOperate =>
-            _ctrlProgramDatasOperate ?? (_ctrlProgramDatasOperate = new DelegateCommand<string>(ExecuteCtrlProgramDatasOperate));
+        private string copyMsgSingle = "";
 
-        private void ExecuteCtrlProgramDatasOperate(string parameter)
+        private DelegateCommand<string> _ctrlProgramDataOperate;
+
+        public DelegateCommand<string> CtrlProgramDataOperate =>
+            _ctrlProgramDataOperate ?? (_ctrlProgramDataOperate = new DelegateCommand<string>(ExecuteCtrlProgramDataOperate));
+
+        private void ExecuteCtrlProgramDataOperate(string parameter)
         {
-            CurrentProgramDatas.Remove(CurrentSelectedProgramData);
-
-            try
-            {
-                CurrentProgram[CurrentProgramIndex].ProgramDatas = Variables.DeepClone(CurrentProgramDatas);
-            }
-            catch { }
-
             switch (parameter)
             {
                 case "copy":
                     // 深拷贝程序数据
-                    copyDatas = GlobalVars.Variables.DeepClone(CurrentProgram[CurrentProgramIndex].ProgramDatas);
+                    copyData = GlobalVars.Variables.DeepClone(CurrentSelectedProgramData);
                     // 设置复制提示消息
-                    copyMsg = "确认从【程序" + ProgramsName[ProgramsIndex] + "】【" + (CurrentProgramIndex) + "】号位置粘贴吗？";
+                    copyMsgSingle = "确认从【程序" + ProgramsName[ProgramsIndex] + "】【" + (CurrentProgramIndex) + "】" + "第【" + CurrentProgramDatasIndex + "】个检测项粘贴吗？";
                     break;
 
                 case "paste":
                     // 显示确认对话框
-                    bool rst = GlobalVars.Variables.ShowConfirm(copyMsg);
-                    // 粘贴程序数据
-                    CurrentProgram[CurrentProgramIndex].ProgramDatas = Variables.DeepClone(copyDatas);
+                    bool rst = GlobalVars.Variables.ShowConfirm(copyMsgSingle);
+                    if (!rst)
+                        return;
+
+                    if (CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex].InspectFunction != copyData.InspectFunction)
+                    {
+                        GlobalVars.Variables.ShowMessage("无法从【" + copyData.InspectFunction + "】"
+                            + "复制到【" + CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex].InspectFunction + "】\r\n类型不一致！");
+                        return;
+                    }
+
+                    if (CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex].Content != copyData.InspectFunction)
+                    {
+                        rst = GlobalVars.Variables.ShowConfirm("是否从【" + copyData.InspectFunction + "】的" + "【" + copyData.Content + "】"
+                            + "复制到【" + CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex].InspectFunction + "的" + "【" + CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex].Content + "】？");
+                    }
+
+                    if (rst)
+                    {
+                        CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex] = Variables.DeepClone(copyData);
+
+                        var inspectRegionPath = CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex].Parameters.BingGetOrAdd("InspectRegion", Guid.NewGuid().ToString() + ".reg").ToString();
+                        var ROIImagePath = CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex].Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                        var OriginalImagePath = CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex].Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                        try
+                        {
+                            string s = Guid.NewGuid().ToString() + ".reg";
+                            File.Copy(Variables.ProjectObjectPath + inspectRegionPath, (Variables.ProjectObjectPath + s).ToString());
+                            CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex].Parameters.BingAddOrUpdate("InspectRegion", s);
+                        }
+                        catch { }
+                        try
+                        {
+                            string s = Guid.NewGuid().ToString();
+                            File.Copy(Variables.ProjectImagesPath + ROIImagePath + ".bmp", (Variables.ProjectImagesPath + s + ".bmp").ToString());
+                            CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex].Parameters.BingAddOrUpdate("ROIImage", s);
+                        }
+                        catch { }
+                        try
+                        {
+                            string s = Guid.NewGuid().ToString();
+                            File.Copy(Variables.ProjectImagesPath + OriginalImagePath + ".bmp", (Variables.ProjectImagesPath + s + ".bmp").ToString());
+                            CurrentProgram[CurrentProgramIndex].ProgramDatas[CurrentProgramDatasIndex].Parameters.BingAddOrUpdate("OriginalImage", s);
+                        }
+                        catch { }
+                    }
+
+                    #region 暂存
+
+                    // 搜索IMAGE REGION
+
+                    #endregion 暂存
 
                     CurrentProgramDatas = Variables.DeepClone(CurrentProgram[CurrentProgramIndex].ProgramDatas);
                     break;
@@ -915,6 +1699,133 @@ namespace VisionProject.ViewModels
                         isClear = GlobalVars.Variables.ShowConfirm("请确认是否清空当前位置？");
                         if (isClear)
                         {
+                            for (int i = 0; i < CurrentProgram[CurrentProgramIndex].ProgramDatas.Count(); i++)
+                            {
+                                ProgramData programDataTemp = CurrentProgram[CurrentProgramIndex].ProgramDatas[i];
+                                var inspectRegionPath = programDataTemp.Parameters.BingGetOrAdd("InspectRegion", Guid.NewGuid().ToString() + ".reg").ToString();
+                                var ROIImagePath = programDataTemp.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                                var OriginalImagePath = programDataTemp.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                                try
+                                {
+                                    File.Delete(Variables.ProjectObjectPath + inspectRegionPath);
+                                }
+                                catch { }
+                                try
+                                {
+                                    File.Delete(Variables.ProjectImagesPath + ROIImagePath + ".bmp");
+                                }
+                                catch { }
+                                try
+                                {
+                                    File.Delete(Variables.ProjectImagesPath + OriginalImagePath + ".bmp");
+                                }
+                                catch { }
+                            }
+
+                            CurrentProgramDatas.Clear();
+                            CurrentProgram[CurrentProgramIndex].ProgramDatas = Variables.DeepClone(CurrentProgramDatas);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        //用于复制的检测项集合
+        private ObservableCollection<ProgramData> copyDatas = new ObservableCollection<ProgramData>();
+
+        private string copyMsg = "";
+        private DelegateCommand<string> _ctrlProgramDatasOperate;
+
+        public DelegateCommand<string> CtrlProgramDatasOperate =>
+            _ctrlProgramDatasOperate ?? (_ctrlProgramDatasOperate = new DelegateCommand<string>(ExecuteCtrlProgramDatasOperate));
+
+        private void ExecuteCtrlProgramDatasOperate(string parameter)
+        {
+            switch (parameter)
+            {
+                case "copy":
+                    // 深拷贝程序数据
+                    copyDatas = GlobalVars.Variables.DeepClone(CurrentProgram[CurrentProgramIndex].ProgramDatas);
+                    // 设置复制提示消息
+                    copyMsg = "确认从【程序" + ProgramsName[ProgramsIndex] + "】【" + (CurrentProgramIndex) + "】号位置粘贴吗？";
+                    break;
+
+                case "paste":
+                    // 显示确认对话框
+                    bool rst = GlobalVars.Variables.ShowConfirm(copyMsg);
+                    if (rst)
+                    {
+                        try
+                        {
+                            // 粘贴程序数据
+                            CurrentProgram[CurrentProgramIndex].ProgramDatas = Variables.DeepClone(copyDatas);
+                            for (int i = 0; i < CurrentProgram[CurrentProgramIndex].ProgramDatas.Count(); i++)
+                            {
+                                ProgramData programDataTemp = CurrentProgram[CurrentProgramIndex].ProgramDatas[i];
+                                var inspectRegionPath = programDataTemp.Parameters.BingGetOrAdd("InspectRegion", Guid.NewGuid().ToString() + ".reg").ToString();
+                                var ROIImagePath = programDataTemp.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                                var OriginalImagePath = programDataTemp.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                                try
+                                {
+                                    string s = Guid.NewGuid().ToString() + ".reg";
+                                    File.Copy(Variables.ProjectObjectPath + inspectRegionPath, (Variables.ProjectObjectPath + s).ToString());
+                                    programDataTemp.Parameters.BingAddOrUpdate("InspectRegion", s);
+                                }
+                                catch { }
+                                try
+                                {
+                                    string s = Guid.NewGuid().ToString();
+                                    File.Copy(Variables.ProjectImagesPath + ROIImagePath + ".bmp", (Variables.ProjectImagesPath + s + ".bmp").ToString());
+                                    programDataTemp.Parameters.BingAddOrUpdate("ROIImage", s);
+                                }
+                                catch { }
+                                try
+                                {
+                                    string s = Guid.NewGuid().ToString();
+                                    File.Copy(Variables.ProjectImagesPath + OriginalImagePath + ".bmp", (Variables.ProjectImagesPath + s + ".bmp").ToString());
+                                    programDataTemp.Parameters.BingAddOrUpdate("OriginalImage", s);
+                                }
+                                catch { }
+                            }
+                        }
+                        catch (Exception ex) { Log.Error(ex.Message); }
+                    }
+
+                    CurrentProgramDatas = Variables.DeepClone(CurrentProgram[CurrentProgramIndex].ProgramDatas);
+                    break;
+
+                case "clear":
+                    // 显示确认对话框，询问是否清空当前位置
+                    bool isClear = GlobalVars.Variables.ShowConfirm("是否清空当前位置？");
+                    if (isClear)
+                    {
+                        // 再次显示确认对话框，确认是否清空当前位置
+                        isClear = GlobalVars.Variables.ShowConfirm("请确认是否清空当前位置？");
+                        if (isClear)
+                        {
+                            for (int i = 0; i < CurrentProgram[CurrentProgramIndex].ProgramDatas.Count(); i++)
+                            {
+                                ProgramData programDataTemp = CurrentProgram[CurrentProgramIndex].ProgramDatas[i];
+                                var inspectRegionPath = programDataTemp.Parameters.BingGetOrAdd("InspectRegion", Guid.NewGuid().ToString() + ".reg").ToString();
+                                var ROIImagePath = programDataTemp.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                                var OriginalImagePath = programDataTemp.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                                try
+                                {
+                                    File.Delete(Variables.ProjectObjectPath + inspectRegionPath);
+                                }
+                                catch { }
+                                try
+                                {
+                                    File.Delete(Variables.ProjectImagesPath + ROIImagePath + ".bmp");
+                                }
+                                catch { }
+                                try
+                                {
+                                    File.Delete(Variables.ProjectImagesPath + OriginalImagePath + ".bmp");
+                                }
+                                catch { }
+                            }
+
                             CurrentProgramDatas.Clear();
                             CurrentProgram[CurrentProgramIndex].ProgramDatas = Variables.DeepClone(CurrentProgramDatas);
                         }
@@ -939,7 +1850,7 @@ namespace VisionProject.ViewModels
                     // 疑问点：  图片为了测试先写死了一个，需要修改
                     string path = @"C:\Users\PC\Desktop\202211181359345410.tif";
                     var rst = new HImage(path);
-                    // run(rst);//需要换图片；
+                    // run(rst); //需要换图片；
                 }
                 catch (Exception ex) { }
             }));
@@ -955,6 +1866,13 @@ namespace VisionProject.ViewModels
         public Dictionary<string, ObservableCollection<SubProgram>> Programs = new Dictionary<string, ObservableCollection<SubProgram>>();
         public string CreateDate = "";
         public string LastDate = "";
+        public int CameraMode = 1;
+        public int RowCrop = Variables.ImageHeight;
+        public int ColCrop = Variables.ImageWidth;
+        public short PLCProjectName = 0;
+        public short PLCProjectName1 = 0;
+        public short PLCProjectName2 = 0;
+        public bool IsShowResultToPinTu = false;
     }
 
     // 疑问点：

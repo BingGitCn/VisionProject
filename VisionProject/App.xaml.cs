@@ -25,6 +25,16 @@ namespace VisionProject
             {
                 if (callback.Result != ButtonResult.OK)
                 {
+                    for (int i = 0; i <GlobalVars.Variables.Cameras.Count; i++)
+                    {
+                        try
+                        {
+                            GlobalVars.Variables.Cameras[i].CloseCamera();
+                        }
+                        catch { }
+                    }
+
+
                     Environment.Exit(0);
                     return;
                 }
@@ -49,12 +59,14 @@ namespace VisionProject
             containerRegistry.RegisterDialog<Dialog_ParamSet, Dialog_ParamSetViewModel>(GlobalVars.DialogNames.ShowParamSetDialog);
             //位置参数设置窗口
             containerRegistry.RegisterDialog<Dialog_Location, Dialog_LocationViewModel>(GlobalVars.DialogNames.ShowLocationDialog);
-
+            //项目设置设置窗口
+            containerRegistry.RegisterDialog<Dialog_ProjectSet, Dialog_ProjectSetViewModel>(GlobalVars.DialogNames.ShowProjectSetDialog);
             //脚本工具窗口
             //containerRegistry.RegisterDialog<Function_ScriptTest, Function_ScriptTestViewModel>(GlobalVars.DialogNames.ToolNams["脚本工具"]);
             containerRegistry.RegisterDialog<Function_Match, Function_MatchViewModel>(GlobalVars.DialogNames.ToolNams["图像比对"]);
             containerRegistry.RegisterDialog<Function_Script, Function_ScriptViewModel>(GlobalVars.DialogNames.ToolNams["视觉脚本"]);
             containerRegistry.RegisterDialog<Function_Blob, Function_BlobViewModel>(GlobalVars.DialogNames.ToolNams["Blob分析"]);
+            containerRegistry.RegisterDialog<Function_PINOne, Function_PINOneViewModel>(GlobalVars.DialogNames.ToolNams["PIN针检测"]);
             containerRegistry.RegisterDialog<Function_Code, Function_CodeViewModel>(GlobalVars.DialogNames.ToolNams["条码识别"]);
         }
     }

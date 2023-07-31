@@ -15,6 +15,8 @@ namespace BingLibrary.Vision
         public int ROIID { get; set; }
         public bool SizeEnable { set; get; } = true;
 
+        public int smallregionwidth { set; get; } = 20;
+
         public bool ShowRect { set; get; } = true;
 
         public virtual void show()

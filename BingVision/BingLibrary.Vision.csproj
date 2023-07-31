@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -256,12 +257,14 @@
       <DependentUpon>BingImageWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="BingImageWindowData.cs" />
+    <Compile Include="Camera\HKCamera.cs" />
+    <Compile Include="Camera\HKCameraSDK.cs" />
     <Compile Include="Common\Halcon.MicroSoft.Window.API.cs" />
     <Compile Include="Common\Halcon.Colors.cs" />
     <Compile Include="Common\Halcon.Drawing.cs" />
     <Compile Include="Common\Halcon.CoordinateSystem.cs" />
     <Compile Include="Ctrl\WindowController.cs" />
-    <Compile Include="HCamera.cs" />
+    <Compile Include="Camera\HCamera.cs" />
     <Compile Include="InfoMessage\MessageController.cs" />
     <Compile Include="InfoDispObject\DispObjectBase.cs" />
     <Compile Include="InfoDispObject\DispObjectController.cs" />

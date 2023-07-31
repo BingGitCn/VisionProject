@@ -1,5 +1,6 @@
 ﻿using BingLibrary.Extension;
 using BingLibrary.Vision;
+using HalconDotNet;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
@@ -9,6 +10,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using VisionProject.GlobalVars;
+using VisionProject.RunTools;
 
 namespace VisionProject.ViewModels
 {
@@ -468,18 +470,21 @@ namespace VisionProject.ViewModels
         {
             try
             {
-                for (int i = 0; i < IOVariables1.Count; i++)
-                {
-                    //这里数据类型都一样，按实际情况传入数据
-                    Variables.WorkEngines[EngineIndex].SetParam(
-                        ScriptNames[ScriptIndex1],
-                        IOVariables1[i],
-                       new HalconDotNet.HTuple(Variables.CurrentProgramData.Parameters.BingGetOrAdd(EngineIndex + "." + ScriptIndex1 + "." + i + "." + IOVariables1[i], "0").ToString().BingToDouble()
-                        ));
-                }
-                bool rst = Variables.WorkEngines[EngineIndex].InspectProcedure(ScriptNames[ScriptIndex1]);
+                //for (int i = 0; i < IOVariables1.Count; i++)
+                //{
+                //    //这里数据类型都一样，按实际情况传入数据
+                //    Variables.WorkEngines[EngineIndex].SetParam(
+                //        ScriptNames[ScriptIndex1],
+                //        IOVariables1[i],
+                //       new HalconDotNet.HTuple(Variables.CurrentProgramData.Parameters.BingGetOrAdd(EngineIndex + "." + ScriptIndex1 + "." + i + "." + IOVariables1[i], "0").ToString().BingToDouble()
+                //        ));
+                //}
+                HImage hImage = new HImage();
+
+                //bool rst = Variables.WorkEngines[EngineIndex].InspectProcedure(ScriptNames[ScriptIndex1]);
+                RunResult rst = Function_BlobTool.Run(hImage, Variables.CurrentProgramData);
                 //获取结果
-                RunScriptResult = Variables.WorkEngines[EngineIndex].GetParam<HalconDotNet.HTuple>(ScriptNames[ScriptIndex1], "Result").ToString();
+                //RunScriptResult = Variables.WorkEngines[EngineIndex].GetParam<HalconDotNet.HTuple>(ScriptNames[ScriptIndex1], "Result").ToString();
             }
             catch { }
         }

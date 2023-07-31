@@ -47,9 +47,8 @@ namespace BingLibrary.Vision
             col2 = c2;
         }
 
-        private int smallregionwidth = 15;//4边小矩形的大小
-        private HTuple hv_Font = new HTuple();
-        private HTuple hv_OS = new HTuple();
+        //private HTuple hv_Font = new HTuple();
+        //private HTuple hv_OS = new HTuple();
 
         /// <summary>Paints the ROI into the supplied window</summary>
         /// <param name="window">HALCON window</param>
@@ -60,6 +59,9 @@ namespace BingLibrary.Vision
             {
                 midR = ((row2 - row1) / 2) + row1;
                 midC = ((col2 - col1) / 2) + col1;
+
+                smallregionwidth = (int)(((row2 - row1) + (col2 - col1)) / 25);
+                if (smallregionwidth < 10) smallregionwidth = 6;
 
                 window.DispRectangle2(row1, col1, 0, smallregionwidth, smallregionwidth);
                 window.DispRectangle2(row1, col2, 0, smallregionwidth, smallregionwidth);
@@ -96,19 +98,17 @@ namespace BingLibrary.Vision
 
         public override double distToClosestROI(double x, double y)
         {
-            HTuple dis = 0;
-            if (y >= row1 && y <= row2 && x >= col1 && x <= col2)
-                dis = 0;
-            else
-                dis = -1;
-
-            return dis;
+            return (y >= row1 && y <= row2 && x >= col1 && x <= col2) ? 0 : -1;
         }
 
         public override void displayActive(HalconDotNet.HWindow window)
         {
             if (!SizeEnable || !ShowRect)
                 return;
+
+            smallregionwidth = (int)(((row2 - row1) + (col2 - col1)) / 25);
+            if (smallregionwidth < 10) smallregionwidth = 6;
+
             switch (activeHandleIdx)
             {
                 case 0:

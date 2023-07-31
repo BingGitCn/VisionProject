@@ -15,6 +15,7 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -27,7 +28,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -43,6 +43,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DocumentationFile>
     </DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -97,14 +98,19 @@
     <Compile Include="Core\InspectCY.cs" />
     <Compile Include="Core\InspectDL.cs" />
     <Compile Include="Core\InspectSM.cs" />
+    <Compile Include="GlobalVars\MESTony.cs" />
     <Compile Include="GlobalVars\ParamSetVar.cs" />
+    <Compile Include="RunTools\Function_PINOneTool.cs" />
     <Compile Include="RunTools\Function_ScriptTool.cs" />
     <Compile Include="RunTools\Function_CodeTool.cs" />
     <Compile Include="RunTools\Function_MatchTool.cs" />
     <Compile Include="RunTools\Function_BlobTool.cs" />
     <Compile Include="RunTools\Hal.cs" />
+    <Compile Include="ViewModels\RunShowData.cs" />
     <Compile Include="ViewModels\Tools\Dialog_LocationViewModel.cs" />
     <Compile Include="ViewModels\Tools\Dialog_ModelSetViewModel.cs" />
+    <Compile Include="ViewModels\Tools\Dialog_ProjectSetViewModel.cs" />
+    <Compile Include="ViewModels\Tools\Function_PINOneViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_ClsViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_CodeViewModel.cs" />
     <Compile Include="ViewModels\Tools\Function_BlobViewModel.cs" />
@@ -124,6 +130,12 @@
     </Compile>
     <Compile Include="Views\Tools\Dialog_ModelSet.xaml.cs">
       <DependentUpon>Dialog_ModelSet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tools\Dialog_ProjectSet.xaml.cs">
+      <DependentUpon>Dialog_ProjectSet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Tools\Function_PINOne.xaml.cs">
+      <DependentUpon>Function_PINOne.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Tools\Function_Cls.xaml.cs">
       <DependentUpon>Function_Cls.xaml</DependentUpon>
@@ -167,6 +179,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Tools\Dialog_ModelSet.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Tools\Dialog_ProjectSet.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Tools\Function_PINOne.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -296,6 +316,10 @@
       <Project>{281775f6-4a65-40ab-a5ba-d90876c42119}</Project>
       <Name>BingLibrary.Vision</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DLTools.Apply\DLTools.Apply.csproj">
+      <Project>{81f6c564-7aac-4554-88b7-07c06453f395}</Project>
+      <Name>DLTools.Apply</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="bitbug_favicon.ico" />
@@ -317,9 +341,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Login.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="1686792000863.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

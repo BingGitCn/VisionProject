@@ -64,21 +64,6 @@
                                 Content="注册ROI图像"
                                 Style="{StaticResource ButtonPrimary}" />
                         </StackPanel>
-                        <CheckBox
-                            Grid.ColumnSpan="2"
-                            Margin="5"
-                            Content="保存NG图像"
-                            FontWeight="Bold"
-                            IsChecked="{Binding IsSaveNG, UpdateSourceTrigger=PropertyChanged}">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="Checked">
-                                    <i:InvokeCommandAction Command="{Binding IsSaveNGChanged}" />
-                                </i:EventTrigger>
-                                <i:EventTrigger EventName="Unchecked">
-                                    <i:InvokeCommandAction Command="{Binding IsSaveNGChanged}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </CheckBox>
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="识别">
@@ -115,6 +100,32 @@
                             <ComboBoxItem Content="白底黑字" />
                             <ComboBoxItem Content="黑底白字" />
                         </hc:ComboBox>
+                        <TextBlock Margin="5" Text="结果判定" />
+                        <TextBox
+                            Grid.Column="0"
+                            Margin="20,5,5,5"
+                            hc:InfoElement.Title="最小结果位数"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="80"
+                            IsReadOnly="True"
+                            Style="{StaticResource TextBoxExtend}"
+                            Text="{Binding MinResultNumber}" />
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                Command="{Binding Save}"
+                                CommandParameter="0"
+                                Content="保存参数"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                Command="{Binding TestRun}"
+                                CommandParameter="0"
+                                Content="测试运行"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
                         <TextBlock Margin="5" Text="结果预览" />
                         <TextBox
                             Grid.Column="0"
@@ -125,15 +136,6 @@
                             IsReadOnly="True"
                             Style="{StaticResource TextBoxExtend}"
                             Text="{Binding IdentifyResult}" />
-                        <StackPanel Orientation="Horizontal">
-                            <Button
-                                Width="170"
-                                Margin="5"
-                                Command="{Binding TestRun}"
-                                CommandParameter="0"
-                                Content="测试运行"
-                                Style="{StaticResource ButtonPrimary}" />
-                        </StackPanel>
                     </StackPanel>
                 </TabItem>
             </TabControl>

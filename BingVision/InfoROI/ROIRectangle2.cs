@@ -77,7 +77,7 @@ namespace BingLibrary.Vision
             if (SizeEnable && ShowRect)
             {
                 for (int i = 0; i < numHandles; i++)
-                    window.DispRectangle2(rows[i].D, cols[i].D, -phi, 15, 15);
+                    window.DispRectangle2(rows[i].D, cols[i].D, -phi, smallregionwidth, smallregionwidth);
 
                 window.DispArrow(midR, midC, midR + (Math.Sin(phi) * length1 * 1.2),
                     midC + (Math.Cos(phi) * length1 * 1.2), 2.0);
@@ -117,13 +117,13 @@ namespace BingLibrary.Vision
                 return;
             window.DispRectangle2(rows[activeHandleIdx].D,
                                   cols[activeHandleIdx].D,
-                                  -phi, 15, 15);
+                                  -phi, smallregionwidth, smallregionwidth);
 
             if (activeHandleIdx == 5)
                 window.DispArrow(midR, midC,
                                  midR + (Math.Sin(phi) * length1 * 1.2),
                                  midC + (Math.Cos(phi) * length1 * 1.2),
-                                 15.0);
+                                 smallregionwidth);
         }
 
         public override HRegion getRegion()

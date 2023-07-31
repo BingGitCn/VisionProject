@@ -70,21 +70,6 @@
                             </hc:PreviewSlider>
                             <TextBox Width="50" Text="{Binding ElementName=Channel1Slider, Path=ValueEnd}" />
                         </StackPanel>
-                        <CheckBox
-                            Grid.ColumnSpan="2"
-                            Margin="5"
-                            Content="保存NG图像"
-                            FontWeight="Bold"
-                            IsChecked="{Binding IsSaveNG, UpdateSourceTrigger=PropertyChanged}">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="Checked">
-                                    <i:InvokeCommandAction Command="{Binding IsSaveNGChanged}" />
-                                </i:EventTrigger>
-                                <i:EventTrigger EventName="Unchecked">
-                                    <i:InvokeCommandAction Command="{Binding IsSaveNGChanged}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </CheckBox>
                     </StackPanel>
                 </TabItem>
             </TabControl>

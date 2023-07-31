@@ -3,6 +3,7 @@ using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
 using System.Windows.Input;
+using VisionProject.GlobalVars;
 
 namespace VisionProject.ViewModels
 {
@@ -43,7 +44,10 @@ namespace VisionProject.ViewModels
             _confirm ?? (_confirm = new DelegateCommand(() =>
             {
                 if (LoginPassword == "123456" || Keyboard.IsKeyDown(Key.LeftCtrl))
+                {
                     RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+                    Variables.IsSoftWareRun = true;
+                }
             }));
 
         private DelegateCommand _cancel;

@@ -67,22 +67,6 @@
                                 Content="注册ROI图像"
                                 Style="{StaticResource ButtonPrimary}" />
                         </StackPanel>
-                        <CheckBox
-                            Grid.ColumnSpan="2"
-                            Margin="5"
-                            Content="保存NG图像"
-                            FontWeight="Bold"
-                            IsChecked="{Binding IsSaveNG, UpdateSourceTrigger=PropertyChanged}">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="Checked">
-                                    <i:InvokeCommandAction Command="{Binding IsSaveNGChanged}" />
-                                </i:EventTrigger>
-                                <i:EventTrigger EventName="Unchecked">
-                                    <i:InvokeCommandAction Command="{Binding IsSaveNGChanged}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </CheckBox>
-
                         <FlowDocumentScrollViewer
                             Height="360"
                             Margin="5"
@@ -360,14 +344,22 @@
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </CheckBox>
-                            <Button
-                                Grid.Column="1"
-                                Width="80"
-                                Margin="71,0,0,0"
-                                HorizontalAlignment="Left"
-                                Command="{Binding ResetPreEnhance}"
-                                Content="重  置"
-                                Style="{StaticResource ButtonDashed}" />
+                            <StackPanel Orientation="Horizontal"  Margin="180,5,5,5" Grid.ColumnSpan="3">
+                                <Button
+                                    Width="80"
+                                    Margin="5"
+                                    Command="{Binding RevokePreEnhance}"
+                                    Content="撤销"
+                                    Style="{StaticResource ButtonDanger}" />
+                                <Button
+                                    Grid.Column="1"
+                                    Width="80"
+                                    Margin="5"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding ResetPreEnhance}"
+                                    Content="重  置"
+                                    Style="{StaticResource ButtonDanger}" />
+                            </StackPanel>
                         </Grid>
 
                         <DockPanel
@@ -442,6 +434,13 @@
                             </Slider>
                             <TextBox Width="50" Text="{Binding ElementName=GammaSlider, Path=Value}" />
                         </DockPanel>
+                        <Button
+                            HorizontalAlignment="Right"
+                            Width="80"
+                            Margin="5"
+                            Command="{Binding SavePreEnhance}"
+                            Content="保存"
+                            Style="{StaticResource ButtonPrimary}" />
                     </StackPanel>
                 </TabItem>
 
@@ -450,16 +449,26 @@
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="104*" />
-                                <ColumnDefinition Width="257*" />
+                                <ColumnDefinition Width="17" />
+                                <ColumnDefinition Width="239*"/>
                             </Grid.ColumnDefinitions>
-                            <Button
-                                Grid.Column="1"
-                                Width="80"
-                                Margin="5"
-                                HorizontalAlignment="Right"
-                                Command="{Binding ResetGray}"
-                                Content="重  置"
-                                Style="{StaticResource ButtonDashed}" />
+
+                            <StackPanel Orientation="Horizontal"  Margin="180,5,5,5" Grid.ColumnSpan="3">
+                                <Button
+                                    Width="80"
+                                    Margin="5"
+                                    Command="{Binding RevokeGray}"
+                                    Content="撤销"
+                                    Style="{StaticResource ButtonDanger}" />
+                                <Button
+                                    Grid.Column="1"
+                                    Width="80"
+                                    Margin="5"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding ResetGray}"
+                                    Content="重  置"
+                                    Style="{StaticResource ButtonDanger}" />
+                            </StackPanel>
                         </Grid>
                         <hc:ComboBox
                             Margin="30,2,5,2"
@@ -472,7 +481,7 @@
                             <ComboBoxItem Content="RGB Mode" />
                             <ComboBoxItem Content="HSV Mode" />
                             <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="DropDownClosed">
+                                <i:EventTrigger EventName="SelectionChanged">
                                     <i:InvokeCommandAction Command="{Binding GrayModeChanged}" CommandParameter="changed" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
@@ -674,6 +683,13 @@
                                 </i:Interaction.Triggers>
                             </CheckBox>
                         </DockPanel>
+                        <Button
+                            HorizontalAlignment="Right"
+                            Width="80"
+                            Margin="5"
+                            Command="{Binding SaveGray}"
+                            Content="保存"
+                            Style="{StaticResource ButtonPrimary}" />
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="处理">
@@ -903,10 +919,6 @@
                                 </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
-                        <TextBlock
-                            Margin="5"
-                            Text="{Binding Text}"
-                            Visibility="{Binding ValueVisibility}" />
                         <TextBox
                             Grid.Column="0"
                             Margin="30,2,5,2"
@@ -937,6 +949,26 @@
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </TextBox>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                Height="20"
+                                Margin="5,15,25,5"
+                                Text="查看绘制区域内特征参数(未绘制显示全图参数)"
+                                Visibility="{Binding ValueVisibility}" />
+                            <StackPanel HorizontalAlignment="Right">
+                                <Button
+                                    Margin="5"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding DrawTemp}"
+                                    Content="绘制区域"
+                                    Style="{StaticResource ButtonPrimary}"
+                                    Visibility="{Binding ValueVisibility}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <TextBlock
+                            Margin="5"
+                            Text="{Binding Text}"
+                            Visibility="{Binding ValueVisibility}" />
                     </StackPanel>
                 </TabItem>
                 <TabItem Header="判定">
@@ -980,6 +1012,14 @@
                             Style="{StaticResource TextBoxExtend}"
                             Text="{Binding CurNum}" />
 
+                        <CheckBox 
+                            HorizontalAlignment="Right" 
+                            Margin="5"
+                            Width="auto"
+                            Content="删除与边缘重合的区域"
+                            IsChecked="{Binding IsDeleteOverlop}">
+
+                        </CheckBox>
                         <StackPanel Orientation="Horizontal">
                             <Button
                                 Width="170"

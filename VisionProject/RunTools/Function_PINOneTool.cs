@@ -1,17 +1,19 @@
 ﻿using BingLibrary.Extension;
 using HalconDotNet;
-using Prism.Regions;
+using ImageResizer.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
+using System.Linq;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 using VisionProject.GlobalVars;
 using VisionProject.ViewModels;
-using static VisionProject.ViewModels.Function_BlobViewModel;
+using static VisionProject.ViewModels.Function_PINOneViewModel;
 
 namespace VisionProject.RunTools
 {
-    public static class Function_BlobTool
+    public static class Function_PINOneTool
     {
         //programData.Parameters
         public static RunResult Run(HImage image, ProgramData programData)
@@ -24,7 +26,6 @@ namespace VisionProject.RunTools
             var col2 = (double)programData.Parameters.BingGetOrAdd("ROIColumn2", 0.0);
             var IsTrans = (bool)programData.Parameters.BingGetOrAdd("IsTrans", false);
             var TransBrightnessValue = (double)programData.Parameters.BingGetOrAdd("TransBrightnessValue", 128.0);
-
             var TransContrastValue = (double)programData.Parameters.BingGetOrAdd("TransContrastValue", 128.0);
             var TransGammaValue = (double)programData.Parameters.BingGetOrAdd("TransGammaValue", 1.0);
             var IsPreEnhance = (bool)programData.Parameters.BingGetOrAdd("IsPreEnhance", false);
@@ -32,6 +33,8 @@ namespace VisionProject.RunTools
             var ContrastValue = (double)programData.Parameters.BingGetOrAdd("ContrastValue", 128.0);
             var GammaValue = (double)programData.Parameters.BingGetOrAdd("GammaValue", 1.0);
             var GrayModeIndex = int.Parse(programData.Parameters.BingGetOrAdd("GrayModeIndex", 0).ToString());
+
+            var IsEnableDeep = (bool)programData.Parameters.BingGetOrAdd("IsEnableDeep", false);
 
             var ValueS1 = int.Parse(programData.Parameters.BingGetOrAdd("ValueS1", 0).ToString());
             var ValueS2 = int.Parse(programData.Parameters.BingGetOrAdd("ValueS2", 0).ToString());
@@ -63,15 +66,15 @@ namespace VisionProject.RunTools
             var InspectROIRow2 = (double)programData.Parameters.BingGetOrAdd("InspectROIRow2", 0.0);
             var InspectROIColumn1 = (double)programData.Parameters.BingGetOrAdd("InspectROIColumn1", 0.0);
             var InspectROIColumn12 = (double)programData.Parameters.BingGetOrAdd("InspectROIColumn2", 0.0);
-            var MinNum = int.Parse(programData.Parameters.BingGetOrAdd("MinNum", 0).ToString());
-            var MaxNum = int.Parse(programData.Parameters.BingGetOrAdd("MaxNum", 0).ToString());
-            var IsDeleteOverlop = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsDeleteOverlop", false);
+            var AllowOffset = (double)(programData.Parameters.BingGetOrAdd("AllowOffset", 0.0));
+            var Scale = int.Parse(programData.Parameters.BingGetOrAdd("Scale", 1).ToString());
 
             #endregion 参数获得
 
             // 照片传进来
             HImage runImage = new HImage();
             HImage modelImage = new HImage();
+            HImage ImageTemp = new HImage();
             HRegion resultRegion = new HRegion();
             bool resultBool = true;
             int num = 0;
@@ -81,6 +84,7 @@ namespace VisionProject.RunTools
                 if (row1 + row2 != 0)
                     runImage = image.CropRectangle1(row1, col1, row2, col2);
                 else runImage = image.CopyImage();
+                ImageTemp = runImage.CopyImage();
             }
             catch { }
 
@@ -133,7 +137,7 @@ namespace VisionProject.RunTools
                     runImage = runImage.AffineTransImage(hHomMat2D, "constant", "false");
                 }
             }
-            catch { }
+            catch (Exception ex) { }
 
             //调节（预处理）
             if (IsPreEnhance)
@@ -174,7 +178,11 @@ namespace VisionProject.RunTools
                 resultRegion.GenEmptyRegion();
                 if (true)
                 {
-                    if (GrayModeIndex == 0)
+                    if (IsEnableDeep)
+                    {
+                        resultRegion = Variables.PinDeep.ApplyModelInSegmentation(runImage, new int[] { 1 }, true).Threshold(2.0, 2.0);
+                    }
+                    else if (GrayModeIndex == 0)
                     {
                         if (runImage.CountChannels() == 1)
                         {
@@ -475,8 +483,7 @@ namespace VisionProject.RunTools
                     }
                 }
 
-                //resultRegion = region.Union1().Connection();
-                resultRegion = region;
+                resultRegion = region.Union1().Connection();
             }
             catch { }
 
@@ -484,7 +491,7 @@ namespace VisionProject.RunTools
             try
             {
                 Dictionary<string, List<double>> blobRess = new Dictionary<string, List<double>>();
-                HRegion region = resultRegion;
+                HRegion region = resultRegion.Connection();
                 HRegion regions = new HRegion(region);
                 regions.GenEmptyRegion();
                 if (BlobFeatureDatas.Count == 0)
@@ -513,15 +520,8 @@ namespace VisionProject.RunTools
                     {
                         HTuple featureName = new HTuple(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
                         HTuple featureValue = region.RegionFeatures(featureName);
-                        if (featureValue.Length == 0)
-                        {
-                            min = 0; max = 0;
-                        }
-                        else
-                        {
-                            min = featureValue.TupleMin();
-                            max = featureValue.TupleMax();
-                        }
+                        min = featureValue.TupleMin();
+                        max = featureValue.TupleMax();
 
                         regions = region.SelectShape(hNames, "or", hMins, hMaxs);
                     }
@@ -529,15 +529,8 @@ namespace VisionProject.RunTools
                     {
                         HTuple featureName = new HTuple(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
                         HTuple featureValue = region.RegionFeatures(featureName);
-                        if (featureValue.Length == 0)
-                        {
-                            min = 0; max = 0;
-                        }
-                        else
-                        {
-                            min = featureValue.TupleMin();
-                            max = featureValue.TupleMax();
-                        }
+                        min = featureValue.TupleMin();
+                        max = featureValue.TupleMax();
                         regions = region.SelectShape(hNames, "or", hMins, hMaxs);
                         regions = region.Difference(regions);
                     }
@@ -551,15 +544,8 @@ namespace VisionProject.RunTools
                             featureValue = regions.RegionFeatures(featureName);
                         }
                         else featureValue = region.RegionFeatures(featureName);
-                        if (featureValue.Length == 0)
-                        {
-                            min = 0; max = 0;
-                        }
-                        else
-                        {
-                            min = featureValue.TupleMin();
-                            max = featureValue.TupleMax();
-                        }
+                        min = featureValue.TupleMin();
+                        max = featureValue.TupleMax();
 
                         hNames = hNames.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
                         hMins = hMins.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].MinValue);
@@ -576,22 +562,15 @@ namespace VisionProject.RunTools
                             featureValue = regions.RegionFeatures(featureName);
                         }
                         else featureValue = region.RegionFeatures(featureName);
-                        if (featureValue.Length == 0)
-                        {
-                            min = 0; max = 0;
-                        }
-                        else
-                        {
-                            min = featureValue.TupleMin();
-                            max = featureValue.TupleMax();
-                        }
+                        min = featureValue.TupleMin();
+                        max = featureValue.TupleMax();
 
                         hNames = hNames.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].Feature.ToDescription());
                         hMins = hMins.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].MinValue);
                         hMaxs = hMaxs.TupleConcat(BlobFeatureDatas[BlobFeatureDataIndex].MaxValue);
                         regions = region.SelectShape(hNames, "and", hMins, hMaxs);
                     }
-                    resultRegion = regions;
+                    resultRegion = regions.Union1().Connection();
                     HTuple unique = Unique(hNames);
                     for (int i = 0; i < unique.Length; i++)
                     {
@@ -606,89 +585,81 @@ namespace VisionProject.RunTools
                 }
             }
             catch { }
+
             RunResult runResult = new RunResult();
             //判定
             try
             {
                 var defaultRegion = new HRegion();
                 defaultRegion.GenEmptyRegion();
-                var region = resultRegion;
+                // RowAllowOffset
+                var InspectFrames = (List<InspectFrame>)programData.Parameters.BingGetOrAdd("InspectFrames", new List<InspectFrame>());
+                runResult.ResultImage = ImageTemp;
+                runResult.MessageResult = "PIN针检测\n";
+                HRegion hRegion = new HRegion();
+                hRegion.GenEmptyRegion();
 
-                var inspectRegionPath = programData.Parameters.BingGetOrAdd("InspectRegion", Guid.NewGuid().ToString() + ".reg").ToString();
-                if (File.Exists(Variables.ProjectObjectPath + inspectRegionPath))
-                    defaultRegion.ReadRegion(Variables.ProjectObjectPath + inspectRegionPath);
-
-                if (IsDeleteOverlop && defaultRegion.Area != 0)
+                List<double> distances = new List<double>();
+                for (int i = 0; i < InspectFrames.Count(); i++)
                 {
-                    //resultRegion = resultRegion.Connection();
+                    defaultRegion.GenRectangle1(InspectFrames[i].Row1, InspectFrames[i].Col1, InspectFrames[i].Row2, InspectFrames[i].Col2);
+
+                    defaultRegion = defaultRegion.Intersection(resultRegion);
+                    double col = 0, row = 0;
+                    defaultRegion.AreaCenter(out row, out col);
+                    Vector2 point1 = new Vector2((float)row, (float)col);
+                    Vector2 point2 = new Vector2((float)InspectFrames[i].CrossRow, (float)InspectFrames[i].CrossCol);
+
+                    double distance = Vector2.Distance(point1, point2);
+                    distances.Add(distance);
+                }
+
+                var minDistance = distances.Average();
+                for (int i = 0; i < distances.Count; i++)
+                {
+                    distances[i] = Math.Abs(distances[i] - minDistance);
+                }
+
+                for (int i = 0; i < InspectFrames.Count(); i++)
+                {
                     try
                     {
-                        for (int i = 0; i < resultRegion.CountObj(); i++)
+                        defaultRegion.GenRectangle1(InspectFrames[i].Row1, InspectFrames[i].Col1, InspectFrames[i].Row2, InspectFrames[i].Col2);
+
+                        defaultRegion = defaultRegion.Intersection(resultRegion);
+                        double col = 0, row = 0;
+                        defaultRegion.AreaCenter(out row, out col);
+
+                        if (distances[i] > AllowOffset * Scale)
                         {
-                            var regionSingle = resultRegion.SelectObj(i + 1);    //resultRegion.SelectObj(i);
-                            var regionTemp = defaultRegion.Intersection(regionSingle);
-                            if (regionTemp.Area < regionSingle.Area)
+                            if (InspectFrames[i].ContainsObject)
                             {
-                                region = region.Difference(regionSingle);
+                                resultBool = false;
                             }
                         }
-                        region = region.Union1().Connection();
+                        else
+                        {
+                            //runResult.BoolResult = true;
+                            hRegion = hRegion.Union2(defaultRegion.Intersection(resultRegion));
+                        }
+                        int j = i + 1;
+                        if (col == 0 && row == 0)
+                        {
+                            runResult.MessageResult += "缺失" + "\n";
+                        }
+                        else
+                            runResult.MessageResult += (distances[i] / Scale).ToString("N3") + "\n";
                     }
-                    catch { region = new HRegion(); }
-                }
-                else
-                {
-                    if (defaultRegion.Area == 0)
-                        defaultRegion = resultRegion;
-                    // region = defaultRegion.Intersection(resultRegion);//0726_2 try里面都是修改的
-                    try
+                    catch
                     {
-                        for (int i = 0; i < resultRegion.CountObj(); i++)
-                        {
-                            var regionSingle = resultRegion.SelectObj(i + 1);    //resultRegion.SelectObj(i);
-                            var regionTemp = defaultRegion.Intersection(regionSingle);
-                            if (regionTemp.Area <= 0)
-                            {
-                                region = region.Difference(regionSingle);
-                            }
-                        }
-                        region = region.Union1().Connection();
+                        runResult.MessageResult += "缺失" + "\n";
                     }
-                    catch { region = new HRegion(); }
                 }
 
-                try
-                {
-                    //num = region.Union1().Connection().CountObj();//0726
-                    num = region.CountObj();
-                }
-                catch (Exception ex)
-                {
-                    num = 0;
-                }
-                if (num < MinNum || num > MaxNum)
-                    resultBool = false;
-                else { resultBool = true; }
-
-                runResult.RunRegion = region.Union1();
+                runResult.RunRegion = hRegion.Union1();
 
                 if (row1 + row2 != 0)
                     runResult.RegionResult = new HRegion(row1, col1, row2, col2);
-
-                string content = "";
-                if (programData.Content == null)
-                    content = "【未定义缺陷】";
-                else
-                {
-                    if (programData.Content == "")
-                        content = "【未定义缺陷】";
-                    else
-                    {
-                        content = "【" + programData.Content + "】";
-                    }
-                }
-
-                runResult.MessageResult = content + "个数：" + num;
             }
             catch (Exception ex) { resultBool = false; runResult.MessageResult = "报错：" + ex.Message; }
 

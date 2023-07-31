@@ -148,6 +148,7 @@ namespace BingLibrary.Vision
                 if (e.Button == System.Windows.Input.MouseButton.Left)
                     if (IsDrawing)
                         HalconMicroSoft.FinishDraw();
+            Repaint();
         }
 
         private void ViewPort_HMouseWheel(object sender, HMouseEventArgsWPF e)

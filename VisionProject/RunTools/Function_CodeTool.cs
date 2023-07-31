@@ -1,8 +1,6 @@
 ﻿using BingLibrary.Extension;
 using HalconDotNet;
 using System;
-using System.IO;
-using System.Runtime.CompilerServices;
 using VisionProject.GlobalVars;
 using VisionProject.ViewModels;
 
@@ -19,15 +17,16 @@ namespace VisionProject.RunTools
             var row2 = (double)programData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
             var col1 = (double)programData.Parameters.BingGetOrAdd("ROIColumn1", 0.0);
             var col2 = (double)programData.Parameters.BingGetOrAdd("ROIColumn2", 0.0);
-            var IsSaveNG = (bool)programData.Parameters.BingGetOrAdd("IsSaveNG", false);
 
-            var ColorIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ColorIndex", 0).ToString());
-            var CodeIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("CodeIndex", 0).ToString());
+            var ColorIndex = int.Parse(programData.Parameters.BingGetOrAdd("ColorIndex", 0).ToString());
+            var CodeIndex = int.Parse(programData.Parameters.BingGetOrAdd("CodeIndex", 0).ToString());
+            var MinResultNumber = int.Parse(programData.Parameters.BingGetOrAdd("MinResultNumber", 0).ToString());
 
             #endregion 参数获得
 
             // 照片传进来
             bool resultBool = true;
+            int resultLength = 0;
             try
             {
                 //image = ((HImage)programData.Parameters.BingGetOrAdd("ROIImage", new HImage())).CopyImage();
@@ -55,12 +54,14 @@ namespace VisionProject.RunTools
                     hRegion = hBarCode.FindBarCode(image, "auto", out resultString);
                     inspectXLD = hRegion.GenContourRegionXld("border");
                     runResult.MessageResult = "条码：" + resultString;
+                    resultLength = resultString.Length;
                 }
                 else if (CodeIndex == 1)
                 {
                     hDataCode2D.CreateDataCode2dModel("Data Matrix ECC 200", "default_parameters", "enhanced_recognition");
                     inspectXLD = hDataCode2D.FindDataCode2d(image, new HTuple(), new HTuple(), out HTuple hTuple1, out hTuple2);
-                    runResult.MessageResult = (string)hTuple2;
+                    runResult.MessageResult = "条码：" + (string)hTuple2;
+                    resultLength = ((string)hTuple2).Length;
                 }
                 else if (CodeIndex == 2)
                 {
@@ -68,8 +69,11 @@ namespace VisionProject.RunTools
                     inspectXLD = hDataCode2D.FindDataCode2d(image, new HTuple(), new HTuple(), out HTuple hTuple1, out hTuple2);
 
                     runResult.MessageResult = "条码：" + hTuple2.S;
+                    resultLength = (hTuple2.S).Length;
                 }
-
+                if (resultLength < MinResultNumber)
+                    runResult.BoolResult = false;
+                else runResult.BoolResult = true;
                 runResult.RunRegion = inspectXLD.GenRegionContourXld("filled");
             }
             catch (Exception ex)
@@ -79,7 +83,7 @@ namespace VisionProject.RunTools
             }
 
             runResult.BoolResult = resultBool;
-            runResult.NGImagePath = "";
+            //runResult.NGImagePath = "";
             return runResult;
         }
     }

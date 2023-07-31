@@ -6,102 +6,410 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:prism="http://prismlibrary.com/"
-    Width="960"
+    Width="1080"
     Height="690"
     prism:ViewModelLocator.AutoWireViewModel="True"
     FontFamily="pack://application:,,,/VisionProject;component/fonts/#iconfont,pack://application:,,,/VisionProject;component/fonts/#仓耳今楷03 W04">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="270" />
+            <ColumnDefinition Width="360" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <bingVision:BingImageWindow x:Name="aimg" />
         </Grid>
 
-        <Grid Grid.Column="1">
-            <StackPanel Orientation="Vertical">
-                <hc:ComboBox
-                    Margin="5"
-                    hc:InfoElement.Title="引擎选择"
-                    hc:InfoElement.TitlePlacement="Left"
-                    hc:InfoElement.TitleWidth="100"
-                    ItemsSource="{Binding EngineNames}"
-                    SelectedIndex="{Binding EngineIndex}"
-                    Style="{StaticResource ComboBoxExtend}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DropDownClosed">
-                            <i:InvokeCommandAction Command="{Binding SelectedEngine}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </hc:ComboBox>
-                <hc:ComboBox
-                    Margin="5"
-                    hc:InfoElement.Title="脚本选择"
-                    hc:InfoElement.TitlePlacement="Left"
-                    hc:InfoElement.TitleWidth="100"
-                    ItemsSource="{Binding ScriptNames}"
-                    Style="{StaticResource ComboBoxExtend}"
-                    Text="{Binding ScriptName}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DropDownClosed">
-                            <i:InvokeCommandAction Command="{Binding SelectedScript}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </hc:ComboBox>
+        <Grid Grid.Column="1" IsEnabled="{Binding NotDrawIng}">
+            <TabControl SelectedIndex="{Binding TabIndex}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding DoSwitchTab}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <TabItem Header="图像">
+                    <StackPanel Orientation="Vertical">
 
-                <StackPanel Orientation="Horizontal">
-                    <Button
-                        Width="125"
-                        Margin="5"
-                        Command="{Binding DrawROI}"
-                        CommandParameter="roi"
-                        Content="ROI 绘制"
-                        Style="{StaticResource ButtonPrimary}" />
-                    <Button
-                        Width="125"
-                        Margin="5"
-                        Command="{Binding DrawROI}"
-                        CommandParameter="del"
-                        Content="清除 ROI"
-                        IsEnabled="{Binding IsDrawROIEnabled}"
-                        Style="{StaticResource ButtonDanger}" />
-                </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ImageOperate}"
+                                CommandParameter="select"
+                                Content="选择图像"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ImageOperate}"
+                                CommandParameter="original"
+                                Content="显示原图"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
 
-                <StackPanel Orientation="Horizontal">
-                    <Button
-                        Width="125"
-                        Margin="5"
-                        Command="{Binding ParamSet}"
-                        Content="参数设置"
-                        Style="{StaticResource ButtonPrimary}" />
-                    <Button
-                        Width="125"
-                        Margin="5"
-                        Command="{Binding EditScript}"
-                        Content="编辑脚本"
-                        Style="{StaticResource ButtonPrimary}" />
-                </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                Command="{Binding ROIOperate}"
+                                CommandParameter="roiDraw"
+                                Content="ROI绘制"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                Command="{Binding ROIOperate}"
+                                CommandParameter="roiRegiste"
+                                Content="注册ROI图像"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
+                        <FlowDocumentScrollViewer
+                            Height="360"
+                            Margin="5"
+                            Foreground="#3e3e3e">
+                            <FlowDocument FontFamily="pack://application:,,,/VisionProject;component/fonts/#iconfont,pack://application:,,,/VisionProject;component/fonts/#仓耳今楷03 W04">
+                                <Section FontSize="12">
+                                    <Paragraph FontSize="14">
+                                        <Bold>选择图像</Bold>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        选择待处理的图像。
+                                    </Paragraph>
 
-                <StackPanel Orientation="Horizontal">
+                                    <Paragraph FontSize="14">
+                                        <Bold>ROI绘制</Bold>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        绘制ROI区域，尽量将要处理的图像包含在ROI区域内。
+                                    </Paragraph>
 
-                    <Button
-                        Width="125"
-                        Margin="5"
-                        Command="{Binding SaveParam}"
-                        Content="保存参数"
-                        Style="{StaticResource ButtonPrimary}" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Button
-                        Width="125"
-                        Margin="5"
-                        Command="{Binding RunScript}"
-                        Content="运行测试"
-                        Style="{StaticResource ButtonPrimary}" />
-                    <TextBlock VerticalAlignment="Center" Text="{Binding RunScriptResult}" />
-                </StackPanel>
-            </StackPanel>
+                                    <Paragraph FontSize="14">
+                                        <Bold>注册ROI图像</Bold>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        注册当前图像为标准图像。
+                                    </Paragraph>
+
+                                    <Paragraph FontSize="14">
+                                        <Bold>显示原图</Bold>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        显示【选择图像】。
+                                    </Paragraph>
+                                </Section>
+                            </FlowDocument>
+                        </FlowDocumentScrollViewer>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="补正">
+
+                    <StackPanel Orientation="Vertical">
+                        <Grid>
+                            <CheckBox
+                                Margin="5"
+                                Content="启用"
+                                FontWeight="Bold"
+                                IsChecked="{Binding IsTrans, UpdateSourceTrigger=PropertyChanged}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Checked">
+                                        <i:InvokeCommandAction Command="{Binding TransPreEnhanceValueChanged}" CommandParameter="changed" />
+                                    </i:EventTrigger>
+                                    <i:EventTrigger EventName="Unchecked">
+                                        <i:InvokeCommandAction Command="{Binding TransPreEnhanceValueChanged}" CommandParameter="changed" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </CheckBox>
+
+                            <Button
+                                Width="80"
+                                Margin="5"
+                                HorizontalAlignment="Right"
+                                Command="{Binding TransResetPreEnhance}"
+                                Content="重  置"
+                                IsEnabled="{Binding IsTrans}"
+                                Style="{StaticResource ButtonDashed}" />
+                        </Grid>
+                        <DockPanel
+                            Height="30"
+                            Margin="30,2,2,2"
+                            VerticalAlignment="Bottom"
+                            IsEnabled="{Binding IsTrans}">
+                            <TextBlock
+                                Width="50"
+                                VerticalAlignment="Center"
+                                Text="亮度: " />
+                            <Slider
+                                Name="TransBrightnessSlider"
+                                Width="210"
+                                Margin="5"
+                                VerticalAlignment="Center"
+                                Maximum="255"
+                                Minimum="1"
+                                Value="{Binding TransBrightnessValue, Mode=TwoWay}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                        <i:InvokeCommandAction Command="{Binding TransPreEnhanceValueChanged}" CommandParameter="changed" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Slider>
+                            <TextBox Width="50" Text="{Binding ElementName=TransBrightnessSlider, Path=Value}" />
+                        </DockPanel>
+                        <DockPanel
+                            Height="30"
+                            Margin="30,2,2,2"
+                            VerticalAlignment="Bottom"
+                            IsEnabled="{Binding IsTrans}">
+                            <TextBlock
+                                Width="50"
+                                VerticalAlignment="Center"
+                                Text="对比度: " />
+                            <Slider
+                                Name="TransContrastSlider"
+                                Width="210"
+                                Margin="5"
+                                VerticalAlignment="Center"
+                                Maximum="255"
+                                Minimum="1"
+                                Value="{Binding TransContrastValue, Mode=TwoWay}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                        <i:InvokeCommandAction Command="{Binding TransPreEnhanceValueChanged}" CommandParameter="changed" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Slider>
+                            <TextBox Width="50" Text="{Binding ElementName=TransContrastSlider, Path=Value}" />
+                        </DockPanel>
+                        <DockPanel
+                            Height="30"
+                            Margin="30,2,2,2"
+                            VerticalAlignment="Bottom"
+                            IsEnabled="{Binding IsTrans}">
+                            <TextBlock
+                                Width="50"
+                                VerticalAlignment="Center"
+                                Text="Gamma: " />
+                            <Slider
+                                Name="TransGammaSlider"
+                                Width="210"
+                                Margin="5"
+                                VerticalAlignment="Center"
+                                Maximum="10.0"
+                                Minimum="0.1"
+                                Value="{Binding TransGammaValue, Mode=TwoWay}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                        <i:InvokeCommandAction Command="{Binding TransPreEnhanceValueChanged}" CommandParameter="changed" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Slider>
+                            <TextBox Width="50" Text="{Binding ElementName=TransGammaSlider, Path=Value}" />
+                        </DockPanel>
+                        <StackPanel IsEnabled="{Binding IsTrans}" Orientation="Horizontal">
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ModelRegionOperate}"
+                                CommandParameter="draw"
+                                Content="绘制模板区域"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ModelRegionOperate}"
+                                CommandParameter="clear"
+                                Content="清除模板区域"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
+                        <StackPanel IsEnabled="{Binding IsTrans}" Orientation="Horizontal">
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ModelOperate}"
+                                CommandParameter="create"
+                                Content="创建模板"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ModelOperate}"
+                                CommandParameter="registe"
+                                Content="注册模板"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
+                        <StackPanel IsEnabled="{Binding IsTrans}" Orientation="Horizontal">
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ModelOperate}"
+                                CommandParameter="find"
+                                Content="查找测试"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="170"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                Command="{Binding ModelOperate}"
+                                CommandParameter="trans"
+                                Content="矫正测试"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
+                        <FlowDocumentScrollViewer
+                            Height="360"
+                            Margin="5"
+                            Foreground="#3e3e3e">
+                            <FlowDocument FontFamily="pack://application:,,,/VisionProject;component/fonts/#iconfont,pack://application:,,,/VisionProject;component/fonts/#仓耳今楷03 W04">
+                                <Section FontSize="12">
+                                    <Paragraph FontSize="14">
+                                        <Bold>启用和重置</Bold>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        是否启用图像不正功能；重置图像补正的所有参数。
+                                    </Paragraph>
+
+                                    <Paragraph FontSize="14">
+                                        <Bold>绘制模板区域</Bold>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        绘制制作模板的区域，点击后按下鼠标左键开始绘制，右键结束绘制。
+                                    </Paragraph>
+
+                                    <Paragraph FontSize="14">
+                                        <Bold>清除模板区域</Bold>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        清除已绘制的模板区域，用于重新绘制。
+                                    </Paragraph>
+
+                                    <Paragraph FontSize="14">
+                                        <Bold>创建模板</Bold>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        制作模板，用于矫正图像。
+                                    </Paragraph>
+
+                                    <Paragraph FontSize="14">
+                                        <Bold>注册模板</Bold>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        注册为标准模板。
+                                    </Paragraph>
+
+                                    <Paragraph FontSize="14">
+                                        <Bold>查找测试</Bold>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        用于检查模板质量。
+                                    </Paragraph>
+
+                                    <Paragraph FontSize="14">
+                                        <Bold>矫正测试</Bold>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        用于检查图像补正效果。
+                                    </Paragraph>
+                                </Section>
+                            </FlowDocument>
+                        </FlowDocumentScrollViewer>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="脚本">
+
+                    <StackPanel Orientation="Vertical">
+                        <hc:ComboBox
+                            Margin="5"
+                            hc:InfoElement.Title="引擎选择"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="100"
+                            ItemsSource="{Binding EngineNames}"
+                            SelectedIndex="{Binding EngineIndex}"
+                            Style="{StaticResource ComboBoxExtend}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="DropDownClosed">
+                                    <i:InvokeCommandAction Command="{Binding SelectedEngine}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </hc:ComboBox>
+                        <hc:ComboBox
+                            Margin="5"
+                            hc:InfoElement.Title="脚本选择"
+                            hc:InfoElement.TitlePlacement="Left"
+                            hc:InfoElement.TitleWidth="100"
+                            ItemsSource="{Binding ScriptNames}"
+                            Style="{StaticResource ComboBoxExtend}"
+                            Text="{Binding ScriptName}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="DropDownClosed">
+                                    <i:InvokeCommandAction Command="{Binding SelectedScript}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </hc:ComboBox>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                Width="125"
+                                Margin="5"
+                                Command="{Binding DrawROI}"
+                                CommandParameter="roi"
+                                Content="ROI 绘制"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="125"
+                                Margin="5"
+                                Command="{Binding DrawROI}"
+                                CommandParameter="del"
+                                Content="清除 ROI"
+                                IsEnabled="{Binding IsDrawROIEnabled}"
+                                Style="{StaticResource ButtonDanger}" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                Width="125"
+                                Margin="5"
+                                Command="{Binding ParamSet}"
+                                Content="参数设置"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="125"
+                                Margin="5"
+                                Command="{Binding EditScript}"
+                                Content="编辑脚本"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal">
+
+                            <Button
+                                Width="125"
+                                Margin="5"
+                                Command="{Binding SaveParam}"
+                                Content="保存参数"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <Button
+                                Width="125"
+                                Margin="5"
+                                Command="{Binding OpenFile}"
+                                Content="打开脚本文件夹"
+                                Style="{StaticResource ButtonPrimary}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                Width="125"
+                                Margin="5"
+                                Command="{Binding RunScript}"
+                                Content="运行测试"
+                                Style="{StaticResource ButtonPrimary}" />
+                            <TextBlock VerticalAlignment="Center" Text="{Binding RunScriptResult}" />
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
         </Grid>
     </Grid>
 </UserControl>

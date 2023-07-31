@@ -42,19 +42,30 @@ namespace VisionProject.ViewModels
                     try
                     {
                         string imagePath = "";
-                        imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
-
-                        image = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
-
+                        //0729del
+                        //imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                        //image = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
+                        //imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
                         imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
 
+                        //originalImage = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
                         originalImage = new HImage(Variables.ProjectImagesPath + imagePath + ".bmp");
-
-                        Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
-                        Variables.ImageWindowDataForFunction.ROICtrl.Clear();
+                        var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
+                        var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
+                        var col1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn1", 0.0);
+                        var col2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIColumn2", 0.0);
+                        if (row1 + row2 == 0)
+                        {
+                            image = originalImage.CopyImage();
+                        }
+                        else
+                        {
+                            image = originalImage.CropRectangle1(row1, col1, row2, col2);
+                        }
                         Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(image.CopyImage());
                         Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
                         Variables.ImageWindowDataForFunction.WindowCtrl.Repaint();
+                        resultImage = image.CopyImage();
                     }
                     catch { }
                 }
@@ -73,13 +84,6 @@ namespace VisionProject.ViewModels
         private HImage resultImage = new HImage();
 
         private bool notDrawIng = true;
-        private bool _isSaveNG;
-
-        public bool IsSaveNG
-        {
-            get { return _isSaveNG; }
-            set { SetProperty(ref _isSaveNG, value); }
-        }
 
         public bool NotDrawIng
         {
@@ -177,6 +181,7 @@ namespace VisionProject.ViewModels
             switch (parameter)
             {
                 case "roiDraw":
+                    ExecuteImageOperate("original");
                     NotDrawIng = false;
                     var row1 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow1", 0.0);
                     var row2 = (double)Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIRow2", 0.0);
@@ -235,16 +240,29 @@ namespace VisionProject.ViewModels
                         { }
                         else
                         {
-                            image = originalImage.CropRectangle1(row01, col01, row02, col02);
+                            image = originalImage.CropRectangle1((int)row01, (int)col01, (int)row02, (int)col02);
                             string imagePath = "";
-                            imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
-                            image.WriteImage("bmp", 0, Variables.ProjectImagesPath + imagePath + ".bmp");
+
+                            try
+                            {
+                                imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
+                                if (System.IO.File.Exists(Variables.ProjectImagesPath + imagePath + ".bmp"))
+                                    System.IO.File.Delete(Variables.ProjectImagesPath + imagePath + ".bmp");
+                                //0729del
+                                //imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                                //if (System.IO.File.Exists(Variables.ProjectImagesPath + imagePath + ".bmp"))
+                                //    System.IO.File.Delete(Variables.ProjectImagesPath + imagePath + ".bmp");
+                            }
+                            catch { }
+                            //0729del
+                            //imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("ROIImage", Guid.NewGuid().ToString()).ToString();
+                            //image.WriteImage("bmp", 0, Variables.ProjectImagesPath + imagePath + ".bmp");
 
                             imagePath = Variables.CurrentProgramData.Parameters.BingGetOrAdd("OriginalImage", Guid.NewGuid().ToString()).ToString();
                             originalImage.WriteImage("bmp", 0, Variables.ProjectImagesPath + imagePath + ".bmp");
 
                             //Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ROIImage", image);
-
+                            //Variables.CurrentProgramData.Parameters.BingAddOrUpdate("OriginalImage", originalImage);
                             Variables.ImageWindowDataForFunction.WindowCtrl.ShowImageToWindow(image.CopyImage());
                             Variables.ImageWindowDataForFunction.DispObjectCtrl.ClearDispObjects();
                             Variables.ImageWindowDataForFunction.WindowCtrl.FitImageToWindow();
@@ -272,16 +290,6 @@ namespace VisionProject.ViewModels
             }
             string fileName = openFileDialog.FileName;
             return fileName;
-        }
-
-        private DelegateCommand _isSaveNGChanged;
-
-        public DelegateCommand IsSaveNGChanged =>
-            _isSaveNGChanged ?? (_isSaveNGChanged = new DelegateCommand(ExecuteIsSaveNGChanged));
-
-        private void ExecuteIsSaveNGChanged()
-        {
-            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("IsSaveNG", IsSaveNG);
         }
 
         #endregion 图像选择
@@ -315,6 +323,19 @@ namespace VisionProject.ViewModels
             catch { }
 
             // runCode();
+        }
+
+        private DelegateCommand _save;
+
+        public DelegateCommand Save =>
+            _save ?? (_save = new DelegateCommand(ExecuteSave));
+
+        private void ExecuteSave()
+        {
+            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("MinResultNumber", MinResultNumber);
+
+            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("CodeIndex", CodeIndex);
+            Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ColorIndex", ColorIndex);
         }
 
         private void runCode()
@@ -373,19 +394,6 @@ namespace VisionProject.ViewModels
                 boolResult = false;
             }
 
-            if (!boolResult && IsSaveNG)
-            {
-                try
-                {
-                    HImage hImage = Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindowImage();
-                    if (!Directory.Exists(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd")))
-                        Directory.CreateDirectory(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd"));
-                    hImage.WriteImage("bmp", new HTuple(0), new HTuple(Variables.SavePath + "NG\\" + DateTime.Now.ToString("yyyy-MM-dd") + "\\" + DateTime.Now.ToString("HH-mm-ss-ffff") + ".bmp"));
-
-                    //Variables.ImageWindowDataForFunction.WindowCtrl.hWindowControlWPF.HalconWindow.DumpWindow("postscript", path);
-                }
-                catch { }
-            }
             Variables.CurrentProgramData.Parameters.BingAddOrUpdate("CodeIndex", CodeIndex);
             Variables.CurrentProgramData.Parameters.BingAddOrUpdate("ColorIndex", ColorIndex);
         }
@@ -414,6 +422,14 @@ namespace VisionProject.ViewModels
             set { SetProperty(ref _identifyResult, value); }
         }
 
+        private int _minResultNumber;
+
+        public int MinResultNumber
+        {
+            get { return _minResultNumber; }
+            set { SetProperty(ref _minResultNumber, value); }
+        }
+
         #endregion 条码识别
 
         public string Title => "条码识别";
@@ -422,7 +438,13 @@ namespace VisionProject.ViewModels
 
         public bool CanCloseDialog()
         {
-            return true;
+            if (NotDrawIng)
+                return true;
+            else
+            {
+                Variables.ShowMessage("请先右键完成绘制");
+                return false;
+            }
         }
 
         private bool isInitlized = false;
@@ -433,10 +455,10 @@ namespace VisionProject.ViewModels
             await Task.Delay(300);
             ColorIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("ColorIndex", 0).ToString());
             CodeIndex = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("CodeIndex", 0).ToString());
-            IsSaveNG = (bool)Variables.CurrentProgramData.Parameters.BingGetOrAdd("IsSaveNG", false);
-
+            MinResultNumber = int.Parse(Variables.CurrentProgramData.Parameters.BingGetOrAdd("MinResultNumber", 0).ToString());
             try
             {
+                ///0729 疑问，这里的图片初始化是指的什么？
                 if (!originalImage.IsInitialized())
                 {
                     string imagePath = "";
@@ -454,6 +476,7 @@ namespace VisionProject.ViewModels
 
             await Task.Delay(200);
             isInitlized = true;
+            DoSwitchTab.Execute();
             return true;
         }
 

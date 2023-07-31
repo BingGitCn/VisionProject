@@ -1,7 +1,9 @@
 ﻿using BingLibrary.Communication.Modbus;
 using BingLibrary.Vision;
 using BingLibrary.Vision.Engine;
+using DLTools.Apply;
 using HalconDotNet;
+using HandyControl.Controls;
 using Newtonsoft.Json;
 using Prism.Events;
 using Prism.Services.Dialogs;
@@ -14,20 +16,38 @@ namespace VisionProject.GlobalVars
 {
     public static class Variables
     {
+        //东尼mes
+        public static string MesDetail = "";
+
+        public static MESClass mes = new MESClass();
+
+        #region 深度学习
+
+        public static Inspect PinDeep = new DLTools.Apply.Inspect();
+
+        #endregion 深度学习
+
+        //软件启动登录
+        public static bool IsSoftWareRun = false;
+
         #region 相机相关
 
         //添加引擎，这里使用数组，方便多相机或多线程使用
         public static List<WorkerEngine> WorkEngines = new List<WorkerEngine>()
         {
             new WorkerEngine(),
-            new WorkerEngine()
+            new WorkerEngine(),
+            new WorkerEngine(),
+            new WorkerEngine(),
         };
 
         //添加相机名字，这里使用数组，方便多相机或多线程使用
         public static List<HCamera> Cameras = new List<HCamera>()
         {
-            new HCamera("[0] Integrated Webcam"),
-            new HCamera("cam2")
+            new HCamera("Cam1"),
+            new HCamera("Cam2"),
+            new HCamera("Cam3"),
+            new HCamera("Cam4")
         };
 
         //图像窗口，需在mainwindow.cs入口指定对应的windowdata
@@ -35,6 +55,12 @@ namespace VisionProject.GlobalVars
 
         //图像窗口，需在mainwindow.cs入口指定对应的windowdata
         public static BingImageWindowData WindowData2 = new BingImageWindowData();
+
+        //图像窗口，需在mainwindow.cs入口指定对应的windowdata
+        public static BingImageWindowData WindowData3 = new BingImageWindowData();
+
+        //图像窗口，需在mainwindow.cs入口指定对应的windowdata
+        public static BingImageWindowData WindowData4 = new BingImageWindowData();
 
         public static HImage CurrentImage1 = new HImage();
 
@@ -48,6 +74,9 @@ namespace VisionProject.GlobalVars
         public static string ScriptCode = "";
 
         public static ScriptEdit scriptEdit = new ScriptEdit();
+
+        public static List<string> Barcode1String = new List<string>();
+        public static List<string> Barcode2String = new List<string>();
 
         #endregion 相机相关
 
@@ -87,6 +116,8 @@ namespace VisionProject.GlobalVars
 
         public static ModbusNet HCPLC1 = new ModbusNet();
         public static ModbusNet HCPLC2 = new ModbusNet();
+        public static ModbusNet HCPLC3 = new ModbusNet();
+        public static ModbusNet HCPLC4 = new ModbusNet();
 
         #endregion PLC
 
@@ -117,7 +148,7 @@ namespace VisionProject.GlobalVars
         public static ProgramData CurrentProgramData = new ProgramData();
 
         //当前编辑的位置参数
-        public static ConfigSet CurrentConfigSet = new ConfigSet();
+        public static ConfigSet CurrentConfigSet = new ConfigSet() { RowInput = 1, ColInput = 1 };
 
         //当前编辑的程序名字
         public static string ProgramName = "";
@@ -129,11 +160,19 @@ namespace VisionProject.GlobalVars
         public static string ProjectObjectPath = AppDomain.CurrentDomain.BaseDirectory + "Projects\\Objects\\";
 
         //undone 图像长宽需设置
-        public static int ImageWidth = 5000;
+        public static int ImageWidth = 5472;
 
-        public static int ImageHeight = 4000;
+        public static int ImageHeight = 3648;
 
-        public static string SavePath = "C:\\Users\\PC\\Desktop\\";
+        //最终结果标志
+        public static bool Result1OK = false;
+
+        public static bool Result2OK = false;
+
+        //图片地址
+        public static string SaveImagePath;
+
+        public static string SaveOriginalImagePath;
 
         //弹出窗口确认
         public static void ShowMessage(string msg)
@@ -144,6 +183,21 @@ namespace VisionProject.GlobalVars
         public static bool ShowConfirm(string msg)
         {
             return HandyControl.Controls.MessageBox.Ask(msg, "确认操作") == System.Windows.MessageBoxResult.OK;
+        }
+
+        public static void ShowGrowlInfo(string msg)
+        {
+            Growl.Info(msg);
+        }
+
+        public static void ShowGrowlWarning(string msg)
+        {
+            Growl.Warning(msg);
+        }
+
+        public static void ShowGrowlError(string msg)
+        {
+            Growl.Error(msg);
         }
 
         //剩余硬盘容量
@@ -206,8 +260,8 @@ namespace VisionProject.GlobalVars
 
     public class RunResult
     {
-        public bool BoolResult { get; set; }
-        public HImage ResultImage { get; set; }
+        public bool BoolResult { get; set; }//ok ng
+        public HImage ResultImage { get; set; }//图片
         public string NGImagePath { get; set; }
         public string MessageResult { get; set; }
 
@@ -215,11 +269,36 @@ namespace VisionProject.GlobalVars
         public HRegion RegionResult { get; set; } = new HRegion();
     }
 
+    public class InspectFrame
+    {
+        public bool ContainsObject { get; set; }
+        public double Row1 { get; set; } = 0;
+        public double Col1 { get; set; } = 0;
+        public double Row2 { get; set; } = 0;
+        public double Col2 { get; set; } = 0;
+        public double CrossRow { get; set; } = 0;
+        public double CrossCol { get; set; } = 0;
+    }
+
     public class ConfigSet
     {
         public string ConfigIndex { get; set; }
 
-        public int RowInput { get; set; }
-        public int ColInput { get; set; }
+        public int RowInput { get; set; } = 1;
+        public int ColInput { get; set; } = 1;
+
+        public int Row1 { get; set; } = 0;
+        public int Column1 { get; set; } = 0;
+        public int Row2 { get; set; } = 3648;
+        public int Column2 { get; set; } = 5472;
+
+        public int RowChangeValue { get; set; } = 0;
+        public int ColChangeValue { get; set; } = 0;
+
+        public int RowMax { get; set; } = 0;
+        public int RowMin { get; set; } = 0;
+
+        public int ColMax { get; set; } = 0;
+        public int ColMin { get; set; } = 0;
     }
 }

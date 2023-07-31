@@ -40,8 +40,8 @@ namespace BingLibrary.Vision
             window.DispCircle(midR, midC, radius);
             if (SizeEnable && ShowRect)
             {
-                window.DispRectangle2(row1, col1, 0, 15, 15);
-                window.DispRectangle2(midR, midC, 0, 15, 15);
+                window.DispRectangle2(row1, col1, 0, smallregionwidth, smallregionwidth);
+                window.DispRectangle2(midR, midC, 0, smallregionwidth, smallregionwidth);
             }
         }
 
@@ -77,11 +77,11 @@ namespace BingLibrary.Vision
             switch (activeHandleIdx)
             {
                 case 0:
-                    window.DispRectangle2(row1, col1, 0, 15, 15);
+                    window.DispRectangle2(row1, col1, 0, smallregionwidth, smallregionwidth);
                     break;
 
                 case 1:
-                    window.DispRectangle2(midR, midC, 0, 15, 15);
+                    window.DispRectangle2(midR, midC, 0, smallregionwidth, smallregionwidth);
                     break;
             }
         }

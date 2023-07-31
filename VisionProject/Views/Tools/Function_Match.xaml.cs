@@ -20,11 +20,19 @@ namespace VisionProject.Views
             {
                 g1.Visibility = System.Windows.Visibility.Visible;
                 g2.Visibility = System.Windows.Visibility.Collapsed;
+                g3.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            else if (cb.SelectedIndex == 1)
+            {
+                g1.Visibility = System.Windows.Visibility.Collapsed;
+                g2.Visibility = System.Windows.Visibility.Visible;
+                g3.Visibility = System.Windows.Visibility.Collapsed;
             }
             else
             {
                 g1.Visibility = System.Windows.Visibility.Collapsed;
-                g2.Visibility = System.Windows.Visibility.Visible;
+                g2.Visibility = System.Windows.Visibility.Collapsed;
+                g3.Visibility = System.Windows.Visibility.Visible;
             }
         }
 
@@ -34,11 +42,19 @@ namespace VisionProject.Views
             {
                 g1.Visibility = System.Windows.Visibility.Visible;
                 g2.Visibility = System.Windows.Visibility.Collapsed;
+                g3.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            else if (cb.SelectedIndex == 1)
+            {
+                g1.Visibility = System.Windows.Visibility.Collapsed;
+                g2.Visibility = System.Windows.Visibility.Visible;
+                g3.Visibility = System.Windows.Visibility.Collapsed;
             }
             else
             {
                 g1.Visibility = System.Windows.Visibility.Collapsed;
-                g2.Visibility = System.Windows.Visibility.Visible;
+                g2.Visibility = System.Windows.Visibility.Collapsed;
+                g3.Visibility = System.Windows.Visibility.Visible;
             }
         }
     }
